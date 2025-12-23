@@ -2,15 +2,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@/*": ["./*"],
       "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*", "./src/lib/*"],
+      "@/lib/*": ["./lib/*"],
       "@/app/*": ["./app/*"],
-      "@/modules/*": ["./src/modules/*"],
-      "@/demo/*": ["./src/demo/*"],
-      "@/domain/*": ["./src/domain/*"],
-      "@/styles/*": ["./src/styles/*"]
+      "@/modules/*": ["./modules/*"],
+      "@/demo/*": ["./demo/*"],
+      "@/domain/*": ["./domain/*"],
+      "@/styles/*": ["./styles/*"]
     }
   },
-  "exclude": ["node_modules", ".next"]
+  "exclude": ["node_modules", ".next", "app_old", "src"]
 }

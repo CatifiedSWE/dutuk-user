@@ -2,39 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --border: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-  }
+:root {
+  --background: #FDF5E6;
+  --foreground: #4F0000;
+  --primary: #7C2A2A;
+  --secondary: #FFC13C;
+  --text-dark: #270100;
+  --text-light: #FFFFFF;
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --border: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-  }
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+  --chart-1: 12 76% 61%;
+  --chart-2: 173 58% 39%;
+  --chart-3: 197 37% 24%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+
+  --font-poppins: 'Poppins', sans-serif;
+  --font-urbanist: 'Urbanist', sans-serif;
+  --font-inter: 'Inter', sans-serif;
 }
 
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#FDF5E6] text-[#4F0000];
+    font-family: var(--font-poppins), sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
   }
+}
+
+@layer utilities {
+  /* Custom scrollbar */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Font utilities */
+  .font-poppins {
+    font-family: var(--font-poppins), sans-serif;
+  }
+
+  .font-urbanist {
+    font-family: var(--font-urbanist), sans-serif;
+  }
+
+  .font-inter {
+    font-family: var(--font-inter), sans-serif;
+  }
+}
+
+/* Custom scrollbar for the whole page */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #7C2A2A;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4F0000;
+}
+
+/* Selection styling */
+::selection {
+  background-color: #7C2A2A;
+  color: white;
+}
+
+::-moz-selection {
+  background-color: #7C2A2A;
+  color: white;
 }

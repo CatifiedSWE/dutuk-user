@@ -2,10 +2,11 @@
 module.exports = {
     darkMode: ["class"],
     content: [
-      './pages/**/*.{js,jsx}',
-      './components/**/*.{js,jsx}',
-      './app/**/*.{js,jsx}',
-      './src/**/*.{js,jsx}',
+      './pages/**/*.{js,jsx,ts,tsx}',
+      './components/**/*.{js,jsx,ts,tsx}',
+      './app/**/*.{js,jsx,ts,tsx}',
+      './modules/**/*.{js,jsx,ts,tsx}',
+      './src/**/*.{js,jsx,ts,tsx}',
     ],
     prefix: "",
     theme: {
@@ -68,6 +69,11 @@ module.exports = {
     				border: 'hsl(var(--sidebar-border))',
     				ring: 'hsl(var(--sidebar-ring))'
     			}
+    		},
+    		fontFamily: {
+    			poppins: ['var(--font-poppins)', 'sans-serif'],
+    			urbanist: ['var(--font-urbanist)', 'sans-serif'],
+    			inter: ['var(--font-inter)', 'sans-serif'],
     		},
     		borderRadius: {
     			lg: 'var(--radius)',

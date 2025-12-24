@@ -28,11 +28,11 @@ export default function HomePageScreen() {
             {/* Bundle Services Section */}
             <BundleServices />
 
-            {/* Premium Event Planning Section */}
-            <PremiumEventPlanning />
-
             {/* Premium Packages Banner */}
             <PremiumPackagesBanner />
+
+            {/* Premium Event Planning Section */}
+            <PremiumEventPlanning />
           </div>
         </div>
       </main>

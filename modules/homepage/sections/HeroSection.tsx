@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, ArrowRight } from 'lucide-react';
+import { Search, Building2, Calendar, Package } from 'lucide-react';
 
 export default function HeroSection() {
     return (
@@ -42,17 +42,17 @@ export default function HeroSection() {
                 {/* Category Actions */}
                 <div className="flex flex-wrap items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
                     <button className="flex items-center gap-3 bg-white text-[#4F0000] px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                        <span className="w-2 h-2 rounded-full bg-[#4F0000]" />
+                        <Building2 className="w-5 h-5" />
                         Vendors
                     </button>
 
                     <button className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-urbanist font-medium text-base hover:bg-white/20 transition-all hover:-translate-y-1">
-                        <span className="w-2 h-2 rounded-full bg-white" />
+                        <Calendar className="w-5 h-5" />
                         Events
                     </button>
 
                     <button className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-urbanist font-medium text-base hover:bg-white/20 transition-all hover:-translate-y-1">
-                        <span className="w-2 h-2 rounded-full bg-white" />
+                        <Package className="w-5 h-5" />
                         Packages
                     </button>
                 </div>

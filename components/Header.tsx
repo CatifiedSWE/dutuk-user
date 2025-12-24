@@ -8,8 +8,9 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <header className="fixed top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300">
-            <div className="absolute inset-0 bg-[#270100]/30 backdrop-blur-md" />
+        <header className="sticky top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 navbar-gradient-border">
+            {/* Glassmorphism Background */}
+            <div className="absolute inset-0 bg-[#270100]/40 backdrop-blur-xl backdrop-saturate-150 -z-10" />
 
             <div className="relative max-w-[1440px] mx-auto flex items-center justify-between h-14">
                 {/* Left Section: Logo & Location */}
@@ -47,8 +48,8 @@ export default function Header() {
                         </Link>
                     </nav>
 
-                    {/* Search Bar */}
-                    <div className="flex items-center bg-white rounded-full px-4 py-1.5 w-64 shadow-lg">
+                    {/* Search Bar with Glassmorphism */}
+                    <div className="relative flex items-center bg-white/90 backdrop-blur-md rounded-full px-4 py-1.5 w-64 shadow-xl border border-white/20">
                         <input
                             type="text"
                             placeholder="Search..."

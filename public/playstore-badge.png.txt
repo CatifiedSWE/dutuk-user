@@ -1,0 +1,2 @@
+Placeholder for Google Play Store badge
+Download from: https://play.google.com/intl/en_us/badges/

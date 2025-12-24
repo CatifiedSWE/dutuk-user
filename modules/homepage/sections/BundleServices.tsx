@@ -1,33 +1,33 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const bundles = [
     {
         title: 'Birthday Party for 100 people',
         price: '₹ 2,00,000 - ₹ 5,00,000',
-        color: '#FF6B9D'
+        image: '/bundles/birthday.jpg'
     },
     {
         title: 'Wedding Bundle for 300 people',
         price: '₹ 2,80,000 - ₹ 7,00,000',
-        color: '#C73E1D'
+        image: '/bundles/wedding.jpg'
     },
     {
         title: 'Corporate event for 300 people',
         price: '₹ 2,00,000 - ₹ 4,00,000',
-        color: '#3B82F6'
+        image: '/bundles/corporate.jpg'
     },
     {
         title: 'Engagement Party',
         price: '₹ 1,50,000 - ₹ 3,00,000',
-        color: '#A855F7'
+        image: '/bundles/engagement.jpg'
     },
 ];
 
 export default function BundleServices() {
-    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const scrollMap = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -79,14 +79,14 @@ export default function BundleServices() {
                         {/* Bundle Image */}
                         <div className="relative h-52 rounded-2xl overflow-hidden mb-4">
                             <div
-                                className="absolute inset-0 hover:scale-105 transition-transform duration-500"
-                                style={{ background: `linear-gradient(135deg, ${bundle.color}, ${bundle.color}dd)` }}
+                                className="absolute inset-0 bg-cover bg-center hover:scale-105 transition-transform duration-500"
+                                style={{ backgroundImage: `url(${bundle.image})` }}
                             />
                         </div>
 
                         {/* Content */}
                         <div className="px-2 flex flex-col gap-2">
-                            <span className="font-[inter] font-light text-sm md:text-base text-[#535353]">
+                            <span className="font-inter font-light text-sm md:text-base text-[#535353]">
                                 Chennai, Egmore
                             </span>
 
@@ -94,7 +94,7 @@ export default function BundleServices() {
                                 <h3 className="font-poppins font-normal text-lg md:text-xl text-[#333333] line-clamp-2 min-h-[56px]">
                                     {bundle.title}
                                 </h3>
-                                <span className="font-[inter] font-semibold text-xl text-[#4F0000]">
+                                <span className="font-inter font-semibold text-xl text-[#4F0000]">
                                     {bundle.price}
                                 </span>
                             </div>

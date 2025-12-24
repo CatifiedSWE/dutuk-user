@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const events = [
@@ -8,34 +8,34 @@ const events = [
         title: 'ECR Beach House Wedding',
         location: 'Chennai, Egmore',
         price: '₹ 2,00,000 - ₹ 5,00,000',
-        color: '#06B6D4',
+        image: '/events/beach-house.jpg',
         premium: true
     },
     {
         title: 'ITC Grand Chola - All Events',
         location: 'Chennai, Egmore',
         price: '₹ 2,80,000 - ₹ 7,00,000',
-        color: '#8B5CF6',
+        image: '/events/itc-grand.jpg',
         premium: true
     },
     {
         title: 'Sterling Ooty Resort - Events',
         location: 'Chennai, Egmore',
         price: '₹ 2,00,000 - ₹ 4,00,000',
-        color: '#10B981',
+        image: '/events/sterling-ooty.jpg',
         premium: true
     },
     {
         title: 'Leela Palace Grand Ball',
         location: 'Chennai, MRC Nagar',
         price: '₹ 5,00,000 - ₹ 12,00,000',
-        color: '#F59E0B',
+        image: '/events/leela-palace.jpg',
         premium: true
     },
 ];
 
 export default function PremiumEventPlanning() {
-    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const scrollMap = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
@@ -87,8 +87,8 @@ export default function PremiumEventPlanning() {
                         {/* Event Image */}
                         <div className="relative h-52 rounded-2xl overflow-hidden mb-4">
                             <div
-                                className="absolute inset-0 transition-transform duration-500 group-hover:scale-110"
-                                style={{ background: `linear-gradient(135deg, ${event.color}, ${event.color}dd)` }}
+                                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                style={{ backgroundImage: `url(${event.image})` }}
                             />
 
                             {event.premium && (
@@ -102,7 +102,7 @@ export default function PremiumEventPlanning() {
 
                         {/* Content */}
                         <div className="px-2 flex flex-col gap-3">
-                            <span className="font-[inter] font-light text-sm md:text-base text-[#535353]">
+                            <span className="font-inter font-light text-sm md:text-base text-[#535353]">
                                 {event.location}
                             </span>
 
@@ -110,7 +110,7 @@ export default function PremiumEventPlanning() {
                                 <h3 className="font-poppins font-normal text-lg md:text-xl text-[#333333] line-clamp-2">
                                     {event.title}
                                 </h3>
-                                <span className="font-[inter] font-semibold text-xl text-[#4F0000]">
+                                <span className="font-inter font-semibold text-xl text-[#4F0000]">
                                     {event.price}
                                 </span>
                             </div>

@@ -1,0 +1,31 @@
+# Hero Background
+hero-bg.jpg=https://images.unsplash.com/photo-1761477617017-7a5d9f9c4d8f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxldmVudCUyMGNlbGVicmF0aW9ufGVufDB8fHx8MTc2NjU1MTE4N3ww&ixlib=rb-4.1.0&q=85
+
+# Event Categories
+categories/family.jpg=https://images.unsplash.com/photo-1527529482837-4698179dc6ce
+categories/governance.jpg=https://images.unsplash.com/photo-1511578314322-379afb476865
+categories/surprise.jpg=https://images.unsplash.com/photo-1527529482837-4698179dc6ce
+categories/colleges.jpg=https://images.unsplash.com/photo-1519167758481-83f550bb49b3
+categories/shoot.jpg=https://images.unsplash.com/photo-1495745966610-2a67f2297e5e
+
+# Vendor Categories
+vendors/dj.jpg=https://images.unsplash.com/photo-1470225620780-dba8ba36b745
+vendors/photographer.jpg=https://images.unsplash.com/photo-1493863641943-9b68992a8d07
+vendors/decorators.jpg=https://images.pexels.com/photos/1090638/pexels-photo-1090638.jpeg
+vendors/catering.jpg=https://images.unsplash.com/photo-1555244162-803834f70033
+vendors/entertainment.jpg=https://images.unsplash.com/photo-1541126274323-dbac58d14741
+
+# Bundle Services
+bundles/birthday.jpg=https://images.unsplash.com/photo-1527529482837-4698179dc6ce
+bundles/wedding.jpg=https://images.unsplash.com/photo-1665607437981-973dcd6a22bb
+bundles/corporate.jpg=https://images.unsplash.com/photo-1519167758481-83f550bb49b3
+bundles/engagement.jpg=https://images.unsplash.com/photo-1665607437981-973dcd6a22bb
+
+# Premium Events
+events/beach-house.jpg=https://images.unsplash.com/photo-1665607437981-973dcd6a22bb
+events/itc-grand.jpg=https://images.unsplash.com/photo-1519167758481-83f550bb49b3
+events/sterling-ooty.jpg=https://images.pexels.com/photos/35285172/pexels-photo-35285172.jpeg
+events/leela-palace.jpg=https://images.unsplash.com/photo-1519167758481-83f550bb49b3
+
+# Premium Banner
+premium-banner.jpg=https://images.unsplash.com/photo-1761477617017-7a5d9f9c4d8f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzB8MHwxfHNlYXJjaHw0fHxldmVudCUyMGNlbGVicmF0aW9ufGVufDB8fHx8MTc2NjU1MTE4N3ww&ixlib=rb-4.1.0&q=85

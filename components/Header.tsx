@@ -48,61 +48,46 @@ export default function Header() {
                     </nav>
 
                     {/* Search Bar */}
-                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2">
-                        <Search className="w-4 h-4 text-white/70" />
+                    <div className="flex items-center bg-white rounded-full px-4 py-1.5 w-64 shadow-lg">
                         <input
                             type="text"
                             placeholder="Search..."
-                            className="bg-transparent border-none outline-none text-sm text-white placeholder:text-white/50 w-32"
+                            className="flex-1 bg-transparent border-none outline-none text-sm text-[#1B0F11] placeholder:text-gray-400 font-poppins"
                         />
+                        <button className="bg-[#270100] p-1.5 rounded-full hover:bg-[#4F0000] transition-colors">
+                            <Search className="w-3.5 h-3.5 text-white" />
+                        </button>
                     </div>
 
-                    {/* Auth Buttons */}
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href="/login"
-                            className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            href="/signup"
-                            className="bg-[#FFC13C] text-[#4F0000] px-6 py-2 rounded-full font-poppins font-semibold text-sm hover:bg-[#e6ac34] transition-colors shadow-md"
-                        >
-                            Sign Up
-                        </Link>
-                    </div>
+                    {/* Login / Profile */}
+                    <Link href="/login" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors">
+                        Login / Sign in
+                    </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
                 <button
+                    className="lg:hidden p-2 text-white"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    className="lg:hidden p-2 text-white hover:text-[#FFC13C] transition-colors"
                 >
-                    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    {isMenuOpen ? <X /> : <Menu />}
                 </button>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Dropdown */}
             {isMenuOpen && (
-                <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-[#270100]/95 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden">
-                    <nav className="flex flex-col p-4">
-                        <Link href="#" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors py-3 border-b border-white/10">
-                            Vendors
-                        </Link>
-                        <Link href="#" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors py-3 border-b border-white/10">
-                            Events
-                        </Link>
-                        <Link href="#" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors py-3 border-b border-white/10">
-                            Packages
-                        </Link>
-                        <Link href="/login" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors py-3 border-b border-white/10">
-                            Login
-                        </Link>
-                        <Link href="/signup" className="font-poppins font-medium text-sm text-[#FFC13C] hover:text-white transition-colors py-3">
-                            Sign Up
-                        </Link>
-                    </nav>
+                <div className="absolute top-full left-0 w-full bg-[#270100]/95 backdrop-blur-xl border-t border-white/10 lg:hidden flex flex-col p-4 gap-4 animate-in slide-in-from-top-2">
+                    <Link href="#" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Vendors</Link>
+                    <Link href="#" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Events</Link>
+                    <Link href="#" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Packages</Link>
+                    <div className="h-px bg-white/20 my-2" />
+                    <div className="flex items-center gap-3 px-4 py-2">
+                        <MapPin className="text-[#FFC13C] w-5 h-5" />
+                        <div className="flex flex-col leading-none">
+                            <span className="font-poppins font-semibold text-xs text-white">Chennai</span>
+                            <span className="font-poppins font-medium text-xs text-stone-300">Tamil Nadu</span>
+                        </div>
+                    </div>
                 </div>
             )}
         </header>

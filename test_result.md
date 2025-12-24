@@ -101,3 +101,155 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: Copy the exact design from Repo B (https://github.com/Melvinkheturus/dutuk-webapp) to Repo A while maintaining the structure and hierarchy of Repo A. This is a design-only update for the homepage.
+
+frontend:
+  - task: "Copy Header design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/components/Header.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Header component with glassmorphism effect, white search bar, and exact styling from Repo B. Includes location selector, navigation links, and mobile responsive menu."
+
+  - task: "Copy Footer design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/components/Footer.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Footer with gradient background, newsletter subscription, social media icons, and service links matching Repo B design."
+
+  - task: "Copy HeroSection design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/HeroSection.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Hero section with background image (fireworks), dark overlay, floating search bar, and category action buttons."
+
+  - task: "Copy EventCategories design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/EventCategories.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Event Categories with circular cards, hover effects, and 5 category images (Family, Governance, Surprise, Colleges, Shoot)."
+
+  - task: "Copy VendorCategories design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/VendorCategories.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Vendor Categories with tabbed navigation, filter button, vendor cards with hover effects and 'Check now' buttons."
+
+  - task: "Copy BundleServices design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/BundleServices.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Bundle Services section with horizontal scrollable cards, navigation arrows, and 4 service bundles."
+
+  - task: "Copy PremiumEventPlanning design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/PremiumEventPlanning.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Premium Event Planning section with yellow navigation arrows, premium badges, and 'Check now' CTA buttons."
+
+  - task: "Copy PremiumPackagesBanner design from Repo B"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/PremiumPackagesBanner.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated Premium Packages Banner with full-width background image, dark overlay, and action buttons."
+
+  - task: "Apply color scheme from Repo B"
+    implemented: true
+    working: true
+    file: "/app/app/globals.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Applied exact color scheme: #7C2A2A (primary), #FFC13C (secondary), #FDF5E6 (background). Added custom scrollbar styling and selection colors."
+
+  - task: "Add Google Fonts (Poppins, Urbanist, Inter)"
+    implemented: true
+    working: true
+    file: "/app/app/layout.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Added Google Fonts import for Poppins, Urbanist, and Inter. Applied font variables throughout the application."
+
+  - task: "Download and integrate images from Repo B"
+    implemented: true
+    working: true
+    file: "/app/public/"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Downloaded 20 high-quality images from Unsplash and Pexels for all sections: hero, categories, vendors, bundles, events, and premium banner."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: true
+
+test_plan:
+  current_focus:
+    - "All homepage design components completed"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "completed"
+
+agent_communication:
+    - agent: "main"
+      message: "Design copy completed successfully. All components from Repo B have been implemented in Repo A while maintaining the structure and hierarchy. Images have been downloaded and integrated. The homepage now mirrors the design of Repo B with the exact color scheme, typography, and layout."

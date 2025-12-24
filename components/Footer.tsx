@@ -48,7 +48,7 @@ export default function Footer() {
                         <h4 className="font-poppins font-semibold text-lg">Company</h4>
                         <div className="flex flex-col gap-3">
                             {['About Us', 'Why Choose DUTUK', 'Our Promise', 'Careers / Join Our Team', 'Contact Us'].map((link) => (
-                                <Link key={link} href="#" className="text-white/80 hover:text-white transition-colors font-poppins font-light">
+                                <Link key={link} href="#" className="font-poppins text-white/70 hover:text-white transition-colors">
                                     {link}
                                 </Link>
                             ))}
@@ -59,31 +59,36 @@ export default function Footer() {
                     <div className="flex flex-col gap-4">
                         <h4 className="font-poppins font-semibold text-lg">Services</h4>
                         <div className="flex flex-col gap-3">
-                            {['Vendors', 'Events', 'Packages', 'Premium Planning', 'Bundle Services'].map((link) => (
-                                <Link key={link} href="#" className="text-white/80 hover:text-white transition-colors font-poppins font-light">
+                            {['Event Planning', 'Vendor Partners', 'Wedding Events', 'Birthday Parties', 'Corporate Events'].map((link) => (
+                                <Link key={link} href="#" className="font-poppins text-white/70 hover:text-white transition-colors">
                                     {link}
                                 </Link>
                             ))}
                         </div>
                     </div>
 
-                    {/* Column 4: Legal */}
+                    {/* Column 4: Quick Links & Downloads */}
                     <div className="flex flex-col gap-4">
-                        <h4 className="font-poppins font-semibold text-lg">Legal</h4>
-                        <div className="flex flex-col gap-3">
-                            {['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'Refund Policy'].map((link) => (
-                                <Link key={link} href="#" className="text-white/80 hover:text-white transition-colors font-poppins font-light">
+                        <h4 className="font-poppins font-semibold text-lg">Quick Links</h4>
+                        <div className="flex flex-col gap-3 mb-4">
+                            {['Book an Event', 'FAQs'].map((link) => (
+                                <Link key={link} href="#" className="font-poppins text-white/70 hover:text-white transition-colors">
                                     {link}
                                 </Link>
                             ))}
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <button className="w-36 h-10 bg-[url('/playstore-badge.png')] bg-cover bg-center rounded border border-[#6D1F1F]/50 shadow-lg hover:opacity-90 transition-opacity" />
+                            <button className="w-36 h-10 bg-[url('/appstore-badge.png')] bg-cover bg-center rounded border border-[#6D1F1F]/50 shadow-lg hover:opacity-90 transition-opacity" />
                         </div>
                     </div>
                 </div>
 
-                {/* Bottom Section: Copyright */}
+                {/* Copyright */}
                 <div className="text-center">
-                    <p className="text-white/60 font-poppins font-light text-sm">
-                        © {new Date().getFullYear()} DUTUK. All rights reserved.
+                    <p className="font-poppins text-xs md:text-sm text-white/60 leading-relaxed max-w-4xl mx-auto">
+                        By continuing past this page, you agree to our Terms of Service, Cookie Policy, Privacy Policy and Content Policies. All trademarks are properties of their respective owners 2008-2025 © Dutuk™ Ltd. All rights reserved.
                     </p>
                 </div>
             </div>

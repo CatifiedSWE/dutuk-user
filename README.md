@@ -8,8 +8,8 @@ A modern, fully TypeScript-based event management and booking platform built wit
 - **Language**: [TypeScript](https://www.typescriptlang.org/) (100% type-safe)
 - **UI Library**: [React 19](https://react.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database**: MongoDB (ready for integration)
-- **Package Manager**: Yarn
+- **Database**: Supabase (ready for integration)
+- **Package Manager**: npm
 
 ## 📁 Project Structure
 
@@ -229,8 +229,8 @@ Next.js App Router that orchestrates modules:
 ### Prerequisites
 
 - Node.js 18+ installed
-- Yarn package manager
-- MongoDB instance (optional for demo)
+- npm package manager
+- Supabase project (optional for demo)
 
 ### Installation
 
@@ -238,16 +238,16 @@ The application is already set up and running. To start development:
 
 ```bash
 # Install dependencies (if needed)
-yarn install
+npm install
 
 # Start development server
-yarn dev
+npm run dev
 
 # Build for production
-yarn build
+npm run build
 
 # Start production server
-yarn start
+npm start
 ```
 
 The application runs on:
@@ -570,7 +570,8 @@ export function ComponentName({ title, description }: Props) {
 - [ ] Protected routes with middleware
 
 ### Backend Integration
-- [ ] MongoDB CRUD operations
+- [ ] Supabase database setup
+- [ ] CRUD operations via Supabase
 - [ ] RESTful API endpoints
 - [ ] Real-time event availability updates
 - [ ] Server-side pagination and filtering
@@ -612,17 +613,17 @@ export function ComponentName({ title, description }: Props) {
 
 ```bash
 # Development
-yarn dev                 # Start development server
-yarn dev:no-reload      # Start without hot reload
-yarn dev:webpack        # Start with webpack
+npm run dev                 # Start development server
+npm run dev:no-reload      # Start without hot reload
+npm run dev:webpack        # Start with webpack
 
 # Production
-yarn build              # Build for production
-yarn start              # Start production server
+npm run build              # Build for production
+npm start                  # Start production server
 
 # Utilities
-yarn lint               # Run ESLint
-yarn type-check         # Run TypeScript compiler check
+npm run lint               # Run ESLint
+npm run type-check         # Run TypeScript compiler check
 ```
 
 ## 🐛 Troubleshooting
@@ -633,13 +634,13 @@ yarn type-check         # Run TypeScript compiler check
 ```bash
 # Clear Next.js cache
 rm -rf .next
-yarn dev
+npm run dev
 ```
 
 **Issue**: TypeScript errors
 ```bash
 # Check TypeScript configuration
-yarn type-check
+npm run type-check
 ```
 
 **Issue**: Port already in use

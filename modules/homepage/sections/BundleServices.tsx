@@ -2,29 +2,7 @@
 
 import React, { useRef } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-
-const bundles = [
-    {
-        title: 'Birthday Party for 100 people',
-        price: '₹ 2,00,000 - ₹ 5,00,000',
-        image: '/bundles/birthday.jpg'
-    },
-    {
-        title: 'Wedding Bundle for 300 people',
-        price: '₹ 2,80,000 - ₹ 7,00,000',
-        image: '/bundles/wedding.jpg'
-    },
-    {
-        title: 'Corporate event for 300 people',
-        price: '₹ 2,00,000 - ₹ 4,00,000',
-        image: '/bundles/corporate.jpg'
-    },
-    {
-        title: 'Engagement Party',
-        price: '₹ 1,50,000 - ₹ 3,00,000',
-        image: '/bundles/engagement.jpg'
-    },
-];
+import { bundleServicesData } from '@/demo';
 
 export default function BundleServices() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -71,7 +49,7 @@ export default function BundleServices() {
                 ref={scrollContainerRef}
                 className="flex overflow-x-auto gap-6 pb-6 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory"
             >
-                {bundles.map((bundle, index) => (
+                {bundleServicesData.map((bundle, index) => (
                     <div
                         key={index}
                         className="flex-shrink-0 w-[300px] md:w-[340px] bg-white p-3 rounded-[24px] shadow-sm hover:shadow-md transition-shadow snap-start"

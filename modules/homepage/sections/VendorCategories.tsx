@@ -2,17 +2,7 @@
 
 import React, { useState } from 'react';
 import { Filter } from 'lucide-react';
-
-const categories = [
-    { name: 'Disc Jockey (DJ)', price: '₹ 10,000 - ₹ 60,000', image: '/vendors/dj.jpg' },
-    { name: 'Photographer', price: '₹ 10,000 - ₹ 1,00,000', image: '/vendors/photographer.jpg' },
-    { name: 'Decorators', price: '₹ 30,000 - ₹ 1,50,000', image: '/vendors/decorators.jpg' },
-    { name: 'Decorators', price: '₹ 30,000 - ₹ 1,50,000', image: '/vendors/decorators.jpg' },
-    { name: 'Catering', price: '₹ 15,000 - ₹ 1,00,000', image: '/vendors/catering.jpg' },
-    { name: 'Music / Entertainment', price: '₹ 30,000 - ₹ 1,50,000', image: '/vendors/entertainment.jpg' },
-];
-
-const tabs = ['Discover', 'Event Planner', 'DJ', 'Catering', 'Photographer', 'Decoration', 'Printmaker'];
+import { vendorCategoriesData, vendorTabs } from '@/demo';
 
 export default function VendorCategories() {
     const [activeTab, setActiveTab] = useState('Discover');
@@ -28,7 +18,7 @@ export default function VendorCategories() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 {/* Scrollable Tabs */}
                 <div className="flex items-center gap-2 overflow-x-auto w-full lg:w-auto pb-2 scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0">
-                    {tabs.map((tab, index) => (
+                    {vendorTabs.map((tab, index) => (
                         <button
                             key={index}
                             onClick={() => setActiveTab(tab)}
@@ -54,7 +44,7 @@ export default function VendorCategories() {
 
             {/* Vendor Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categories.map((vendor, index) => (
+                {vendorCategoriesData.map((vendor, index) => (
                     <div
                         key={index}
                         className="flex flex-col gap-4 bg-white p-4 rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 group"

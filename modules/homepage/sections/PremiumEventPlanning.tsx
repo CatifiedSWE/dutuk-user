@@ -2,37 +2,7 @@
 
 import React, { useRef } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-
-const events = [
-    {
-        title: 'ECR Beach House Wedding',
-        location: 'Chennai, Egmore',
-        price: '₹ 2,00,000 - ₹ 5,00,000',
-        image: '/events/beach-house.jpg',
-        premium: true
-    },
-    {
-        title: 'ITC Grand Chola - All Events',
-        location: 'Chennai, Egmore',
-        price: '₹ 2,80,000 - ₹ 7,00,000',
-        image: '/events/itc-grand.jpg',
-        premium: true
-    },
-    {
-        title: 'Sterling Ooty Resort - Events',
-        location: 'Chennai, Egmore',
-        price: '₹ 2,00,000 - ₹ 4,00,000',
-        image: '/events/sterling-ooty.jpg',
-        premium: true
-    },
-    {
-        title: 'Leela Palace Grand Ball',
-        location: 'Chennai, MRC Nagar',
-        price: '₹ 5,00,000 - ₹ 12,00,000',
-        image: '/events/leela-palace.jpg',
-        premium: true
-    },
-];
+import { premiumEventsData } from '@/demo';
 
 export default function PremiumEventPlanning() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -79,7 +49,7 @@ export default function PremiumEventPlanning() {
                 ref={scrollContainerRef}
                 className="flex overflow-x-auto gap-6 pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory"
             >
-                {events.map((event, index) => (
+                {premiumEventsData.map((event, index) => (
                     <div
                         key={index}
                         className="flex-shrink-0 w-[300px] md:w-[340px] bg-white p-3 rounded-[24px] shadow-sm hover:shadow-lg transition-all duration-300 snap-start group"

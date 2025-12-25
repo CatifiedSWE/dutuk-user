@@ -2,14 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-
-const categories = [
-    { name: 'Family', image: '/categories/family.jpg' },
-    { name: 'Governance', image: '/categories/governance.jpg' },
-    { name: 'Surprise', image: '/categories/surprise.jpg' },
-    { name: 'Colleges', image: '/categories/colleges.jpg' },
-    { name: 'Shoot', image: '/categories/shoot.jpg' },
-];
+import { eventCategoriesData } from '@/demo';
 
 export default function EventCategories() {
     return (
@@ -29,7 +22,7 @@ export default function EventCategories() {
 
             {/* Categories Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 justify-items-center">
-                {categories.map((category, index) => (
+                {eventCategoriesData.map((category, index) => (
                     <Link
                         href="#"
                         key={index}

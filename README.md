@@ -1,10 +1,10 @@
 # Dutuk - Event Management Platform
 
-A modern, fully TypeScript-based event management and booking platform built with Next.js 14, featuring a modular architecture and responsive design.
+A modern, fully TypeScript-based event management and booking platform built with Next.js 16, featuring a modular architecture and responsive design.
 
 ## 🚀 Tech Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router with Turbopack)
 - **Language**: [TypeScript](https://www.typescriptlang.org/) (100% type-safe)
 - **UI Library**: [React 19](https://react.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
@@ -132,7 +132,7 @@ A modern, fully TypeScript-based event management and booking platform built wit
 │
 ├── lib/                         # Utilities (TypeScript)
 │   ├── utils.ts                # Helper functions (cn utility)
-│   └── supabase/               # (future integration)
+│   └── supabase/               # Supabase client utilities
 │
 ├── hooks/                       # Custom React hooks (TypeScript)
 │   ├── use-mobile.tsx          # Mobile detection hook
@@ -371,28 +371,29 @@ Available aliases:
 ## 📦 Key Dependencies
 
 ### Core
-- `next@14.2.3` - React framework
-- `react@18` - UI library
+- `next@16.1.1` - React framework with Turbopack
+- `react@19` - UI library
 - `typescript@5.9.3` - Type safety
 
 ### UI & Styling
-- `tailwindcss@3.4.1` - Utility-first CSS
-- `lucide-react@0.516.0` - Icon library
+- `tailwindcss@4.1.18` - Utility-first CSS
+- `lucide-react@0.562.0` - Icon library
 - `class-variance-authority@0.7.1` - Component variants
-- `tailwind-merge@3.3.1` - Merge Tailwind classes
+- `tailwind-merge@3.4.0` - Merge Tailwind classes
 
 ### Form & Validation
-- `react-hook-form@7.58.1` - Form management
-- `zod@3.25.67` - Schema validation
-- `@hookform/resolvers@5.1.1` - Form resolvers
+- `react-hook-form@7.69.0` - Form management
+- `zod@4.2.1` - Schema validation
+- `@hookform/resolvers@5.2.2` - Form resolvers
 
 ### Database
-- `mongodb@6.6.0` - MongoDB driver
+- `@supabase/supabase-js@2.89.0` - Supabase client (ready for integration)
+- `@supabase/ssr@0.8.0` - Supabase SSR utilities
 
 ### Utilities
 - `date-fns@4.1.0` - Date manipulation
-- `axios@1.10.0` - HTTP client
-- `uuid@9.0.1` - UUID generation
+- `axios@1.13.2` - HTTP client
+- `uuid@13.0.0` - UUID generation
 
 ## 🗄️ Demo Data
 
@@ -450,15 +451,15 @@ Sample: 2 booking records
 Create a `.env` file in the root directory:
 
 ```env
-# MongoDB Configuration
-MONGO_URL=mongodb://localhost:27017
-DB_NAME=your_database_name
-
 # Application URLs
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 
 # CORS Configuration
 CORS_ORIGINS=*
+
+# Supabase Configuration (for future integration)
+# NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ## 🧩 Module Documentation
@@ -620,10 +621,6 @@ npm run dev:webpack        # Start with webpack
 # Production
 npm run build              # Build for production
 npm start                  # Start production server
-
-# Utilities
-npm run lint               # Run ESLint
-npm run type-check         # Run TypeScript compiler check
 ```
 
 ## 🐛 Troubleshooting

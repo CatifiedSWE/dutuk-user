@@ -3,8 +3,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Moved from experimental in Next.js 15+
-  serverExternalPackages: ['mongodb'],
   experimental: {
     // Other experimental features can go here
   },

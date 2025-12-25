@@ -157,7 +157,7 @@ All images downloaded from Unsplash and Pexels:
 - This design update documentation
 
 ## Next Steps
-- Consider adding actual event data from MongoDB
+- Consider adding actual event data from Supabase database
 - Implement search functionality
 - Add authentication flows
 - Connect vendor filtering to real data

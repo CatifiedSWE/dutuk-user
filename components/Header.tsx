@@ -13,9 +13,9 @@ interface HeaderProps {
 export default function Header({ variant = 'solid' }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    // Conditional styling based on variant
+    // Conditional styling based on variant - Optimized for performance
     const headerStyles = variant === 'glassmorphic'
-        ? 'bg-[#270100]/50 backdrop-blur-xl backdrop-saturate-150 shadow-lg'
+        ? 'bg-[#270100]/80 backdrop-blur-md shadow-lg'
         : 'bg-[#270100] shadow-md';
 
     return (
@@ -49,8 +49,8 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                         <NavLink href="#">Packages</NavLink>
                     </nav>
 
-                    {/* Search Bar with Glassmorphism */}
-                    <div className="relative flex items-center bg-white/90 backdrop-blur-md rounded-full px-4 py-1.5 w-64 shadow-xl border border-white/20 transition-all focus-within:ring-2 focus-within:ring-[#FFC13C]/50 focus-within:scale-[1.02]">
+                    {/* Search Bar with Glassmorphism - Optimized */}
+                    <div className="relative flex items-center bg-white/95 rounded-full px-4 py-1.5 w-64 shadow-lg border border-white/20 transition-all focus-within:ring-2 focus-within:ring-[#FFC13C]/50 focus-within:scale-[1.02]">
                         <input
                             type="text"
                             placeholder="Search..."
@@ -107,7 +107,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3, ease: 'easeInOut' }}
-                        className="absolute top-full left-0 w-full bg-[#270100]/95 backdrop-blur-xl border-t border-white/10 lg:hidden overflow-hidden"
+                        className="absolute top-full left-0 w-full bg-[#270100]/95 backdrop-blur-md border-t border-white/10 lg:hidden overflow-hidden"
                     >
                         <div className="flex flex-col p-4 gap-2">
                             <MobileNavLink href="#">Vendors</MobileNavLink>

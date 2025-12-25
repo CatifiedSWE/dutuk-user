@@ -27,7 +27,7 @@ export default function PremiumPackagesBanner() {
                             Events
                         </button>
 
-                        <button className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 md:px-8 py-3 rounded-full font-urbanist font-medium text-lg hover:bg-white/20 transition-colors shadow-lg">
+                        <button className="flex items-center gap-3 bg-white/15 border border-white/30 text-white px-6 md:px-8 py-3 rounded-full font-urbanist font-medium text-lg hover:bg-white/25 transition-colors shadow-lg">
                             <Package className="w-5 h-5" />
                             Packages
                         </button>

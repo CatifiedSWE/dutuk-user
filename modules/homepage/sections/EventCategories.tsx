@@ -4,7 +4,6 @@ import React from 'react';
 import Link from 'next/link';
 import { eventCategoriesData } from '@/demo';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function EventCategories() {
     return (
@@ -33,13 +32,10 @@ export default function EventCategories() {
             {/* Categories Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 justify-items-center">
                 {eventCategoriesData.map((category, index) => (
-                    <motion.div
+                    <div
                         key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1, duration: 0.5 }}
-                        className="flex flex-col items-center gap-5 w-full max-w-[180px]"
+                        className="flex flex-col items-center gap-5 w-full max-w-[180px] animate-fadeInUp"
+                        style={{ animationDelay: `${index * 0.1}s` }}
                     >
                         <Link href="#" className="flex flex-col items-center gap-5 group cursor-pointer w-full">
                             <div className="relative w-full aspect-square rounded-full overflow-hidden shadow-xl shadow-[#4F0000]/10 group-hover:shadow-2xl group-hover:shadow-[#4F0000]/20 transition-all duration-500 group-hover:-translate-y-2 border-[5px] border-white">
@@ -53,7 +49,7 @@ export default function EventCategories() {
                                 {category.name}
                             </span>
                         </Link>
-                    </motion.div>
+                    </div>
                 ))}
             </div>
         </section>

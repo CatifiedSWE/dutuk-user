@@ -3,25 +3,24 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Moved from experimental in Next.js 15+
+  serverExternalPackages: ['mongodb'],
   experimental: {
-    // Remove if not using Server Components
-    serverComponentsExternalPackages: ['mongodb'],
+    // Other experimental features can go here
   },
+  // Removed webpack config to avoid conflicts with Turbopack (enabled by default in Next.js 16)
+  /*
   webpack(config, { dev }) {
     if (dev) {
-      // Reduce CPU/memory from file watching
       config.watchOptions = {
-        poll: 2000, // check every 2 seconds
-        aggregateTimeout: 300, // wait before rebuilding
-        ignored: ['**/node_modules'],
+        poll: 2000,
+        aggregateTimeout: 300,
+        ignored: ['** /node_modules'],
       };
     }
     return config;
   },
-  onDemandEntries: {
-    maxInactiveAge: 10000,
-    pagesBufferLength: 2,
-  },
+  */
   async headers() {
     return [
       {

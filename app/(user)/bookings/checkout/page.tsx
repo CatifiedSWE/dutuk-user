@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { BookingCheckoutScreen } from '@/modules/bookings/user';
 import DesktopNavbar from '@/modules/layouts/user/desktop/Navbar';
 import DesktopFooter from '@/modules/layouts/user/desktop/Footer';
@@ -12,7 +13,9 @@ export default function BookingCheckoutPage() {
       <DesktopNavbar />
       <MobileTopbar />
       <main className="pb-16 lg:pb-0">
-        <BookingCheckoutScreen />
+        <Suspense fallback={<div className="h-screen w-full flex items-center justify-center">Loading...</div>}>
+          <BookingCheckoutScreen />
+        </Suspense>
       </main>
       <DesktopFooter />
       <MobileBottomNav />

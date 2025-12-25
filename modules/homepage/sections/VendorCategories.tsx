@@ -1,18 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Filter, Star } from 'lucide-react';
+import React from 'react';
+import Image from 'next/image';
+import { Filter } from 'lucide-react';
 import { vendorCategoriesData, vendorTabs } from '@/demo';
 
 export default function VendorCategories() {
-    const [activeTab, setActiveTab] = useState('Discover');
+    const [activeTab, setActiveTab] = React.useState('Discover');
 
     return (
         <section className="w-full flex flex-col gap-10">
             {/* Header */}
             <div className="flex flex-col gap-2">
                 <h2 className="font-poppins font-semibold text-3xl md:text-4xl text-[#4F0000]">
-                    Top Vendors
+                    Vendor Categories
                 </h2>
                 <p className="font-urbanist text-[#4F0000]/70 text-lg">
                     Handpicked professionals for your big day
@@ -57,31 +58,29 @@ export default function VendorCategories() {
                     >
                         {/* Vendor Image Card */}
                         <div className="relative h-60 rounded-2xl overflow-hidden bg-gray-100">
-                            <div
-                                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                                style={{
-                                    backgroundImage: `url(${vendor.image})`
-                                }}
+                            <Image
+                                src={vendor.image}
+                                alt={vendor.name}
+                                fill
+                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                loading="lazy"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
 
-                            <div className="absolute top-3 right-3 bg-white/25 text-white px-3 py-1 rounded-full text-xs font-bold border border-white/30 flex items-center gap-1">
-                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                                4.9
-                            </div>
-
-                            <div className="absolute inset-x-0 bottom-0 p-5 flex flex-col justify-end">
-                                <span className="font-poppins font-semibold text-2xl text-white drop-shadow-md translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            {/* Centered Vendor Name */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="font-poppins font-semibold text-2xl text-white drop-shadow-md text-center px-4">
                                     {vendor.name}
                                 </span>
+                            </div>
 
-                                {/* Check Now Button Overlay (Visible on Hover) */}
-                                <div className="max-h-0 group-hover:max-h-20 overflow-hidden transition-all duration-300">
-                                    <div className="pt-4">
-                                        <button className="w-full bg-white text-[#4F0000] py-3 rounded-xl font-urbanist font-bold text-sm shadow-lg hover:bg-[#FDF5E6] transition-colors">
-                                            Check Availability
-                                        </button>
-                                    </div>
+                            {/* Check Now Button Overlay (Visible on Hover) */}
+                            <div className="absolute inset-x-0 bottom-0 max-h-0 group-hover:max-h-20 overflow-hidden transition-all duration-300">
+                                <div className="p-5">
+                                    <button className="w-full bg-white text-[#4F0000] py-3 rounded-xl font-urbanist font-bold text-sm shadow-lg hover:bg-[#FDF5E6] transition-colors">
+                                        Check Availability
+                                    </button>
                                 </div>
                             </div>
                         </div>

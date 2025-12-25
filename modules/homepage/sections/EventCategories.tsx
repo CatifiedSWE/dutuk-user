@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { eventCategoriesData } from '@/demo';
 import { ArrowRight } from 'lucide-react';
@@ -39,9 +40,13 @@ export default function EventCategories() {
                     >
                         <Link href="#" className="flex flex-col items-center gap-5 group cursor-pointer w-full">
                             <div className="relative w-full aspect-square rounded-full overflow-hidden shadow-xl shadow-[#4F0000]/10 group-hover:shadow-2xl group-hover:shadow-[#4F0000]/20 transition-all duration-500 group-hover:-translate-y-2 border-[5px] border-white">
-                                <div
-                                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-                                    style={{ backgroundImage: `url(${category.image})` }}
+                                <Image
+                                    src={category.image}
+                                    alt={category.name}
+                                    fill
+                                    sizes="(max-width: 768px) 150px, 180px"
+                                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                    loading="lazy"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent group-hover:opacity-0 transition-opacity duration-300" />
                             </div>

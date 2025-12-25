@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import Image from 'next/image';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { premiumEventsData } from '@/demo';
 
@@ -56,9 +57,13 @@ export default function PremiumEventPlanning() {
                     >
                         {/* Event Image */}
                         <div className="relative h-52 rounded-2xl overflow-hidden mb-4">
-                            <div
-                                className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                                style={{ backgroundImage: `url(${event.image})` }}
+                            <Image
+                                src={event.image}
+                                alt={event.title}
+                                fill
+                                sizes="340px"
+                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                loading="lazy"
                             />
 
                             {event.premium && (
@@ -85,9 +90,8 @@ export default function PremiumEventPlanning() {
                                 </span>
                             </div>
 
-                            {/* Check Now Button */}
-                            <button className="w-full mt-2 bg-[#FFC13C] text-[#4F0000] py-2.5 rounded-full font-poppins font-semibold text-lg hover:bg-[#e6ac34] transition-colors shadow-sm">
-                                Check now
+                            <button className="w-full bg-[#4F0000] hover:bg-[#600000] text-white py-3 rounded-xl font-urbanist font-bold text-sm transition-colors">
+                                Check Availability
                             </button>
                         </div>
                     </div>

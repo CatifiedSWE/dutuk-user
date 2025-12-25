@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
+import Image from 'next/image';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { bundleServicesData } from '@/demo';
 
@@ -52,13 +53,17 @@ export default function BundleServices() {
                 {bundleServicesData.map((bundle, index) => (
                     <div
                         key={index}
-                        className="flex-shrink-0 w-[300px] md:w-[340px] bg-white p-3 rounded-[24px] shadow-sm hover:shadow-md transition-shadow snap-start"
+                        className="flex-shrink-0 w-[300px] md:w-[340px] bg-white p-3 rounded-[24px] shadow-sm hover:shadow-md transition-shadow snap-start group"
                     >
                         {/* Bundle Image */}
                         <div className="relative h-52 rounded-2xl overflow-hidden mb-4">
-                            <div
-                                className="absolute inset-0 bg-cover bg-center hover:scale-105 transition-transform duration-500"
-                                style={{ backgroundImage: `url(${bundle.image})` }}
+                            <Image
+                                src={bundle.image}
+                                alt={bundle.title}
+                                fill
+                                sizes="340px"
+                                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                loading="lazy"
                             />
                         </div>
 

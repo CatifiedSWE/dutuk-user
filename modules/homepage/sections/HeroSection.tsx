@@ -1,18 +1,25 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Search, Building2, Calendar, Package } from 'lucide-react';
 
 export default function HeroSection() {
     return (
         <section className="relative w-full min-h-[700px] lg:min-h-[800px] -mt-20 md:-mt-24 flex items-center justify-center overflow-hidden">
             {/* Background Image with Overlay */}
-            <div
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-                style={{
-                    backgroundImage: "linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/hero-bg.jpg')",
-                }}
-            />
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1920&h=1080&fit=crop&q=80"
+                    alt="Celebration fireworks background"
+                    fill
+                    priority
+                    quality={80}
+                    sizes="100vw"
+                    className="object-cover"
+                />
+                <div className="absolute inset-0 bg-black/60" />
+            </div>
 
             <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center gap-8 md:gap-10 pt-32 md:pt-40 animate-fadeInUp">
                 {/* Main Text Content */}
@@ -53,10 +60,11 @@ export default function HeroSection() {
 function ActionButton({ icon: Icon, label, primary }: { icon: any, label: string, primary?: boolean }) {
     return (
         <button
-            className={`flex items-center gap-3 px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 ${primary
+            className={`flex items-center gap-3 px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 ${
+                primary
                     ? 'bg-white text-[#4F0000]'
                     : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'
-                }`}
+            }`}
         >
             <Icon className="w-5 h-5" />
             {label}

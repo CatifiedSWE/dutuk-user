@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Calendar, Package } from 'lucide-react';
 
 export default function PremiumPackagesBanner() {
@@ -8,12 +9,15 @@ export default function PremiumPackagesBanner() {
         <section className="relative w-full py-10 md:py-20 flex justify-center px-4 overflow-hidden">
             <div className="relative w-full max-w-[1074px] h-[400px] md:h-[330px] rounded-3xl overflow-hidden shadow-2xl">
                 {/* Background Image */}
-                <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                        backgroundImage: "linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/premium-banner.jpg')",
-                    }}
+                <Image
+                    src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&h=800&fit=crop&q=80"
+                    alt="Premium event packages"
+                    fill
+                    sizes="(max-width: 1074px) 100vw, 1074px"
+                    className="object-cover"
+                    loading="lazy"
                 />
+                <div className="absolute inset-0 bg-black/60" />
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-8 md:gap-12 px-6 text-center">

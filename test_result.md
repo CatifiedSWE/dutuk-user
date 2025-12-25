@@ -264,6 +264,18 @@ agent_communication:
           agent: "main"
           comment: "Added gradient border-bottom to navbar using CSS pseudo-element. Border gradient: linear-gradient(89.08deg, #FFFFFF 27.15%, rgba(0, 0, 0, 0) 56.61%, #FFFFFF 86.07%). Applied via .navbar-gradient-border class in globals.css."
 
+  - task: "Fix navbar glassmorphism and sticky scroll"
+    implemented: true
+    working: true
+    file: "/app/components/Header.tsx, /app/app/globals.css, /app/modules/homepage/index.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Fixed navbar issues: 1) Moved backdrop-filter directly to header element (was on child div), 2) Added position: sticky to .navbar-gradient-border CSS class, 3) Removed overflow-x-hidden from HomePageScreen component (breaks sticky positioning), 4) Increased background opacity from 40% to 80% for better visibility. Navbar now has working glassmorphism effect and sticky scroll behavior."
+
   - task: "Reorder homepage sections"
     implemented: true
     working: true
@@ -280,3 +292,5 @@ agent_communication:
       message: "Design copy completed successfully. All components from Repo B have been implemented in Repo A while maintaining the structure and hierarchy. Images have been downloaded and integrated. The homepage now mirrors the design of Repo B with the exact color scheme, typography, and layout."
     - agent: "main"
       message: "Design refinement completed based on user-provided images. Fixed navbar gradient border, reordered sections (PremiumPackagesBanner now appears before PremiumEventPlanning), and verified all styling matches the design specifications. The navbar now has the correct gradient border-bottom as specified: linear-gradient(89.08deg, #FFFFFF 27.15%, rgba(0, 0, 0, 0) 56.61%, #FFFFFF 86.07%)."
+    - agent: "main"
+      message: "NAVBAR FIXED - Root cause found and resolved: 1) Glassmorphism was not working because backdrop-filter was on a child absolute div instead of the header element itself. 2) Sticky positioning was not working because parent container (HomePageScreen) had overflow-x-hidden which breaks position: sticky. Fixed by moving backdrop-filter to header element, adding position: sticky to CSS class, removing overflow-x-hidden from parent, and increasing background opacity to 80% for better visibility. Navbar now has perfect glassmorphism effect and sticky scroll behavior matching the reference design."

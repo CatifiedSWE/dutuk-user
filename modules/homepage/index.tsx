@@ -7,7 +7,7 @@ import PremiumPackagesBanner from './sections/PremiumPackagesBanner';
 
 export default function HomePageScreen() {
   return (
-    <div className="min-h-screen bg-[#FDF5E6] overflow-x-hidden font-poppins selection:bg-[#7C2A2A] selection:text-white">
+    <div className="min-h-screen bg-[#FDF5E6] font-poppins selection:bg-[#7C2A2A] selection:text-white">
       <main className="flex flex-col gap-12 sm:gap-16 lg:gap-24 pb-20">
         {/* Hero Section */}
         <HeroSection />

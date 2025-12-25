@@ -96,7 +96,8 @@
 
 /* Navbar gradient border */
 .navbar-gradient-border {
-  position: relative;
+  position: sticky;
+  top: 0;
 }
 
 .navbar-gradient-border::after {

@@ -8,10 +8,7 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     return (
-        <header className="sticky top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 navbar-gradient-border">
-            {/* Glassmorphism Background */}
-            <div className="absolute inset-0 bg-[#270100]/40 backdrop-blur-xl backdrop-saturate-150 -z-10" />
-
+        <header className="top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 navbar-gradient-border bg-[#270100]/50 backdrop-blur-xl backdrop-saturate-150 shadow-lg">
             <div className="relative max-w-[1440px] mx-auto flex items-center justify-between h-14">
                 {/* Left Section: Logo & Location */}
                 <div className="flex items-center gap-4 md:gap-8">

@@ -37,7 +37,7 @@ export default function Header() {
                             <span className="font-poppins font-medium text-sm">Vendors</span>
                             <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform" />
                         </button>
-                        <Link href="#" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors">
+                        <Link href="/events/list" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors">
                             Events
                         </Link>
                         <Link href="#" className="font-poppins font-medium text-sm text-white hover:text-[#FFC13C] transition-colors">
@@ -76,7 +76,7 @@ export default function Header() {
             {isMenuOpen && (
                 <div className="absolute top-full left-0 w-full bg-[#270100]/95 backdrop-blur-xl border-t border-white/10 lg:hidden flex flex-col p-4 gap-4 animate-in slide-in-from-top-2">
                     <Link href="#" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Vendors</Link>
-                    <Link href="#" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Events</Link>
+                    <Link href="/events/list" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Events</Link>
                     <Link href="#" className="text-white py-2 px-4 hover:bg-white/10 rounded-lg">Packages</Link>
                     <div className="h-px bg-white/20 my-2" />
                     <div className="flex items-center gap-3 px-4 py-2">

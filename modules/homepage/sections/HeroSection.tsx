@@ -7,27 +7,19 @@ import { Search, Building2, Calendar, Package } from 'lucide-react';
 export default function HeroSection() {
     return (
         <section className="relative w-full min-h-[700px] lg:min-h-[800px] -mt-20 md:-mt-24 flex items-center justify-center overflow-hidden">
-            {/* Background Image with Overlay */}
+            {/* Background Video with Overlay */}
             <div className="absolute inset-0 z-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=1920&h=1080&fit=crop&q=80"
-                    alt="Celebration fireworks background"
-                    fill
-                    priority
-                    quality={80}
-                    sizes="100vw"
-                    className="object-cover"
-                />
+                <HeroVideoBackground />
                 <div className="absolute inset-0 bg-black/60" />
             </div>
 
             <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center gap-8 md:gap-10 pt-32 md:pt-40 animate-fadeInUp">
                 {/* Main Text Content */}
-                <div className="flex flex-col items-center gap-6 max-w-2xl text-center">
-                    <h1 className="font-poppins font-semibold text-3xl md:text-5xl lg:text-[56px] leading-tight md:leading-[1.2] text-white">
-                        Let's make your next celebration unforgettable.
+                <div className="flex flex-col items-center gap-6 max-w-4xl text-center">
+                    <h1 className="font-['Playfair_Display'] font-bold text-4xl md:text-6xl lg:text-[72px] leading-tight md:leading-[1.1] text-white drop-shadow-lg">
+                        Let's make your next <br className="hidden md:block" /> celebration unforgettable.
                     </h1>
-                    <p className="font-urbanist font-medium text-lg md:text-xl text-stone-200 max-w-xl">
+                    <p className="font-urbanist font-medium text-lg md:text-xl max-w-2xl bg-gradient-to-r from-white via-rose-100 to-rose-200/90 bg-clip-text text-transparent drop-shadow-sm">
                         Explore work from the most talented and accomplished designers ready to take on your next project.
                     </p>
                 </div>
@@ -61,12 +53,38 @@ function ActionButton({ icon: Icon, label, primary }: { icon: any, label: string
     return (
         <button
             className={`flex items-center gap-3 px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 ${primary
-                    ? 'bg-white text-[#4F0000]'
-                    : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'
+                ? 'bg-white text-[#4F0000]'
+                : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'
                 }`}
         >
             <Icon className="w-5 h-5" />
             {label}
         </button>
+    );
+}
+
+function HeroVideoBackground() {
+    const [currentVideoIndex, setCurrentVideoIndex] = React.useState(0);
+    const videos = [
+        '/hero/hero-video-1.mp4',
+        '/hero/hero-video-2.mp4'
+    ];
+
+    const handleVideoEnded = () => {
+        setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
+    };
+
+    return (
+        <video
+            key={videos[currentVideoIndex]}
+            autoPlay
+            muted
+            playsInline
+            onEnded={handleVideoEnded}
+            className="absolute inset-0 w-full h-full object-cover"
+        >
+            <source src={videos[currentVideoIndex]} type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
     );
 }

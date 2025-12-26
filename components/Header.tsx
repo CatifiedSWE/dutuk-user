@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, Search, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import VendorDropdown from './VendorDropdown';
@@ -26,21 +27,43 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
 
     // Conditional styling based on variant and scroll state
     const headerStyles = isScrolled
-        ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100'
+        ? 'bg-white/95 backdrop-blur-md shadow-lg'
         : variant === 'glassmorphic'
-            ? 'bg-white/10 backdrop-blur-md border-b border-white/10'
-            : 'bg-white shadow-md border-b border-gray-100';
+            ? 'bg-transparent'
+            : 'bg-white shadow-md';
 
     return (
-        <header className={`top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 navbar-gradient-border ${headerStyles}`}>
+        <header className={`top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 ${headerStyles}`}>
             <div className="relative max-w-[1440px] mx-auto flex items-center justify-between h-14">
                 {/* Left Section: Logo & Location */}
                 <div className="flex items-center gap-4 md:gap-8">
                     {/* Logo */}
-                    <Link href="/home" className="flex items-center justify-center btn-gradient px-4 py-1 rounded">
-                        <span className="font-poppins font-semibold text-lg md:text-xl text-white tracking-wide">
-                            DUTUK
-                        </span>
+                    <Link href="/home" className="flex items-center justify-center">
+                        <div className="relative w-24 h-8 md:w-28 md:h-10">
+                            {isScrolled || variant === 'solid' ? (
+                                <div
+                                    className="w-full h-full bg-[#4F0000]"
+                                    style={{
+                                        maskImage: 'url(/Vector.svg)',
+                                        maskSize: 'contain',
+                                        maskRepeat: 'no-repeat',
+                                        maskPosition: 'center',
+                                        WebkitMaskImage: 'url(/Vector.svg)',
+                                        WebkitMaskSize: 'contain',
+                                        WebkitMaskRepeat: 'no-repeat',
+                                        WebkitMaskPosition: 'center'
+                                    }}
+                                />
+                            ) : (
+                                <Image
+                                    src="/Vector.svg"
+                                    alt="DUTUK Logo"
+                                    fill
+                                    className="object-contain"
+                                    priority
+                                />
+                            )}
+                        </div>
                     </Link>
 
                     {/* Location Selector (Desktop) */}

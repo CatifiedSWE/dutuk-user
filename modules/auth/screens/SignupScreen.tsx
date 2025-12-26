@@ -3,7 +3,7 @@
 import React from 'react';
 import GradientBackground from '@/components/GradientBackground';
 
-export default function LoginScreen() {
+export default function SignupScreen() {
     return (
         <GradientBackground className="flex items-center justify-center p-4 font-sans">
             {/* Main card */}
@@ -40,11 +40,11 @@ export default function LoginScreen() {
                     </div>
                 </div>
 
-                {/* Right side - login form */}
+                {/* Right side - signup form */}
                 <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
                     <div className="mb-10">
-                        <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                        <p className="text-[#6B7280]">Please enter your details to sign in.</p>
+                        <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-2">Create Account</h1>
+                        <p className="text-[#6B7280]">Please enter your details to sign up.</p>
                     </div>
 
                     <form action="#" className="space-y-5">
@@ -110,13 +110,13 @@ export default function LoginScreen() {
                             </div>
                         </div>
 
-                        {/* Sign in button */}
+                        {/* Sign up button */}
                         <div className="pt-2">
                             <button
                                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                                 type="submit"
                             >
-                                Sign In
+                                Sign Up
                             </button>
                         </div>
                     </form>
@@ -133,7 +133,7 @@ export default function LoginScreen() {
                         </div>
                     </div>
 
-                    {/* Google login button */}
+                    {/* Google signup button */}
                     <div className="mt-6">
                         <button
                             className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all duration-200"
@@ -145,15 +145,15 @@ export default function LoginScreen() {
                                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
                                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
                             </svg>
-                            <span>Login with Google</span>
+                            <span>Sign up with Google</span>
                         </button>
                     </div>
 
-                    {/* Sign up link */}
+                    {/* Login link */}
                     <p className="mt-8 text-center text-sm text-gray-500">
-                        Don't have an account?{' '}
+                        Already have an account?{' '}
                         <a className="font-semibold text-[#8B0000] hover:text-[#660000] hover:underline transition-colors" href="#">
-                            Sign up
+                            Sign in
                         </a>
                     </p>
                 </div>

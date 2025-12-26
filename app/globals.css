@@ -7,12 +7,21 @@
 */
 
 :root {
-  --background: #FDF5E6;
-  --foreground: #4F0000;
+  --background: #F9FAFB;
+  --foreground: #111827;
   --primary: #7C2A2A;
   --secondary: #FFC13C;
   --text-dark: #270100;
   --text-light: #FFFFFF;
+
+  /* Login page specific colors */
+  --primary-login: #8B0000;
+  --primary-hover-login: #660000;
+  --background-light: #F9FAFB;
+  --card-light: #FFFFFF;
+  --text-main-light: #111827;
+  --text-muted-light: #6B7280;
+  --input-bg-light: #F3F4F6;
 
   --border: 214.3 31.8% 91.4%;
   --input: 214.3 31.8% 91.4%;
@@ -27,6 +36,10 @@
   --font-poppins: 'Poppins', sans-serif;
   --font-urbanist: 'Urbanist', sans-serif;
   --font-inter: 'Inter', sans-serif;
+
+  /* Maroon gradient for buttons */
+  --maroon-light: #A0522D;
+  --maroon-dark: #4F0000;
 }
 
 /* Base Layer Overrides */
@@ -67,6 +80,38 @@ body {
 
   .font-inter {
     font-family: var(--font-inter), sans-serif;
+  }
+
+  /* Login page specific utilities */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .pattern-grid {
+    background-size: 24px 24px;
+    opacity: 0.05;
+  }
+
+  .bg-grid-pattern {
+    background-image: radial-gradient(#8B0000 0.5px, transparent 0.5px);
+  }
+
+  /* Maroon gradient button */
+  .btn-gradient {
+    background: linear-gradient(to bottom, var(--maroon-light), var(--maroon-dark));
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    background: linear-gradient(to bottom, #B8653D, #660000);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(79, 0, 0, 0.3);
+  }
+
+  .btn-gradient:active {
+    transform: translateY(0);
   }
 }
 
@@ -122,6 +167,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -135,6 +181,7 @@ body {
 
 /* Reduce animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -143,7 +190,7 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
+
   .animate-fadeInUp {
     animation: none;
     opacity: 1;

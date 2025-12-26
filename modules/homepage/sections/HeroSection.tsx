@@ -40,7 +40,7 @@ export default function HeroSection() {
                             placeholder="What type of vendor you want?"
                             className="flex-1 bg-transparent border-none outline-none text-base md:text-lg text-[#4F0000] placeholder:text-gray-400 font-urbanist"
                         />
-                        <button className="bg-[#7C2A2A] hover:bg-[#963e3e] text-white p-4 rounded-full transition-all duration-300 shadow-md transform group-hover:rotate-[-10deg] group-hover:scale-110 active:scale-95">
+                        <button className="btn-gradient text-white p-4 rounded-full transition-all duration-300 shadow-md transform group-hover:rotate-[-10deg] group-hover:scale-110 active:scale-95">
                             <Search className="w-6 h-6" />
                         </button>
                     </div>
@@ -60,11 +60,10 @@ export default function HeroSection() {
 function ActionButton({ icon: Icon, label, primary }: { icon: any, label: string, primary?: boolean }) {
     return (
         <button
-            className={`flex items-center gap-3 px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 ${
-                primary
+            className={`flex items-center gap-3 px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 ${primary
                     ? 'bg-white text-[#4F0000]'
                     : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'
-            }`}
+                }`}
         >
             <Icon className="w-5 h-5" />
             {label}

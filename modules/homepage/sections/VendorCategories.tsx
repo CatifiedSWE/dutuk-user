@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Image from 'next/image';
-import { Filter } from 'lucide-react';
+import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
 import { vendorCategoriesData, vendorTabs } from '@/demo';
+import SectionHeader from '@/components/SectionHeader';
 
 export default function VendorCategories() {
     const [activeTab, setActiveTab] = React.useState('Discover');
@@ -11,14 +12,12 @@ export default function VendorCategories() {
     return (
         <section className="w-full flex flex-col gap-10">
             {/* Header */}
-            <div className="flex flex-col gap-2">
-                <h2 className="font-poppins font-semibold text-3xl md:text-4xl text-[#4F0000]">
-                    Vendor Categories
-                </h2>
-                <p className="font-urbanist text-[#4F0000]/70 text-lg">
-                    Handpicked professionals for your big day
-                </p>
-            </div>
+            <SectionHeader
+                label="TOP TIER PROFESSIONALS"
+                titleMain="Discover"
+                titleAccent="Vendors"
+                subtitle="Handpicked professionals for your big day"
+            />
 
             {/* Tabs & Filter */}
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -29,11 +28,10 @@ export default function VendorCategories() {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`relative px-6 py-2.5 rounded-full font-urbanist font-medium text-sm transition-all duration-300 whitespace-nowrap ${
-                                    activeTab === tab 
-                                        ? 'bg-[#4F0000] text-white shadow-md' 
-                                        : 'text-[#4F0000] hover:text-[#4F0000]/80'
-                                }`}
+                                className={`relative px-6 py-2.5 rounded-full font-urbanist font-medium text-sm transition-all duration-300 whitespace-nowrap ${activeTab === tab
+                                    ? 'bg-[#4F0000] text-white shadow-md'
+                                    : 'text-[#4F0000] hover:text-[#4F0000]/80'
+                                    }`}
                             >
                                 {tab}
                             </button>
@@ -68,12 +66,7 @@ export default function VendorCategories() {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
 
-                            {/* Centered Vendor Name */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="font-poppins font-semibold text-2xl text-white drop-shadow-md text-center px-4">
-                                    {vendor.name}
-                                </span>
-                            </div>
+
 
                             {/* Check Now Button Overlay (Visible on Hover) */}
                             <div className="absolute inset-x-0 bottom-0 max-h-0 group-hover:max-h-20 overflow-hidden transition-all duration-300">
@@ -85,12 +78,20 @@ export default function VendorCategories() {
                             </div>
                         </div>
 
-                        {/* Price */}
-                        <div className="px-2 flex items-center justify-between">
-                            <span className="font-urbanist font-medium text-[#4F0000]/60">Starting from</span>
-                            <span className="font-poppins font-semibold text-xl text-[#4F0000]">
-                                {vendor.price}
-                            </span>
+                        {/* Content */}
+                        <div className="px-2 pb-2 flex flex-col gap-1">
+                            {/* Vendor Name */}
+                            <h3 className="font-poppins font-semibold text-xl text-[#4F0000]">
+                                {vendor.name}
+                            </h3>
+
+                            {/* Price */}
+                            <div className="flex items-center justify-between">
+                                <span className="font-urbanist font-medium text-[#4F0000]/60">Starting from</span>
+                                <span className="font-poppins font-semibold text-xl text-[#4F0000]">
+                                    {vendor.price}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 ))}

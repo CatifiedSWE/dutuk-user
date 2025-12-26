@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Image from 'next/image';
+import SectionHeader from '@/components/SectionHeader';
 import { MapPin, Star, Crown, Heart, Calendar } from 'lucide-react';
 import { premiumExploreData } from '@/demo/exploreData';
 
@@ -17,7 +18,7 @@ export default function PremiumExploreSection({ selectedFilter }: PremiumExplore
             'Events': 'event',
             'Packages': 'package'
         };
-        
+
         const typeToFilter = filterMap[selectedFilter];
         return premiumExploreData.filter(item => item.type === typeToFilter);
     }, [selectedFilter]);
@@ -30,16 +31,13 @@ export default function PremiumExploreSection({ selectedFilter }: PremiumExplore
     return (
         <section className="w-full flex flex-col gap-10">
             {/* Header with Crown Icon */}
-            <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-3">
-                    <Crown className="w-8 h-8 text-[#FFC13C] fill-[#FFC13C]" />
-                    <h2 className="font-poppins font-semibold text-3xl md:text-4xl text-[#4F0000]">
-                        Premium {selectedFilter}
-                    </h2>
-                </div>
-                <p className="font-urbanist text-[#4F0000]/70 text-lg">
-                    Exclusive premium {selectedFilter.toLowerCase()} for extraordinary events
-                </p>
+            <div className="flex flex-col gap-3">
+                <SectionHeader
+                    label="EXCLUSIVE COLLECTION"
+                    titleMain="Premium"
+                    titleAccent={selectedFilter}
+                    subtitle={`Exclusive premium ${selectedFilter.toLowerCase()} for extraordinary events`}
+                />
             </div>
 
             {/* Premium Items Grid */}

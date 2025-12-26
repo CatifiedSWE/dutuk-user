@@ -16,7 +16,7 @@ const vendorCategories = [
     { name: 'DJs', href: '/vendors/djs', icon: Disc },
 ];
 
-export default function VendorDropdown() {
+export default function VendorDropdown({ isScrolled }: { isScrolled: boolean }) {
     const [isOpen, setIsOpen] = useState(false);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -39,7 +39,7 @@ export default function VendorDropdown() {
         >
             {/* Trigger Button */}
             <button
-                className="flex items-center gap-1.5 text-white hover:text-[#FFC13C] transition-colors group py-2"
+                className={`flex items-center gap-1.5 transition-colors group py-2 ${isScrolled ? 'text-[#4F0000] hover:text-[#A0522D]' : 'text-white hover:text-white/80'}`}
                 aria-expanded={isOpen}
             >
                 <span className="font-poppins font-medium text-sm">Vendors</span>

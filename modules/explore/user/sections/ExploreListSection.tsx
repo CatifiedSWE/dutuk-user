@@ -1,8 +1,7 @@
-'use client';
-
 import React, { useMemo } from 'react';
 import Image from 'next/image';
-import { MapPin, Star, Heart, Calendar } from 'lucide-react';
+import { Filter, Grid, List as ListIcon, MapPin, Star, Heart, Calendar } from 'lucide-react';
+import SectionHeader from '@/components/SectionHeader';
 import { exploreData } from '@/demo/exploreData';
 
 interface ExploreListSectionProps {
@@ -17,7 +16,7 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
             'Events': 'event',
             'Packages': 'package'
         };
-        
+
         const typeToFilter = filterMap[selectedFilter];
         return exploreData.filter(item => item.type === typeToFilter);
     }, [selectedFilter]);
@@ -25,18 +24,16 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
     return (
         <section className="w-full flex flex-col gap-10">
             {/* Header */}
-            <div className="flex flex-col gap-2">
-                <h2 className="font-poppins font-semibold text-3xl md:text-4xl text-[#4F0000]">
-                    Discover {selectedFilter}
-                </h2>
-                <p className="font-urbanist text-[#4F0000]/70 text-lg">
-                    Browse through our curated selection of {selectedFilter.toLowerCase()}
-                </p>
-            </div>
+            <SectionHeader
+                label="CURATED SELECTION"
+                titleMain="Discover"
+                titleAccent={selectedFilter}
+                subtitle={`Browse through our curated selection of ${selectedFilter.toLowerCase()}`}
+            />
 
             {/* Items Grid */}
             {filteredData.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {filteredData.map((item, index) => (
                         item.type === 'event' ? (
                             // Event Card Design

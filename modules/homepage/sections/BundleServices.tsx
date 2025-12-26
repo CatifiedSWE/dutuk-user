@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { bundleServicesData } from '@/demo';
+import SectionHeader from '@/components/SectionHeader';
 
 export default function BundleServices() {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -24,9 +25,11 @@ export default function BundleServices() {
         <section className="w-full flex flex-col gap-6">
             {/* Header with Navigation */}
             <div className="flex items-center justify-between">
-                <h2 className="font-poppins font-semibold text-2xl md:text-3xl text-[#4F0000]">
-                    Bundle Services
-                </h2>
+                <SectionHeader
+                    label="CURATED PACKAGES"
+                    titleMain="Bundle"
+                    titleAccent="Services"
+                />
 
                 {/* Navigation Arrows */}
                 <div className="flex items-center gap-3">

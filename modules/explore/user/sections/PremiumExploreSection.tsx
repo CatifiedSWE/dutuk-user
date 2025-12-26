@@ -1,11 +1,32 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Image from 'next/image';
-import { MapPin, Star, Crown } from 'lucide-react';
+import { MapPin, Star, Crown, Heart, Calendar } from 'lucide-react';
 import { premiumExploreData } from '@/demo/exploreData';
 
-export default function PremiumExploreSection() {
+interface PremiumExploreSectionProps {
+    selectedFilter: 'Vendors' | 'Events' | 'Packages';
+}
+
+export default function PremiumExploreSection({ selectedFilter }: PremiumExploreSectionProps) {
+    // Filter data based on selected filter
+    const filteredData = useMemo(() => {
+        const filterMap: Record<string, 'vendor' | 'event' | 'package'> = {
+            'Vendors': 'vendor',
+            'Events': 'event',
+            'Packages': 'package'
+        };
+        
+        const typeToFilter = filterMap[selectedFilter];
+        return premiumExploreData.filter(item => item.type === typeToFilter);
+    }, [selectedFilter]);
+
+    // Don't render the section if there are no items
+    if (filteredData.length === 0) {
+        return null;
+    }
+
     return (
         <section className="w-full flex flex-col gap-10">
             {/* Header with Crown Icon */}
@@ -13,89 +34,172 @@ export default function PremiumExploreSection() {
                 <div className="flex items-center gap-3">
                     <Crown className="w-8 h-8 text-[#FFC13C] fill-[#FFC13C]" />
                     <h2 className="font-poppins font-semibold text-3xl md:text-4xl text-[#4F0000]">
-                        Premium Selection
+                        Premium {selectedFilter}
                     </h2>
                 </div>
                 <p className="font-urbanist text-[#4F0000]/70 text-lg">
-                    Exclusive premium vendors, packages, and venues for extraordinary events
+                    Exclusive premium {selectedFilter.toLowerCase()} for extraordinary events
                 </p>
             </div>
 
             {/* Premium Items Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {premiumExploreData.map((item, index) => (
-                    <div
-                        key={item.id}
-                        className="flex flex-col gap-5 bg-white p-4 rounded-3xl shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 group cursor-pointer animate-fadeInUp border border-[#FFC13C]/20"
-                        style={{ animationDelay: `${index * 0.05}s` }}
-                    >
-                        {/* Item Image Card */}
-                        <div className="relative h-60 rounded-2xl overflow-hidden bg-gray-100">
-                            <Image
-                                src={item.image}
-                                alt={item.name}
-                                fill
-                                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                loading="lazy"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
-
-                            {/* Premium Badge */}
-                            <div className="absolute top-4 right-4">
-                                <div className="flex items-center gap-1.5 bg-[#FFC13C] text-[#4F0000] px-3 py-1.5 rounded-full shadow-lg">
-                                    <Crown className="w-3.5 h-3.5 fill-[#4F0000]" />
-                                    <span className="text-xs font-urbanist font-bold uppercase tracking-wide">Premium</span>
+                {filteredData.map((item, index) => (
+                    item.type === 'event' ? (
+                        // Premium Event Card Design
+                        <div
+                            key={item.id}
+                            className="flex flex-col bg-white rounded-3xl shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 cursor-pointer animate-fadeInUp overflow-hidden border-2 border-[#FFC13C]"
+                            style={{ animationDelay: `${index * 0.05}s` }}
+                        >
+                            {/* Event Image with Date Badge */}
+                            <div className="relative h-52 overflow-hidden">
+                                <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    fill
+                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                    className="object-cover"
+                                    loading="lazy"
+                                />
+                                {/* Date Badge */}
+                                {item.dateRange && (
+                                    <div className="absolute top-3 left-3">
+                                        <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full shadow-lg">
+                                            <Calendar className="w-3.5 h-3.5 text-[#4F0000]" />
+                                            <span className="font-urbanist font-medium text-xs text-[#4F0000]">
+                                                {item.dateRange}
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                                {/* Premium Badge */}
+                                <div className="absolute top-3 right-3">
+                                    <div className="flex items-center gap-1 bg-[#FFC13C] px-2.5 py-1 rounded-full shadow-lg">
+                                        <Crown className="w-3 h-3 fill-[#4F0000] text-[#4F0000]" />
+                                        <span className="text-xs font-urbanist font-bold uppercase tracking-wide text-[#4F0000]">Premium</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Type Badge */}
-                            <div className="absolute top-4 left-4">
-                                <span className="inline-block bg-white/90 backdrop-blur-sm text-[#4F0000] px-3 py-1 rounded-full text-xs font-urbanist font-semibold uppercase tracking-wide">
-                                    {item.type}
-                                </span>
-                            </div>
+                            {/* Event Details */}
+                            <div className="p-4 flex flex-col gap-3">
+                                {/* Vendor Info */}
+                                {item.vendorAvatar && item.vendorName && (
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative w-8 h-8 rounded-full overflow-hidden">
+                                                <Image
+                                                    src={item.vendorAvatar}
+                                                    alt={item.vendorName}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                            </div>
+                                            <span className="font-urbanist font-semibold text-sm text-[#4F0000]">
+                                                {item.vendorName}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <Star className="w-4 h-4 fill-[#7C2A2A] text-[#7C2A2A]" />
+                                            <span className="font-urbanist font-bold text-sm text-[#4F0000]">{item.rating}</span>
+                                        </div>
+                                    </div>
+                                )}
 
-                            {/* Centered Item Name */}
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="font-poppins font-semibold text-xl text-white drop-shadow-md text-center px-4">
+                                {/* Event Name */}
+                                <h3 className="font-poppins font-bold text-lg text-[#4F0000] line-clamp-2">
                                     {item.name}
-                                </span>
-                            </div>
+                                </h3>
 
-                            {/* Check Now Button Overlay (Visible on Hover) */}
-                            <div className="absolute inset-x-0 bottom-0 max-h-0 group-hover:max-h-20 overflow-hidden transition-all duration-300">
-                                <div className="p-5">
-                                    <button className="w-full bg-[#FFC13C] text-[#4F0000] py-3 rounded-xl font-urbanist font-bold text-sm shadow-lg hover:bg-[#ffd666] transition-colors">
-                                        Check now
-                                    </button>
+                                {/* Location */}
+                                <div className="flex items-center gap-2 text-[#4F0000]/70">
+                                    <MapPin className="w-4 h-4" />
+                                    <span className="font-urbanist text-xs">{item.location}</span>
                                 </div>
+
+                                {/* Price Per Person */}
+                                {item.pricePerPerson && (
+                                    <div className="flex items-center gap-2 bg-[#FFC13C] px-3 py-1.5 rounded-full w-fit">
+                                        <span className="text-xl">₹</span>
+                                        <span className="font-poppins font-bold text-sm text-[#4F0000]">
+                                            {item.pricePerPerson}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
+                    ) : (
+                        // Premium Vendor/Package Card Design
+                        <div
+                            key={item.id}
+                            className="flex flex-col bg-white rounded-[32px] shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 cursor-pointer animate-fadeInUp overflow-hidden border-2 border-[#FFC13C]"
+                            style={{ animationDelay: `${index * 0.05}s` }}
+                        >
+                            {/* Vendor Image with Avatar Overlay */}
+                            <div className="relative h-56 overflow-hidden">
+                                <div className="absolute inset-0 m-3">
+                                    <div className="relative w-full h-full rounded-[24px] overflow-hidden">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.name}
+                                            fill
+                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                            className="object-cover"
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                </div>
+                                {/* Premium Badge */}
+                                <div className="absolute top-5 right-5 z-10">
+                                    <div className="flex items-center gap-1 bg-[#FFC13C] px-2.5 py-1 rounded-full shadow-lg">
+                                        <Crown className="w-3 h-3 fill-[#4F0000] text-[#4F0000]" />
+                                        <span className="text-xs font-urbanist font-bold uppercase tracking-wide text-[#4F0000]">Premium</span>
+                                    </div>
+                                </div>
+                                {/* Heart Icon */}
+                                <button className="absolute top-5 left-5 bg-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform z-10">
+                                    <Heart className="w-4 h-4 text-[#7C2A2A] fill-[#7C2A2A]" />
+                                </button>
+                                {/* Vendor Avatar Overlay (only for vendors) */}
+                                {item.type === 'vendor' && item.vendorAvatar && (
+                                    <div className="absolute bottom-1 left-5 w-24 h-24 rounded-full overflow-hidden border-[6px] border-white z-10">
+                                        <Image
+                                            src={item.vendorAvatar}
+                                            alt={item.name}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                )}
+                            </div>
 
-                        {/* Item Details */}
-                        <div className="px-2 flex flex-col gap-3">
-                            {/* Location & Rating */}
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2 text-[#4F0000]/60">
+                            {/* Vendor Details */}
+                            <div className="px-5 pb-5 pt-2 flex flex-col gap-2">
+                                {/* Vendor Name and Rating */}
+                                <div className="flex items-start justify-between gap-2">
+                                    <h3 className="font-poppins font-bold text-lg text-[#4F0000] leading-tight">
+                                        {item.name}
+                                    </h3>
+                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                        <Star className="w-5 h-5 fill-[#FFC13C] text-[#FFC13C]" />
+                                        <span className="font-urbanist font-bold text-base text-[#4F0000]">{item.rating}</span>
+                                    </div>
+                                </div>
+
+                                {/* Location */}
+                                <div className="flex items-center gap-2 text-[#4F0000]/60 mt-1">
                                     <MapPin className="w-4 h-4" />
                                     <span className="font-urbanist text-sm">{item.location}</span>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <Star className="w-4 h-4 fill-[#FFC13C] text-[#FFC13C]" />
-                                    <span className="font-urbanist font-semibold text-sm text-[#4F0000]">{item.rating}</span>
+
+                                {/* Price Range */}
+                                <div className="font-poppins font-bold text-lg text-[#4F0000] mt-2">
+                                    {item.price}
                                 </div>
                             </div>
-
-                            {/* Price */}
-                            <div className="flex items-center justify-between pt-2 border-t border-[#FFC13C]/30">
-                                <span className="font-urbanist font-medium text-[#4F0000]/60 text-sm">Starting from</span>
-                                <span className="font-poppins font-semibold text-lg text-[#4F0000]">
-                                    {item.price}
-                                </span>
-                            </div>
                         </div>
-                    </div>
+                    )
                 ))}
             </div>
         </section>

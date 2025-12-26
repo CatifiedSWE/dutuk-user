@@ -4,9 +4,13 @@ import React, { useState } from 'react';
 import { Search, X, Filter, ChevronDown } from 'lucide-react';
 import { filterOptions } from '@/demo/exploreData';
 
-export default function ExploreSearchSection() {
+interface ExploreSearchSectionProps {
+    selectedFilter: 'Vendors' | 'Events' | 'Packages';
+    onFilterChange: (filter: 'Vendors' | 'Events' | 'Packages') => void;
+}
+
+export default function ExploreSearchSection({ selectedFilter, onFilterChange }: ExploreSearchSectionProps) {
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedFilter, setSelectedFilter] = useState('All');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const handleClear = () => {
@@ -14,7 +18,7 @@ export default function ExploreSearchSection() {
     };
 
     const handleFilterSelect = (filter: string) => {
-        setSelectedFilter(filter);
+        onFilterChange(filter as 'Vendors' | 'Events' | 'Packages');
         setIsDropdownOpen(false);
     };
 

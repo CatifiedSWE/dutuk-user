@@ -1,8 +1,13 @@
+'use client';
+
+import { useState } from 'react';
 import ExploreSearchSection from './sections/ExploreSearchSection';
 import ExploreListSection from './sections/ExploreListSection';
 import PremiumExploreSection from './sections/PremiumExploreSection';
 
 export default function ExploreScreen() {
+  const [selectedFilter, setSelectedFilter] = useState<'Vendors' | 'Events' | 'Packages'>('Vendors');
+
   return (
     <div className="min-h-screen bg-[#FDF5E6] font-poppins selection:bg-[#7C2A2A] selection:text-white">
       <main className="flex flex-col gap-12 sm:gap-16 lg:gap-24 pb-20">
@@ -14,13 +19,16 @@ export default function ExploreScreen() {
 
           <div className="flex flex-col gap-16 lg:gap-32 w-full px-4 md:px-8 lg:px-12 pt-8">
             {/* Search Section */}
-            <ExploreSearchSection />
+            <ExploreSearchSection 
+              selectedFilter={selectedFilter}
+              onFilterChange={setSelectedFilter}
+            />
 
             {/* Regular Items List */}
-            <ExploreListSection />
+            <ExploreListSection selectedFilter={selectedFilter} />
 
             {/* Premium Items Section */}
-            <PremiumExploreSection />
+            <PremiumExploreSection selectedFilter={selectedFilter} />
           </div>
         </div>
       </main>

@@ -38,7 +38,8 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
                     {filteredData.map((item, index) => (
                         item.type === 'event' ? (
                             // Event Card Design
-                            <div
+                            <Link
+                                href={`/events/details/${item.id}`}
                                 key={item.id}
                                 className="flex flex-col bg-white rounded-3xl shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 cursor-pointer animate-fadeInUp overflow-hidden"
                                 style={{ animationDelay: `${index * 0.05}s` }}
@@ -121,7 +122,7 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
                                         </div>
                                     )}
                                 </div>
-                            </div>
+                            </Link>
                         ) : (
                             // Vendor/Package Card Design
                             <Link

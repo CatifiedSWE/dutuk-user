@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import SectionHeader from '@/components/SectionHeader';
 import { MapPin, Star, Crown, Heart, Calendar } from 'lucide-react';
 import { premiumExploreData } from '@/demo/exploreData';
@@ -45,7 +46,8 @@ export default function PremiumExploreSection({ selectedFilter }: PremiumExplore
                 {filteredData.map((item, index) => (
                     item.type === 'event' ? (
                         // Premium Event Card Design
-                        <div
+                        <Link
+                            href={`/events/details/${item.id}`}
                             key={item.id}
                             className="flex flex-col bg-white rounded-3xl shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 cursor-pointer animate-fadeInUp overflow-hidden border-2 border-[#FFC13C]"
                             style={{ animationDelay: `${index * 0.05}s` }}
@@ -126,7 +128,7 @@ export default function PremiumExploreSection({ selectedFilter }: PremiumExplore
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </Link>
                     ) : (
                         // Premium Vendor/Package Card Design
                         <div

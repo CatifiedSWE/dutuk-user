@@ -10,7 +10,7 @@ export default function HeroSection() {
             {/* Background Video with Overlay */}
             <div className="absolute inset-0 z-0">
                 <HeroVideoBackground />
-                <div className="absolute inset-0 bg-black/60" />
+                <div className="absolute inset-0 bg-black/85" />
             </div>
 
             <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center gap-8 md:gap-10 pt-32 md:pt-40 animate-fadeInUp">
@@ -64,27 +64,56 @@ function ActionButton({ icon: Icon, label, primary }: { icon: any, label: string
 }
 
 function HeroVideoBackground() {
-    const [currentVideoIndex, setCurrentVideoIndex] = React.useState(0);
+    const [activeVideo, setActiveVideo] = React.useState(0);
+    const video1Ref = React.useRef<HTMLVideoElement>(null);
+    const video2Ref = React.useRef<HTMLVideoElement>(null);
+    
     const videos = [
         '/hero/hero-video-1.mp4',
         '/hero/hero-video-2.mp4'
     ];
 
-    const handleVideoEnded = () => {
-        setCurrentVideoIndex((prev) => (prev + 1) % videos.length);
+    const handleVideo1End = () => {
+        if (video2Ref.current) {
+            video2Ref.current.currentTime = 0;
+            video2Ref.current.play();
+            setActiveVideo(1);
+        }
+    };
+
+    const handleVideo2End = () => {
+        if (video1Ref.current) {
+            video1Ref.current.currentTime = 0;
+            video1Ref.current.play();
+            setActiveVideo(0);
+        }
     };
 
     return (
-        <video
-            key={videos[currentVideoIndex]}
-            autoPlay
-            muted
-            playsInline
-            onEnded={handleVideoEnded}
-            className="absolute inset-0 w-full h-full object-cover"
-        >
-            <source src={videos[currentVideoIndex]} type="video/mp4" />
-            Your browser does not support the video tag.
-        </video>
+        <>
+            {/* Video 1 */}
+            <video
+                ref={video1Ref}
+                autoPlay
+                muted
+                playsInline
+                onEnded={handleVideo1End}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideo === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            >
+                <source src={videos[0]} type="video/mp4" />
+            </video>
+            
+            {/* Video 2 */}
+            <video
+                ref={video2Ref}
+                muted
+                playsInline
+                preload="auto"
+                onEnded={handleVideo2End}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideo === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+            >
+                <source src={videos[1]} type="video/mp4" />
+            </video>
+        </>
     );
 }

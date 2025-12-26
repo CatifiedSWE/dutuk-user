@@ -12,7 +12,7 @@ export default function EventCategories() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="flex flex-col gap-2">
-                    <h2 className="font-poppins font-semibold text-3xl md:text-4xl text-[#4F0000]">
+                    <h2 className="font-['Playfair_Display'] font-bold text-3xl md:text-4xl text-[#4F0000]">
                         Event categories
                     </h2>
                     <p className="font-urbanist text-[#4F0000]/70 text-lg">

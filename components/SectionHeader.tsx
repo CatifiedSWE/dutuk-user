@@ -30,7 +30,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
             </div>
 
             {/* Main Two-Tone Title */}
-            <h2 className="font-poppins font-semibold text-3xl md:text-4xl leading-tight">
+            <h2 className="font-['Playfair_Display'] font-bold text-3xl md:text-4xl leading-tight">
                 <span className="text-[#3D2817]">{titleMain} </span>
                 <span className="text-[#8B0000]">{titleAccent}</span>
             </h2>

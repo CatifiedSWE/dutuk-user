@@ -59,7 +59,7 @@ export default function VendorDropdown({ isScrolled }: { isScrolled: boolean }) 
                         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                         exit={{ opacity: 0, y: 15, scale: 0.95, filter: 'blur(5px)' }}
                         transition={{ duration: 0.25, ease: 'easeOut' }}
-                        className="absolute top-full left-0 mt-0 w-64 bg-[#270100]/90 backdrop-blur-xl rounded-xl shadow-2xl border border-white/10 overflow-hidden z-50 p-2"
+                        className="absolute top-full left-0 mt-0 w-64 bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-200/50 overflow-hidden z-50 p-2"
                     >
                         <div className="grid gap-1">
                             {vendorCategories.map((category, index) => (
@@ -78,9 +78,9 @@ export default function VendorDropdown({ isScrolled }: { isScrolled: boolean }) 
                                             stiffness: 300,
                                             damping: 25
                                         }}
-                                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-stone-200 hover:bg-white/10 hover:text-[#FFC13C] transition-all group"
+                                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#4F0000] hover:bg-[#FDF5E6] hover:text-[#7C2A2A] transition-all group"
                                     >
-                                        <div className="p-1.5 rounded-md bg-white/5 group-hover:bg-[#FFC13C]/20 transition-colors">
+                                        <div className="p-1.5 rounded-md bg-[#4F0000]/5 group-hover:bg-[#FFC13C]/20 transition-colors">
                                             <category.icon className="w-4 h-4" />
                                         </div>
                                         <span className="font-poppins text-sm font-medium">{category.name}</span>

@@ -5,3 +5,4 @@ export * from './categories';
 export * from './vendorCategories';
 export * from './bundleServices';
 export * from './premiumEvents';
+export * from './exploreData';

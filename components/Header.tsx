@@ -45,6 +45,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                     {/* Nav Links */}
                     <nav className="flex items-center gap-6">
                         <VendorDropdown />
+                        <NavLink href="/explore">Explore</NavLink>
                         <NavLink href="/events/list">Events</NavLink>
                         <NavLink href="#">Packages</NavLink>
                     </nav>
@@ -111,6 +112,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                     >
                         <div className="flex flex-col p-4 gap-2">
                             <MobileNavLink href="#">Vendors</MobileNavLink>
+                            <MobileNavLink href="/explore">Explore</MobileNavLink>
                             <MobileNavLink href="/events/list">Events</MobileNavLink>
                             <MobileNavLink href="#">Packages</MobileNavLink>
                             <div className="h-px bg-white/10 my-2" />

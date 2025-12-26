@@ -1,0 +1,150 @@
+// Explore Page Data - Mix of Vendors, Packages, and Events
+
+export interface ExploreItem {
+  id: string;
+  name: string;
+  type: 'vendor' | 'package' | 'event';
+  location: string;
+  price: string;
+  rating: number;
+  image: string;
+  premium: boolean;
+}
+
+export const exploreData: ExploreItem[] = [
+  {
+    id: '1',
+    name: 'Elite Wedding Photographers',
+    type: 'vendor',
+    location: 'Chennai, T Nagar',
+    price: '₹ 50,000 - ₹ 1,50,000',
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '2',
+    name: 'Complete Birthday Bash Package',
+    type: 'package',
+    location: 'Chennai, Anna Nagar',
+    price: '₹ 35,000 - ₹ 80,000',
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '3',
+    name: 'Corporate Gala Night',
+    type: 'event',
+    location: 'Chennai, OMR',
+    price: '₹ 1,00,000 - ₹ 3,00,000',
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '4',
+    name: 'Professional DJ Services',
+    type: 'vendor',
+    location: 'Chennai, Adyar',
+    price: '₹ 20,000 - ₹ 60,000',
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '5',
+    name: 'Grand Wedding Package',
+    type: 'package',
+    location: 'Chennai, Velachery',
+    price: '₹ 2,50,000 - ₹ 6,00,000',
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '6',
+    name: 'Luxury Catering Services',
+    type: 'vendor',
+    location: 'Chennai, Mylapore',
+    price: '₹ 40,000 - ₹ 1,20,000',
+    rating: 4.8,
+    image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '7',
+    name: 'Beach Resort Wedding',
+    type: 'event',
+    location: 'Chennai, ECR',
+    price: '₹ 3,00,000 - ₹ 8,00,000',
+    rating: 4.9,
+    image: 'https://images.unsplash.com/photo-1505236858219-8359eb29e329?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '8',
+    name: 'Premium Decoration Studio',
+    type: 'vendor',
+    location: 'Chennai, Nungambakkam',
+    price: '₹ 60,000 - ₹ 2,00,000',
+    rating: 4.7,
+    image: 'https://images.unsplash.com/photo-1519167758481-83f29da8ae8d?w=600&h=600&fit=crop&q=75',
+    premium: false
+  },
+  {
+    id: '9',
+    name: 'Complete Anniversary Package',
+    type: 'package',
+    location: 'Chennai, Besant Nagar',
+    price: '₹ 45,000 - ₹ 1,00,000',
+    rating: 4.6,
+    image: 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&h=600&fit=crop&q=75',
+    premium: false
+  }
+];
+
+export const premiumExploreData: ExploreItem[] = [
+  {
+    id: 'p1',
+    name: 'ITC Grand Chola - Premium Venue',
+    type: 'event',
+    location: 'Chennai, Guindy',
+    price: '₹ 5,00,000 - ₹ 15,00,000',
+    rating: 5.0,
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop&q=75',
+    premium: true
+  },
+  {
+    id: 'p2',
+    name: 'Celebrity Wedding Planners',
+    type: 'vendor',
+    location: 'Chennai, Alwarpet',
+    price: '₹ 3,00,000 - ₹ 10,00,000',
+    rating: 5.0,
+    image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=600&fit=crop&q=75',
+    premium: true
+  },
+  {
+    id: 'p3',
+    name: 'Royal Wedding Complete Package',
+    type: 'package',
+    location: 'Chennai, Multiple Locations',
+    price: '₹ 10,00,000 - ₹ 25,00,000',
+    rating: 5.0,
+    image: 'https://images.unsplash.com/photo-1460978812857-470ed1c77af0?w=800&h=600&fit=crop&q=75',
+    premium: true
+  },
+  {
+    id: 'p4',
+    name: 'Leela Palace Grand Ballroom',
+    type: 'event',
+    location: 'Chennai, MRC Nagar',
+    price: '₹ 6,00,000 - ₹ 18,00,000',
+    rating: 5.0,
+    image: 'https://images.unsplash.com/photo-1519167758481-83f29da8ae8d?w=800&h=600&fit=crop&q=75',
+    premium: true
+  }
+];
+
+export const filterOptions = ['All', 'Vendors', 'Packages', 'Events'];

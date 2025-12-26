@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Filter, Grid, List as ListIcon, MapPin, Star, Heart, Calendar } from 'lucide-react';
 import SectionHeader from '@/components/SectionHeader';
 import { exploreData } from '@/demo/exploreData';
@@ -123,7 +124,8 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
                             </div>
                         ) : (
                             // Vendor/Package Card Design
-                            <div
+                            <Link
+                                href={item.type === 'vendor' ? `/vendors/profile/${item.vendorId || item.id}` : '#'}
                                 key={item.id}
                                 className="flex flex-col bg-white rounded-[32px] shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 cursor-pointer animate-fadeInUp overflow-hidden"
                                 style={{ animationDelay: `${index * 0.05}s` }}
@@ -183,7 +185,7 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
                                         {item.price}
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         )
                     ))}
                 </div>

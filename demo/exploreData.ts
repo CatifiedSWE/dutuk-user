@@ -9,6 +9,7 @@ export interface ExploreItem {
   rating: number;
   image: string;
   premium: boolean;
+  vendorId?: string; // Link to actual vendor profile
   // Event specific fields
   dateRange?: string;
   vendorName?: string;
@@ -26,6 +27,7 @@ export const exploreData: ExploreItem[] = [
     rating: 4.8,
     image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&h=600&fit=crop&q=75',
     premium: false,
+    vendorId: 'vnd-002',
     vendorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=75'
   },
   {
@@ -61,6 +63,7 @@ export const exploreData: ExploreItem[] = [
     rating: 4.7,
     image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&h=600&fit=crop&q=75',
     premium: false,
+    vendorId: 'vnd-001',
     vendorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&q=75'
   },
   {
@@ -82,6 +85,7 @@ export const exploreData: ExploreItem[] = [
     rating: 4.8,
     image: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&h=600&fit=crop&q=75',
     premium: false,
+    vendorId: 'vnd-004',
     vendorAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&q=75'
   },
   {
@@ -107,6 +111,7 @@ export const exploreData: ExploreItem[] = [
     rating: 4.7,
     image: 'https://images.unsplash.com/photo-1519167758481-83f29da8ae8d?w=600&h=600&fit=crop&q=75',
     premium: false,
+    vendorId: 'vnd-003',
     vendorAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&q=75'
   },
   {
@@ -145,6 +150,7 @@ export const premiumExploreData: ExploreItem[] = [
     rating: 5.0,
     image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800&h=600&fit=crop&q=75',
     premium: true,
+    vendorId: 'vnd-001',
     vendorAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&q=75'
   },
   {

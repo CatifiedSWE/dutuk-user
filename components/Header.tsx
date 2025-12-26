@@ -83,6 +83,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                         <VendorDropdown isScrolled={isScrolled || variant === 'solid'} />
                         <NavLink href="/explore" isScrolled={isScrolled || variant === 'solid'}>Explore</NavLink>
                         <NavLink href="/events/list" isScrolled={isScrolled || variant === 'solid'}>Events</NavLink>
+                        <NavLink href="/chat" isScrolled={isScrolled || variant === 'solid'}>Chat</NavLink>
                         <NavLink href="#" isScrolled={isScrolled || variant === 'solid'}>Packages</NavLink>
                     </nav>
 
@@ -152,6 +153,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                             <MobileNavLink href="#">Vendors</MobileNavLink>
                             <MobileNavLink href="/explore">Explore</MobileNavLink>
                             <MobileNavLink href="/events/list">Events</MobileNavLink>
+                            <MobileNavLink href="/chat">Chat</MobileNavLink>
                             <MobileNavLink href="#">Packages</MobileNavLink>
                             <div className="h-px bg-gray-200 my-2" />
                             <div className="flex items-center gap-3 px-4 py-2">

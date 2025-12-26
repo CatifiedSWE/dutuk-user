@@ -6,3 +6,4 @@ export * from './vendorCategories';
 export * from './bundleServices';
 export * from './premiumEvents';
 export * from './exploreData';
+export * from './chatData';

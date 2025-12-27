@@ -114,9 +114,9 @@ export default function ChatScreen() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-50 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Main Chat Container - Minimal vertical padding for max height */}
-      <main className="relative z-10 flex-1 px-2 py-1.5 sm:px-3 sm:py-2 md:p-4 max-w-[1600px] mx-auto w-full flex">
-        <div className="bg-white rounded-xl md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 w-full flex overflow-hidden">
+      {/* Main Chat Container - Minimal padding, constrained height */}
+      <main className="relative z-10 flex-1 min-h-0 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:p-4 max-w-[1600px] mx-auto w-full flex">
+        <div className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl border border-gray-100 w-full h-full flex overflow-hidden">
           {/* Sidebar */}
           <ChatSidebar
             conversations={conversations}

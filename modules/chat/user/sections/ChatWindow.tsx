@@ -27,11 +27,11 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
 
   return (
     <>
-      {/* Chat Header - Reduced height on small screens */}
-      <div className="flex-shrink-0 h-14 md:h-16 lg:h-20 px-3 md:px-4 lg:px-8 flex items-center justify-between bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="flex items-center gap-2 md:gap-3 lg:gap-4 min-w-0">
+      {/* Chat Header - Compact height on small screens */}
+      <div className="flex-shrink-0 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0">
           <div className="relative flex-shrink-0">
-            <div className="w-9 h-9 md:w-10 md:h-10 lg:w-11 lg:h-11 rounded-full bg-gray-50 p-0.5 ring-1 ring-[#7C2A2A]/10">
+            <div className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-full bg-gray-50 p-0.5 ring-1 ring-[#7C2A2A]/10">
               <img
                 alt={conversation.name}
                 className="w-full h-full rounded-full object-cover"
@@ -67,8 +67,8 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
         </div>
       </div>
 
-      {/* Messages Area - Reduced vertical padding on small screens */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar px-3 py-2 sm:py-3 md:px-6 lg:px-8 md:py-4 lg:py-6 space-y-2 sm:space-y-3 md:space-y-4 bg-[#FDFBF9]">
+      {/* Messages Area - Minimal padding, constrained to flex */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 space-y-2 sm:space-y-2.5 md:space-y-3 bg-[#FDFBF9]">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-400">
@@ -84,7 +84,7 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
         ) : (
           <>
             {/* Date Divider */}
-            <div className="flex justify-center my-3 md:my-4 lg:my-6">
+            <div className="flex justify-center my-2 md:my-3 lg:my-4">
               <span className="text-[10px] md:text-[11px] font-semibold tracking-wide text-gray-400 uppercase bg-gray-100/70 px-2.5 md:px-3 lg:px-4 py-1 md:py-1.5 rounded-full border border-gray-100 shadow-sm">
                 Today, {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </span>

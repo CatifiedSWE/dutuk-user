@@ -26,10 +26,10 @@ export default function ChatSidebar({
 
   return (
     <aside className="w-full md:w-[340px] lg:w-[400px] flex flex-col border-r border-gray-100 bg-white z-20">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-50">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="font-sans text-2xl font-bold text-gray-900 tracking-tight">Messages</h1>
+      {/* Header - Compact for smaller screens */}
+      <div className="p-3 md:p-4 lg:p-5 border-b border-gray-50">
+        <div className="flex justify-between items-center mb-3 md:mb-4 lg:mb-5">
+          <h1 className="font-sans text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Messages</h1>
           <button 
             onClick={onAddChat}
             className="p-2 bg-[#FFF0F0] text-[#7C2A2A] rounded-full hover:bg-red-100 transition-colors"
@@ -41,9 +41,9 @@ export default function ChatSidebar({
         
         {/* Search */}
         <div className="relative group">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-[#7C2A2A] transition-colors" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-[#7C2A2A] transition-colors" />
           <input
-            className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-transparent focus:border-[#7C2A2A]/10 rounded-2xl text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#7C2A2A]/5 focus:bg-white transition-all"
+            className="w-full pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 lg:py-3 bg-gray-50 border border-transparent focus:border-[#7C2A2A]/10 rounded-xl md:rounded-2xl text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#7C2A2A]/5 focus:bg-white transition-all"
             placeholder="Search conversations..."
             type="text"
             value={searchQuery}

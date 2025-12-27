@@ -34,18 +34,11 @@ export default function HeroSection() {
 
     return (
         <section className="relative w-full min-h-[700px] lg:min-h-[800px] -mt-20 md:-mt-24 flex items-center justify-center overflow-hidden">
-            {/* Background Video with Overlay - Progressive loading for mobile */}
+            {/* Background Video with Overlay - Progressive loading */}
             <div className="absolute inset-0 z-0">
-                {/* Mobile: Show blur placeholder first, then video (hidden on desktop) */}
-                <div className="block md:hidden">
-                    <MobileHeroBackground />
-                </div>
-                {/* Desktop: Show video directly (hidden on mobile) */}
-                <div className="hidden md:block">
-                    <HeroVideoBackground />
-                </div>
+                <HeroVideoBackground />
                 {/* Dark overlay for better text visibility */}
-                <div className="absolute inset-0 bg-black/95" />
+                <div className="absolute inset-0 bg-black/70 z-20" />
             </div>
 
             <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center gap-8 md:gap-10 pt-32 md:pt-40 animate-fadeInUp">
@@ -106,10 +99,11 @@ function ActionButton({ icon: Icon, label, primary, onClick }: { icon: any, labe
 }
 
 /**
- * Mobile Hero Background with Progressive Loading
+ * Hero Video Background with Progressive Loading
  * Shows a tiny blurred placeholder image instantly, then crossfades to video when ready
+ * Used for all screen sizes for consistent, optimized experience
  */
-function MobileHeroBackground() {
+function HeroVideoBackground() {
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [activeVideo, setActiveVideo] = useState(0);
     const video1Ref = React.useRef<HTMLVideoElement>(null);
@@ -195,64 +189,6 @@ function MobileHeroBackground() {
                     <source src={videos[1]} type="video/mp4" />
                 </video>
             </div>
-        </>
-    );
-}
-
-/**
- * Desktop Hero Video Background - Original implementation
- */
-function HeroVideoBackground() {
-    const [activeVideo, setActiveVideo] = React.useState(0);
-    const video1Ref = React.useRef<HTMLVideoElement>(null);
-    const video2Ref = React.useRef<HTMLVideoElement>(null);
-    
-    const videos = [
-        '/hero/hero-video-1.mp4',
-        '/hero/hero-video-2.mp4'
-    ];
-
-    const handleVideo1End = () => {
-        if (video2Ref.current) {
-            video2Ref.current.currentTime = 0;
-            video2Ref.current.play();
-            setActiveVideo(1);
-        }
-    };
-
-    const handleVideo2End = () => {
-        if (video1Ref.current) {
-            video1Ref.current.currentTime = 0;
-            video1Ref.current.play();
-            setActiveVideo(0);
-        }
-    };
-
-    return (
-        <>
-            {/* Video 1 */}
-            <video
-                ref={video1Ref}
-                autoPlay
-                muted
-                playsInline
-                onEnded={handleVideo1End}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideo === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-            >
-                <source src={videos[0]} type="video/mp4" />
-            </video>
-            
-            {/* Video 2 */}
-            <video
-                ref={video2Ref}
-                muted
-                playsInline
-                preload="auto"
-                onEnded={handleVideo2End}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${activeVideo === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-            >
-                <source src={videos[1]} type="video/mp4" />
-            </video>
         </>
     );
 }

@@ -13,7 +13,7 @@ interface EventDetailScreenProps {
 
 export default function EventDetailScreen({ event }: EventDetailScreenProps) {
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-24">
       <div className="space-y-8">
         {/* Hero Section */}
         <EventHeroSection

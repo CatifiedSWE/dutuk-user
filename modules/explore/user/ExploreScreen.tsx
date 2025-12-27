@@ -10,7 +10,7 @@ export default function ExploreScreen() {
 
   return (
     <div className="font-poppins selection:bg-primary selection:text-white">
-      <main className="flex flex-col gap-12 sm:gap-16 lg:gap-24 pb-20">
+      <main className="flex flex-col gap-12 sm:gap-16 lg:gap-24 pb-20 pt-24">
         {/* Content wrapper */}
         <div className="relative w-full max-w-[1440px] mx-auto">
 

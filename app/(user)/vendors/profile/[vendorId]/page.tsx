@@ -25,7 +25,9 @@ export default async function VendorProfilePage({ params }: VendorProfilePagePro
 
   return (
     <GradientBackground>
-      <Header variant="glassmorphic" />
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Header variant="solid" />
+      </div>
       <VendorProfileScreen vendor={vendor} />
       <Footer />
     </GradientBackground>

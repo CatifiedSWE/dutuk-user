@@ -21,8 +21,8 @@ export default function ChatScreen() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-grow p-4 md:p-6 lg:p-8 max-w-[1440px] mx-auto w-full">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 w-full h-[calc(100vh-140px)] flex overflow-hidden">
+      <main className="relative z-10 flex-grow p-4 md:p-6 lg:p-8 pt-24 md:pt-28 max-w-[1440px] mx-auto w-full">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 w-full h-[calc(100vh-200px)] flex overflow-hidden">
           {/* Sidebar */}
           <ChatSidebar
             conversations={demoConversations}

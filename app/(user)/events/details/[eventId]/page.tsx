@@ -22,7 +22,9 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
 
   return (
     <GradientBackground>
-      <Header variant="glassmorphic" />
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <Header variant="solid" />
+      </div>
       <EventDetailScreen event={event} />
       <Footer />
     </GradientBackground>

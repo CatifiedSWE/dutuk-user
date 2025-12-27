@@ -13,7 +13,7 @@ interface VendorProfileScreenProps {
 
 export function VendorProfileScreen({ vendor }: VendorProfileScreenProps) {
   return (
-    <div className="min-h-screen bg-background-light">
+    <div className="min-h-screen bg-background-light pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Profile Header */}
         <ProfileHeaderSection vendor={vendor} />

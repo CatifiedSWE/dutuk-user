@@ -1,10 +1,37 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Search, Building2, Calendar, Package } from 'lucide-react';
 
 export default function HeroSection() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const router = useRouter();
+
+    // Handle search - redirect to explore page with search query
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            // Redirect to explore page with search parameter
+            router.push(`/explore?search=${encodeURIComponent(searchQuery.trim())}`);
+        } else {
+            // If no search query, just go to explore page
+            router.push('/explore');
+        }
+    };
+
+    // Handle Enter key press
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
+    // Handle category button click - redirect to explore with filter
+    const handleCategoryClick = (category: 'Vendors' | 'Events' | 'Packages') => {
+        router.push(`/explore?filter=${category}`);
+    };
+
     return (
         <section className="relative w-full min-h-[700px] lg:min-h-[800px] -mt-20 md:-mt-24 flex items-center justify-center overflow-hidden">
             {/* Background Video with Overlay */}
@@ -29,10 +56,16 @@ export default function HeroSection() {
                     <div className="relative flex items-center bg-white rounded-full p-2 pl-6 shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)]">
                         <input
                             type="text"
-                            placeholder="What type of vendor you want?"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Search for vendors, events, packages..."
                             className="flex-1 bg-transparent border-none outline-none text-base md:text-lg text-[#4F0000] placeholder:text-gray-400 font-urbanist"
                         />
-                        <button className="btn-gradient text-white p-4 rounded-full transition-all duration-300 shadow-md transform group-hover:rotate-[-10deg] group-hover:scale-110 active:scale-95">
+                        <button 
+                            onClick={handleSearch}
+                            className="btn-gradient text-white p-4 rounded-full transition-all duration-300 shadow-md transform group-hover:rotate-[-10deg] group-hover:scale-110 active:scale-95"
+                        >
                             <Search className="w-6 h-6" />
                         </button>
                     </div>
@@ -40,18 +73,19 @@ export default function HeroSection() {
 
                 {/* Category Actions */}
                 <div className="flex flex-wrap items-center justify-center gap-4">
-                    <ActionButton icon={Building2} label="Vendors" primary />
-                    <ActionButton icon={Calendar} label="Events" />
-                    <ActionButton icon={Package} label="Packages" />
+                    <ActionButton icon={Building2} label="Vendors" primary onClick={() => handleCategoryClick('Vendors')} />
+                    <ActionButton icon={Calendar} label="Events" onClick={() => handleCategoryClick('Events')} />
+                    <ActionButton icon={Package} label="Packages" onClick={() => handleCategoryClick('Packages')} />
                 </div>
             </div>
         </section>
     );
 }
 
-function ActionButton({ icon: Icon, label, primary }: { icon: any, label: string, primary?: boolean }) {
+function ActionButton({ icon: Icon, label, primary, onClick }: { icon: any, label: string, primary?: boolean, onClick?: () => void }) {
     return (
         <button
+            onClick={onClick}
             className={`flex items-center gap-3 px-6 py-3 rounded-full font-urbanist font-medium text-base shadow-lg transition-all duration-300 hover:-translate-y-1 hover:scale-105 active:scale-95 ${primary
                 ? 'bg-white text-[#4F0000]'
                 : 'bg-white/15 border border-white/20 text-white hover:bg-white/25'

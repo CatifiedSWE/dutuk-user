@@ -179,4 +179,4 @@ export const premiumExploreData: ExploreItem[] = [
   }
 ];
 
-export const filterOptions = ['Vendors', 'Events', 'Packages'];
+export const filterOptions = ['All', 'Vendors', 'Events', 'Packages'];

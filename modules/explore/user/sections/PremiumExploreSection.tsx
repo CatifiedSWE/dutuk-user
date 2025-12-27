@@ -8,21 +8,55 @@ import { MapPin, Star, Crown, Heart, Calendar } from 'lucide-react';
 import { premiumExploreData } from '@/demo/exploreData';
 
 interface PremiumExploreSectionProps {
-    selectedFilter: 'Vendors' | 'Events' | 'Packages';
+    selectedFilter: 'All' | 'Vendors' | 'Events' | 'Packages';
+    searchQuery: string;
 }
 
-export default function PremiumExploreSection({ selectedFilter }: PremiumExploreSectionProps) {
-    // Filter data based on selected filter
-    const filteredData = useMemo(() => {
-        const filterMap: Record<string, 'vendor' | 'event' | 'package'> = {
-            'Vendors': 'vendor',
-            'Events': 'event',
-            'Packages': 'package'
-        };
+// Smart filtering function - searches across multiple fields
+function smartFilter(item: typeof premiumExploreData[0], searchQuery: string): boolean {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase().trim();
+    const searchTerms = query.split(/\s+/); // Split into individual words
+    
+    // Fields to search in
+    const searchableFields = [
+        item.name,
+        item.location,
+        item.type,
+        item.vendorName || '',
+        item.price
+    ].map(field => field.toLowerCase());
+    
+    // Match if ANY search term matches ANY field (inclusive search)
+    return searchTerms.some(term => 
+        searchableFields.some(field => field.includes(term))
+    );
+}
 
-        const typeToFilter = filterMap[selectedFilter];
-        return premiumExploreData.filter(item => item.type === typeToFilter);
-    }, [selectedFilter]);
+export default function PremiumExploreSection({ selectedFilter, searchQuery }: PremiumExploreSectionProps) {
+    // Filter data based on selected filter AND search query
+    const filteredData = useMemo(() => {
+        return premiumExploreData.filter(item => {
+            // Type filter - if "All" is selected, show all types
+            const typeMatch = selectedFilter === 'All' || (() => {
+                const filterMap: Record<string, 'vendor' | 'event' | 'package'> = {
+                    'Vendors': 'vendor',
+                    'Events': 'event',
+                    'Packages': 'package'
+                };
+                return item.type === filterMap[selectedFilter];
+            })();
+            
+            // Then apply smart search filter
+            const searchMatch = smartFilter(item, searchQuery);
+            
+            return typeMatch && searchMatch;
+        });
+    }, [selectedFilter, searchQuery]);
+    
+    // Get display text for filter
+    const filterDisplayText = selectedFilter === 'All' ? 'Results' : selectedFilter;
 
     // Don't render the section if there are no items
     if (filteredData.length === 0) {
@@ -36,8 +70,8 @@ export default function PremiumExploreSection({ selectedFilter }: PremiumExplore
                 <SectionHeader
                     label="EXCLUSIVE COLLECTION"
                     titleMain="Premium"
-                    titleAccent={selectedFilter}
-                    subtitle={`Exclusive premium ${selectedFilter.toLowerCase()} for extraordinary events`}
+                    titleAccent={filterDisplayText}
+                    subtitle={`Exclusive premium ${filterDisplayText.toLowerCase()} for extraordinary events`}
                 />
             </div>
 

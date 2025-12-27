@@ -1,25 +1,48 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, X, Filter, ChevronDown } from 'lucide-react';
 import { filterOptions } from '@/demo/exploreData';
 
 interface ExploreSearchSectionProps {
-    selectedFilter: 'Vendors' | 'Events' | 'Packages';
-    onFilterChange: (filter: 'Vendors' | 'Events' | 'Packages') => void;
+    selectedFilter: 'All' | 'Vendors' | 'Events' | 'Packages';
+    onFilterChange: (filter: 'All' | 'Vendors' | 'Events' | 'Packages') => void;
+    searchQuery: string;
+    onSearchChange: (query: string) => void;
 }
 
-export default function ExploreSearchSection({ selectedFilter, onFilterChange }: ExploreSearchSectionProps) {
-    const [searchQuery, setSearchQuery] = useState('');
+export default function ExploreSearchSection({ 
+    selectedFilter, 
+    onFilterChange,
+    searchQuery,
+    onSearchChange
+}: ExploreSearchSectionProps) {
+    const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    // Sync local state with prop when it changes
+    useEffect(() => {
+        setLocalSearchQuery(searchQuery);
+    }, [searchQuery]);
+
     const handleClear = () => {
-        setSearchQuery('');
+        setLocalSearchQuery('');
+        onSearchChange('');
     };
 
     const handleFilterSelect = (filter: string) => {
-        onFilterChange(filter as 'Vendors' | 'Events' | 'Packages');
+        onFilterChange(filter as 'All' | 'Vendors' | 'Events' | 'Packages');
         setIsDropdownOpen(false);
+    };
+
+    const handleSearch = () => {
+        onSearchChange(localSearchQuery);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     return (
@@ -30,7 +53,10 @@ export default function ExploreSearchSection({ selectedFilter, onFilterChange }:
                     Explore
                 </h1>
                 <p className="font-urbanist text-[#4F0000]/70 text-lg">
-                    Discover the best vendors, packages, and events for your special occasions
+                    {searchQuery 
+                        ? `Showing results for "${searchQuery}"` 
+                        : 'Discover the best vendors, packages, and events for your special occasions'
+                    }
                 </p>
             </div>
 
@@ -71,12 +97,13 @@ export default function ExploreSearchSection({ selectedFilter, onFilterChange }:
                     <Search className="absolute left-4 text-[#4F0000]/40 w-5 h-5" />
                     <input
                         type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
+                        value={localSearchQuery}
+                        onChange={(e) => setLocalSearchQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         placeholder="Search for vendors, packages, or events..."
                         className="w-full bg-[#FDF5E6] text-[#4F0000] placeholder:text-[#4F0000]/40 pl-12 pr-12 py-3 rounded-xl outline-none font-urbanist font-medium border border-[#4F0000]/10 focus:border-[#4F0000]/30 transition-all"
                     />
-                    {searchQuery && (
+                    {localSearchQuery && (
                         <button
                             onClick={handleClear}
                             className="absolute right-4 text-[#4F0000]/60 hover:text-[#4F0000] transition-colors"
@@ -88,7 +115,10 @@ export default function ExploreSearchSection({ selectedFilter, onFilterChange }:
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center justify-center gap-2 bg-[#4F0000] text-white px-8 py-3 rounded-xl hover:bg-[#7C2A2A] transition-all duration-300 font-urbanist font-semibold text-sm shadow-md hover:scale-105 active:scale-95">
+                    <button 
+                        onClick={handleSearch}
+                        className="flex items-center justify-center gap-2 bg-[#4F0000] text-white px-8 py-3 rounded-xl hover:bg-[#7C2A2A] transition-all duration-300 font-urbanist font-semibold text-sm shadow-md hover:scale-105 active:scale-95"
+                    >
                         <Search className="w-4 h-4" />
                         <span className="hidden sm:inline">Search</span>
                     </button>

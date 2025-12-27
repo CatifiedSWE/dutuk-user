@@ -6,21 +6,55 @@ import SectionHeader from '@/components/SectionHeader';
 import { exploreData } from '@/demo/exploreData';
 
 interface ExploreListSectionProps {
-    selectedFilter: 'Vendors' | 'Events' | 'Packages';
+    selectedFilter: 'All' | 'Vendors' | 'Events' | 'Packages';
+    searchQuery: string;
 }
 
-export default function ExploreListSection({ selectedFilter }: ExploreListSectionProps) {
-    // Filter data based on selected filter
-    const filteredData = useMemo(() => {
-        const filterMap: Record<string, 'vendor' | 'event' | 'package'> = {
-            'Vendors': 'vendor',
-            'Events': 'event',
-            'Packages': 'package'
-        };
+// Smart filtering function - searches across multiple fields
+function smartFilter(item: typeof exploreData[0], searchQuery: string): boolean {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase().trim();
+    const searchTerms = query.split(/\s+/); // Split into individual words
+    
+    // Fields to search in
+    const searchableFields = [
+        item.name,
+        item.location,
+        item.type,
+        item.vendorName || '',
+        item.price
+    ].map(field => field.toLowerCase());
+    
+    // Match if ANY search term matches ANY field (inclusive search)
+    return searchTerms.some(term => 
+        searchableFields.some(field => field.includes(term))
+    );
+}
 
-        const typeToFilter = filterMap[selectedFilter];
-        return exploreData.filter(item => item.type === typeToFilter);
-    }, [selectedFilter]);
+export default function ExploreListSection({ selectedFilter, searchQuery }: ExploreListSectionProps) {
+    // Filter data based on selected filter AND search query
+    const filteredData = useMemo(() => {
+        return exploreData.filter(item => {
+            // Type filter - if "All" is selected, show all types
+            const typeMatch = selectedFilter === 'All' || (() => {
+                const filterMap: Record<string, 'vendor' | 'event' | 'package'> = {
+                    'Vendors': 'vendor',
+                    'Events': 'event',
+                    'Packages': 'package'
+                };
+                return item.type === filterMap[selectedFilter];
+            })();
+            
+            // Then apply smart search filter
+            const searchMatch = smartFilter(item, searchQuery);
+            
+            return typeMatch && searchMatch;
+        });
+    }, [selectedFilter, searchQuery]);
+    
+    // Get display text for filter
+    const filterDisplayText = selectedFilter === 'All' ? 'Results' : selectedFilter;
 
     return (
         <section className="w-full flex flex-col gap-10">
@@ -28,8 +62,8 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
             <SectionHeader
                 label="CURATED SELECTION"
                 titleMain="Discover"
-                titleAccent={selectedFilter}
-                subtitle={`Browse through our curated selection of ${selectedFilter.toLowerCase()}`}
+                titleAccent={filterDisplayText}
+                subtitle={`Browse through our curated selection of ${filterDisplayText.toLowerCase()}`}
             />
 
             {/* Items Grid */}
@@ -193,7 +227,7 @@ export default function ExploreListSection({ selectedFilter }: ExploreListSectio
             ) : (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
                     <p className="font-urbanist text-[#4F0000]/60 text-lg">
-                        No {selectedFilter.toLowerCase()} found. Try a different filter.
+                        No {filterDisplayText.toLowerCase()} found. Try a different filter or search term.
                     </p>
                 </div>
             )}

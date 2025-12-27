@@ -1,15 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Phone, Video, MoreVertical, Download } from 'lucide-react';
+import { Phone, Video, MoreVertical, Download, ArrowLeft } from 'lucide-react';
 import { Conversation, Message } from '@/demo/chatData';
 
 interface ChatWindowProps {
   conversation: Conversation | null;
   messages: Message[];
+  onMobileBack?: () => void;
 }
 
-export default function ChatWindow({ conversation, messages }: ChatWindowProps) {
+export default function ChatWindow({ conversation, messages, onMobileBack }: ChatWindowProps) {
   if (!conversation) {
     return (
       <div className="flex-1 flex items-center justify-center bg-[#FDFBF9] p-8 text-center text-gray-500">
@@ -28,10 +29,21 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
   return (
     <>
       {/* Chat Header - Compact height on small screens */}
-      <div className="flex-shrink-0 h-12 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="flex items-center gap-2 md:gap-3 min-w-0">
+      <div className="flex-shrink-0 h-14 md:h-14 lg:h-16 px-3 md:px-4 lg:px-6 flex items-center justify-between bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
+          {/* Mobile Back Button */}
+          {onMobileBack && (
+            <button
+              onClick={onMobileBack}
+              className="md:hidden flex-shrink-0 w-10 h-10 flex items-center justify-center text-gray-600 hover:text-[#7C2A2A] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95"
+              aria-label="Back to conversations"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+          
           <div className="relative flex-shrink-0">
-            <div className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-full bg-gray-50 p-0.5 ring-1 ring-[#7C2A2A]/10">
+            <div className="w-9 h-9 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-full bg-gray-50 p-0.5 ring-1 ring-[#7C2A2A]/10">
               <img
                 alt={conversation.name}
                 className="w-full h-full rounded-full object-cover"
@@ -42,7 +54,7 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
               <div className="absolute bottom-0 right-0 w-2.5 h-2.5 md:w-3 md:h-3 bg-green-500 border-2 border-white rounded-full" />
             )}
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h2 className="font-sans font-bold text-sm md:text-base lg:text-lg text-gray-900 leading-tight truncate">{conversation.name}</h2>
             {conversation.status === 'online' && (
               <p className="text-[10px] md:text-xs text-green-600 font-medium flex items-center gap-1 md:gap-1.5 mt-0.5">
@@ -54,21 +66,21 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
         
         {/* Action Buttons */}
         <div className="flex items-center gap-0.5 md:gap-1 flex-shrink-0">
-          <button className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-[#7C2A2A] hover:bg-[#FFF0F0] rounded-full transition-colors" title="Voice Call">
+          <button className="w-9 h-9 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-[#7C2A2A] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95" title="Voice Call">
             <Phone className="w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5" />
           </button>
-          <button className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-[#7C2A2A] hover:bg-[#FFF0F0] rounded-full transition-colors" title="Video Call">
+          <button className="w-9 h-9 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-[#7C2A2A] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95" title="Video Call">
             <Video className="w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5" />
           </button>
           <div className="w-px h-4 md:h-5 lg:h-6 bg-gray-200 mx-1 md:mx-2" />
-          <button className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
+          <button className="w-9 h-9 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full transition-colors active:scale-95">
             <MoreVertical className="w-4 h-4 md:w-4 md:h-4 lg:w-5 lg:h-5" />
           </button>
         </div>
       </div>
 
-      {/* Messages Area - Minimal padding, constrained to flex */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-3 lg:px-6 lg:py-4 space-y-2 sm:space-y-2.5 md:space-y-3 bg-[#FDFBF9]">
+      {/* Messages Area - Optimized for mobile with generous top padding to prevent cutoff */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 pt-8 pb-2 sm:px-3 sm:pt-8 sm:pb-2 md:px-4 md:pt-8 md:pb-3 lg:px-6 lg:pt-10 lg:pb-4 space-y-3 md:space-y-3 bg-[#FDFBF9]">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-400">
@@ -84,8 +96,8 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
         ) : (
           <>
             {/* Date Divider */}
-            <div className="flex justify-center my-2 md:my-3 lg:my-4">
-              <span className="text-[10px] md:text-[11px] font-semibold tracking-wide text-gray-400 uppercase bg-gray-100/70 px-2.5 md:px-3 lg:px-4 py-1 md:py-1.5 rounded-full border border-gray-100 shadow-sm">
+            <div className="flex justify-center my-3 md:my-3 lg:my-4">
+              <span className="text-[10px] md:text-[11px] font-semibold tracking-wide text-gray-400 uppercase bg-gray-100/70 px-3 md:px-3 lg:px-4 py-1.5 md:py-1.5 rounded-full border border-gray-100 shadow-sm">
                 Today, {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </span>
             </div>
@@ -95,17 +107,17 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
               <div
                 key={message.id}
                 className={`flex flex-col ${
-                  message.isOwn ? 'items-end ml-auto max-w-[90%] sm:max-w-[85%] lg:max-w-[70%]' : 'items-start mr-auto max-w-[90%] sm:max-w-[85%] lg:max-w-[70%] group'
+                  message.isOwn ? 'items-end ml-auto max-w-[85%] sm:max-w-[80%] md:max-w-[85%] lg:max-w-[70%]' : 'items-start mr-auto max-w-[85%] sm:max-w-[80%] md:max-w-[85%] lg:max-w-[70%] group'
                 }`}
               >
                 {message.isOwn ? (
                   // Own Message (Right side - User)
                   <>
-                    <div className="bg-[#7C2A2A] p-2.5 px-3.5 sm:p-3 sm:px-4 md:p-4 md:px-5 rounded-2xl rounded-br-none shadow-lg text-white text-sm md:text-[15px] leading-relaxed break-words">
+                    <div className="bg-[#7C2A2A] p-3 px-4 sm:p-3 sm:px-4 md:p-4 md:px-5 rounded-2xl rounded-br-md shadow-lg text-white text-sm md:text-[15px] leading-relaxed break-words">
                       {message.text}
                       {message.hasFile && (
-                        <div className="mt-2 md:mt-3 flex items-center gap-2 md:gap-3 bg-white/10 p-2 md:p-3 rounded-xl border border-white/10 hover:bg-white/20 transition-all cursor-pointer group/file">
-                          <div className="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg flex items-center justify-center text-[#7C2A2A] shadow-sm group-hover/file:scale-105 transition-transform flex-shrink-0">
+                        <div className="mt-2 md:mt-3 flex items-center gap-2 md:gap-3 bg-white/10 p-2.5 md:p-3 rounded-xl border border-white/10 hover:bg-white/20 transition-all cursor-pointer group/file">
+                          <div className="w-9 h-9 md:w-10 md:h-10 bg-white rounded-lg flex items-center justify-center text-[#7C2A2A] shadow-sm group-hover/file:scale-105 transition-transform flex-shrink-0">
                             <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
@@ -137,11 +149,11 @@ export default function ChatWindow({ conversation, messages }: ChatWindowProps) 
                           alt={conversation.name}
                         />
                       </div>
-                      <div className="bg-white p-2.5 px-3.5 sm:p-3 sm:px-4 md:p-4 md:px-5 rounded-2xl rounded-bl-none shadow-sm text-gray-800 text-sm md:text-[15px] leading-relaxed border border-gray-100 break-words">
+                      <div className="bg-white p-3 px-4 sm:p-3 sm:px-4 md:p-4 md:px-5 rounded-2xl rounded-bl-md shadow-sm text-gray-800 text-sm md:text-[15px] leading-relaxed border border-gray-100 break-words">
                         {message.text}
                       </div>
                     </div>
-                    <span className="text-[9px] md:text-[10px] font-medium text-gray-400 mt-1 md:mt-1.5 ml-[38px] md:ml-[52px]">{message.timestamp}</span>
+                    <span className="text-[9px] md:text-[10px] font-medium text-gray-400 mt-1 md:mt-1.5 ml-[36px] md:ml-[52px]">{message.timestamp}</span>
                   </>
                 )}
               </div>

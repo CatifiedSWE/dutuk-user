@@ -33,7 +33,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
             : 'bg-white shadow-md';
 
     return (
-        <header className={`top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 ${headerStyles}`}>
+        <header className={`sticky top-0 w-full z-50 px-4 md:px-8 py-3 transition-all duration-300 ${headerStyles}`}>
             <div className="relative max-w-[1440px] mx-auto flex items-center justify-between h-14">
                 {/* Left Section: Logo & Location */}
                 <div className="flex items-center gap-4 md:gap-8">

@@ -11,6 +11,9 @@ export default function ChatScreen() {
   // Active conversation state
   const [activeConversationId, setActiveConversationId] = useState('1');
   
+  // Mobile view state - tracks if we're viewing chat window or sidebar on mobile
+  const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
+  
   // All conversations state
   const [conversations, setConversations] = useState<Conversation[]>(demoConversations);
   
@@ -38,6 +41,14 @@ export default function ChatScreen() {
       isActive: conv.id === id,
       unreadCount: conv.id === id ? 0 : conv.unreadCount,
     })));
+    
+    // On mobile, open the chat window when a conversation is selected
+    setIsMobileChatOpen(true);
+  }, []);
+  
+  // Handle back button on mobile
+  const handleMobileBack = useCallback(() => {
+    setIsMobileChatOpen(false);
   }, []);
 
   // Handle sending a message
@@ -114,38 +125,30 @@ export default function ChatScreen() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-50 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Main Chat Container - Minimal padding, constrained height */}
-      <main className="relative z-10 flex-1 min-h-0 px-1.5 py-1 sm:px-2 sm:py-1.5 md:px-3 md:py-2 lg:p-4 max-w-[1600px] mx-auto w-full flex">
-        <div className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl border border-gray-100 w-full h-full flex overflow-hidden">
-          {/* Sidebar */}
-          <ChatSidebar
-            conversations={conversations}
-            activeConversationId={activeConversationId}
-            onConversationSelect={handleConversationSelect}
-            onAddChat={() => setIsAddChatModalOpen(true)}
-          />
+      {/* Main Chat Container - Lower z-index than navbar, with better spacing */}
+      <main className="relative z-10 flex-1 min-h-0 px-1.5 py-2 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:p-4 max-w-[1600px] mx-auto w-full flex">
+        <div className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl border border-gray-100 w-full h-full flex overflow-hidden mt-3 md:mt-0">
+          
+          {/* Sidebar - Hide on mobile when chat is open */}
+          <div className={`${isMobileChatOpen ? 'hidden' : 'flex'} md:flex w-full md:w-auto`}>
+            <ChatSidebar
+              conversations={conversations}
+              activeConversationId={activeConversationId}
+              onConversationSelect={handleConversationSelect}
+              onAddChat={() => setIsAddChatModalOpen(true)}
+            />
+          </div>
 
-          {/* Chat Window & Input - Desktop */}
-          <div className="hidden md:flex flex-1 flex-col min-w-0">
+          {/* Chat Window & Input - Show on desktop always, on mobile only when chat is open */}
+          <div className={`${isMobileChatOpen ? 'flex' : 'hidden'} md:flex flex-1 flex-col min-w-0 w-full`}>
             <ChatWindow
               conversation={activeConversation}
               messages={activeMessages}
+              onMobileBack={handleMobileBack}
             />
             <ChatInput 
               onSendMessage={handleSendMessage}
             />
-          </div>
-
-          {/* Mobile Empty State */}
-          <div className="md:hidden flex-1 w-full flex items-center justify-center bg-gray-50 p-8 text-center text-gray-500">
-            <div>
-              <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
-              </div>
-              <p className="font-medium text-gray-600">Select a conversation to start chatting.</p>
-            </div>
           </div>
         </div>
       </main>

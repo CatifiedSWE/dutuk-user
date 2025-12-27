@@ -27,12 +27,12 @@ export default function ChatSidebar({
   return (
     <aside className="w-full md:w-[340px] lg:w-[400px] flex flex-col border-r border-gray-100 bg-white z-20">
       {/* Header - Compact for smaller screens */}
-      <div className="p-3 md:p-4 lg:p-5 border-b border-gray-50">
-        <div className="flex justify-between items-center mb-3 md:mb-4 lg:mb-5">
+      <div className="p-4 md:p-4 lg:p-5 border-b border-gray-50">
+        <div className="flex justify-between items-center mb-4 md:mb-4 lg:mb-5">
           <h1 className="font-sans text-xl md:text-2xl font-bold text-gray-900 tracking-tight">Messages</h1>
           <button 
             onClick={onAddChat}
-            className="p-2 bg-[#FFF0F0] text-[#7C2A2A] rounded-full hover:bg-red-100 transition-colors"
+            className="p-2.5 md:p-2 bg-[#FFF0F0] text-[#7C2A2A] rounded-full hover:bg-red-100 active:scale-95 transition-all"
             title="New Chat"
           >
             <Edit className="w-5 h-5" />
@@ -41,9 +41,9 @@ export default function ChatSidebar({
         
         {/* Search */}
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5 group-focus-within:text-[#7C2A2A] transition-colors" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 group-focus-within:text-[#7C2A2A] transition-colors" />
           <input
-            className="w-full pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 lg:py-3 bg-gray-50 border border-transparent focus:border-[#7C2A2A]/10 rounded-xl md:rounded-2xl text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#7C2A2A]/5 focus:bg-white transition-all"
+            className="w-full pl-11 pr-4 py-3 md:py-2.5 lg:py-3 bg-gray-50 border border-transparent focus:border-[#7C2A2A]/10 rounded-xl md:rounded-2xl text-sm text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-[#7C2A2A]/5 focus:bg-white transition-all"
             placeholder="Search conversations..."
             type="text"
             value={searchQuery}
@@ -63,16 +63,17 @@ export default function ChatSidebar({
             <div
               key={conversation.id}
               onClick={() => onConversationSelect?.(conversation.id)}
-              className={`p-3 rounded-2xl cursor-pointer relative group transition-all duration-200 ${
+              className={`p-3.5 md:p-3 rounded-2xl cursor-pointer relative group transition-all duration-200 ${
                 conversation.id === activeConversationId
                   ? 'bg-[#FFF0F0]/40 border border-[#7C2A2A]/5'
-                  : 'hover:bg-gray-50'
+                  : 'hover:bg-gray-50 active:bg-gray-100'
               }`}
+              style={{ minHeight: '72px' }}
             >
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-3.5 md:gap-4 items-center">
                 {/* Avatar */}
                 <div className="relative flex-shrink-0">
-                  <div className={`w-12 h-12 rounded-full bg-gray-200 overflow-hidden shadow-sm ${
+                  <div className={`w-12 h-12 md:w-12 md:h-12 rounded-full bg-gray-200 overflow-hidden shadow-sm ${
                     conversation.id === activeConversationId ? 'ring-2 ring-white' : 'ring-1 ring-gray-100'
                   } ${
                     !conversation.isOnline ? 'grayscale opacity-70' : ''
@@ -95,20 +96,20 @@ export default function ChatSidebar({
                 {/* Conversation Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-baseline mb-0.5">
-                    <h3 className={`font-sans font-semibold truncate text-[15px] ${
+                    <h3 className={`font-sans font-semibold truncate text-[15px] md:text-[15px] ${
                       conversation.id === activeConversationId
                         ? 'text-gray-900'
                         : 'text-gray-900 group-hover:text-[#7C2A2A]'
                     } transition-colors`}>
                       {conversation.name}
                     </h3>
-                    <span className={`text-[11px] font-medium ${
+                    <span className={`text-[11px] md:text-[11px] font-medium ${
                       conversation.id === activeConversationId ? 'text-[#7C2A2A]' : 'text-gray-400'
                     }`}>
                       {conversation.lastMessageTime}
                     </span>
                   </div>
-                  <p className={`text-xs font-medium truncate ${
+                  <p className={`text-xs md:text-xs font-medium truncate ${
                     conversation.id === activeConversationId
                       ? 'text-[#7C2A2A]/80'
                       : conversation.isOnline

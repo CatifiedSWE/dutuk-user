@@ -1,5 +1,7 @@
 const nextConfig = {
   output: 'standalone',
+  // Allow cross-origin requests in development from preview domains
+  allowedDevOrigins: ['deploy-checker-15.preview.emergentagent.com', '*.preview.emergentagent.com'],
   images: {
     unoptimized: false,
     formats: ['image/webp'],
@@ -15,6 +17,12 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'images.pexels.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
         port: '',
         pathname: '/**',
       },

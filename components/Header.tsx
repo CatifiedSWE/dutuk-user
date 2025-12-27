@@ -25,6 +25,26 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Prevent body scroll when menu is open
+    useEffect(() => {
+        if (isMenuOpen) {
+            const scrollY = window.scrollY;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${scrollY}px`;
+            document.body.style.width = '100%';
+            document.body.style.overflow = 'hidden';
+        } else {
+            const scrollY = document.body.style.top;
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            document.body.style.overflow = '';
+            if (scrollY) {
+                window.scrollTo(0, parseInt(scrollY || '0') * -1);
+            }
+        }
+    }, [isMenuOpen]);
+
     // Conditional styling based on variant and scroll state
     const headerStyles = isScrolled
         ? 'bg-white/95 backdrop-blur-md shadow-lg'
@@ -139,29 +159,49 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                 </button>
             </div>
 
-            {/* Mobile Menu Dropdown */}
+            {/* Mobile Menu Dropdown - Full Screen */}
             <AnimatePresence>
                 {isMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
-                        className="absolute top-full left-0 w-full bg-white/98 backdrop-blur-md border-t border-gray-200 lg:hidden overflow-hidden shadow-lg"
+                        initial={{ opacity: 0, y: 15, scale: 0.95, filter: 'blur(5px)' }}
+                        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, y: 15, scale: 0.95, filter: 'blur(5px)' }}
+                        transition={{ duration: 0.25, ease: 'easeOut' }}
+                        className="fixed inset-0 bg-white/90 backdrop-blur-xl lg:hidden z-40 overflow-hidden"
                     >
-                        <div className="flex flex-col p-4 gap-2">
-                            <MobileNavLink href="#">Vendors</MobileNavLink>
-                            <MobileNavLink href="/explore">Explore</MobileNavLink>
-                            <MobileNavLink href="/events/list">Events</MobileNavLink>
-                            <MobileNavLink href="/chat">Chat</MobileNavLink>
-                            <MobileNavLink href="#">Packages</MobileNavLink>
-                            <div className="h-px bg-gray-200 my-2" />
-                            <div className="flex items-center gap-3 px-4 py-2">
+                        {/* Close Button */}
+                        <div className="absolute top-6 right-6">
+                            <button
+                                onClick={() => setIsMenuOpen(false)}
+                                className="p-3 rounded-full bg-[#4F0000]/10 hover:bg-[#4F0000]/20 transition-colors"
+                                aria-label="Close menu"
+                            >
+                                <X className="w-6 h-6 text-[#4F0000]" />
+                            </button>
+                        </div>
+
+                        <div className="flex flex-col p-8 gap-4 pt-24">
+                            <MobileNavLink href="#" onClick={() => setIsMenuOpen(false)}>Vendors</MobileNavLink>
+                            <MobileNavLink href="/explore" onClick={() => setIsMenuOpen(false)}>Explore</MobileNavLink>
+                            <MobileNavLink href="/events/list" onClick={() => setIsMenuOpen(false)}>Events</MobileNavLink>
+                            <MobileNavLink href="/chat" onClick={() => setIsMenuOpen(false)}>Chat</MobileNavLink>
+                            <MobileNavLink href="#" onClick={() => setIsMenuOpen(false)}>Packages</MobileNavLink>
+                            <div className="h-px bg-gray-200 my-4" />
+                            <div className="flex items-center gap-3 px-4 py-3">
                                 <MapPin className="text-[#A0522D] w-5 h-5" />
                                 <div className="flex flex-col leading-none">
-                                    <span className="font-poppins font-semibold text-xs text-[#4F0000]">Chennai</span>
-                                    <span className="font-poppins font-medium text-xs text-gray-600">Tamil Nadu</span>
+                                    <span className="font-poppins font-semibold text-sm text-[#4F0000]">Chennai</span>
+                                    <span className="font-poppins font-medium text-sm text-gray-600">Tamil Nadu</span>
                                 </div>
+                            </div>
+                            <div className="mt-4">
+                                <Link
+                                    href="/auth/sign-in"
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="block text-center w-full py-3 px-6 bg-[#4F0000] text-white font-poppins font-medium text-base rounded-lg hover:bg-[#660000] transition-colors"
+                                >
+                                    Login / Sign Up
+                                </Link>
                             </div>
                         </div>
                     </motion.div>
@@ -180,9 +220,9 @@ function NavLink({ href, children, isScrolled }: { href: string; children: React
     );
 }
 
-function MobileNavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function MobileNavLink({ href, children, onClick }: { href: string; children: React.ReactNode; onClick?: () => void }) {
     return (
-        <Link href={href} className="text-[#4F0000] py-3 px-4 hover:bg-gray-100 rounded-lg transition-colors font-poppins font-medium">
+        <Link href={href} onClick={onClick} className="text-[#4F0000] py-4 px-6 hover:bg-gray-100 rounded-xl transition-colors font-poppins font-medium text-lg">
             {children}
         </Link>
     );

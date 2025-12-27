@@ -44,7 +44,8 @@ export default function HeroSection() {
                 <div className="hidden md:block">
                     <HeroVideoBackground />
                 </div>
-                <div className="absolute inset-0 bg-black/85" />
+                {/* Dark overlay for better text visibility */}
+                <div className="absolute inset-0 bg-black/95" />
             </div>
 
             <div className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center gap-8 md:gap-10 pt-32 md:pt-40 animate-fadeInUp">

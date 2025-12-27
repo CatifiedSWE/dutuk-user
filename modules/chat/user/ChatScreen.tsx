@@ -106,7 +106,7 @@ export default function ChatScreen() {
   }, [handleConversationSelect]);
 
   return (
-    <div className="relative min-h-screen flex flex-col font-poppins">
+    <div className="h-full flex flex-col font-poppins">
       {/* Background Pattern */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
@@ -114,9 +114,9 @@ export default function ChatScreen() {
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-50 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
       </div>
 
-      {/* Main Content */}
-      <main className="relative z-10 flex-grow p-4 md:p-6 lg:p-8 pt-32 md:pt-36 pb-8 max-w-[1440px] mx-auto w-full">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 w-full h-[calc(100vh-220px)] md:h-[calc(100vh-240px)] flex overflow-hidden">
+      {/* Main Chat Container - Minimal vertical padding for max height */}
+      <main className="relative z-10 flex-1 px-2 py-1.5 sm:px-3 sm:py-2 md:p-4 max-w-[1600px] mx-auto w-full flex">
+        <div className="bg-white rounded-xl md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 w-full flex overflow-hidden">
           {/* Sidebar */}
           <ChatSidebar
             conversations={conversations}

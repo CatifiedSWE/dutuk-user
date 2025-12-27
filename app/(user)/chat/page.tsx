@@ -1,15 +1,18 @@
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ChatScreen from '@/modules/chat/user/ChatScreen';
 
 export default function ChatPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#FDFBF7]">
-      <div className="fixed top-0 left-0 right-0 z-50">
+    <div className="h-screen flex flex-col bg-[#FDFBF7] overflow-hidden">
+      {/* Fixed Header - approximately 10-15% of screen height */}
+      <div className="flex-shrink-0">
         <Header variant="solid" />
       </div>
-      <ChatScreen />
-      <Footer />
+      
+      {/* Chat Content - approximately 85-90% of screen height */}
+      <div className="flex-1 overflow-hidden">
+        <ChatScreen />
+      </div>
     </div>
   );
 }

@@ -1,18 +1,112 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ChatSidebar from './sections/ChatSidebar';
 import ChatWindow from './sections/ChatWindow';
 import ChatInput from './sections/ChatInput';
-import { demoConversations, demoMessages } from '@/demo/chatData';
+import AddChatModal from './sections/AddChatModal';
+import { demoConversations, demoMessages, Conversation, Message } from '@/demo/chatData';
 
 export default function ChatScreen() {
+  // Active conversation state
   const [activeConversationId, setActiveConversationId] = useState('1');
   
-  const activeConversation = demoConversations.find(c => c.id === activeConversationId) || demoConversations[0];
+  // All conversations state
+  const [conversations, setConversations] = useState<Conversation[]>(demoConversations);
+  
+  // Messages organized by conversation ID
+  const [messagesMap, setMessagesMap] = useState<Record<string, Message[]>>({
+    '1': demoMessages,
+    '2': [],
+    '3': [],
+    '4': [],
+  });
+  
+  // Modal state
+  const [isAddChatModalOpen, setIsAddChatModalOpen] = useState(false);
+  
+  const activeConversation = conversations.find(c => c.id === activeConversationId) || conversations[0];
+  const activeMessages = messagesMap[activeConversationId] || [];
+
+  // Handle conversation selection
+  const handleConversationSelect = useCallback((id: string) => {
+    setActiveConversationId(id);
+    
+    // Update conversations to mark selected as active and clear unread
+    setConversations(prev => prev.map(conv => ({
+      ...conv,
+      isActive: conv.id === id,
+      unreadCount: conv.id === id ? 0 : conv.unreadCount,
+    })));
+  }, []);
+
+  // Handle sending a message
+  const handleSendMessage = useCallback((text: string) => {
+    if (!text.trim() || !activeConversationId) return;
+
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+
+    const newMessage: Message = {
+      id: `msg-${Date.now()}`,
+      senderId: 'me',
+      text: text.trim(),
+      timestamp: timeString,
+      isOwn: true,
+    };
+
+    // Add message to the active conversation
+    setMessagesMap(prev => ({
+      ...prev,
+      [activeConversationId]: [...(prev[activeConversationId] || []), newMessage],
+    }));
+
+    // Update the last message in conversations list
+    setConversations(prev => prev.map(conv => 
+      conv.id === activeConversationId
+        ? { ...conv, lastMessage: text.trim(), lastMessageTime: 'Now' }
+        : conv
+    ));
+  }, [activeConversationId]);
+
+  // Handle adding a new conversation
+  const handleAddConversation = useCallback((name: string, avatarUrl: string) => {
+    const newId = `${Date.now()}`;
+    
+    const newConversation: Conversation = {
+      id: newId,
+      name,
+      avatar: avatarUrl,
+      lastMessage: 'No messages yet',
+      lastMessageTime: 'Now',
+      unreadCount: 0,
+      isOnline: false,
+      status: 'offline',
+      isActive: false,
+    };
+
+    // Add to conversations list
+    setConversations(prev => [newConversation, ...prev]);
+    
+    // Initialize empty message array
+    setMessagesMap(prev => ({
+      ...prev,
+      [newId]: [],
+    }));
+
+    // Auto-select the new conversation
+    handleConversationSelect(newId);
+    
+    // Close modal
+    setIsAddChatModalOpen(false);
+  }, [handleConversationSelect]);
 
   return (
-    <div className="relative min-h-screen flex flex-col font-poppins overflow-hidden">
+    <div className="relative min-h-screen flex flex-col font-poppins">
       {/* Background Pattern */}
       <div className="fixed inset-0 z-0 pointer-events-none opacity-40">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
@@ -21,22 +115,25 @@ export default function ChatScreen() {
       </div>
 
       {/* Main Content */}
-      <main className="relative z-10 flex-grow p-4 md:p-6 lg:p-8 pt-24 md:pt-28 max-w-[1440px] mx-auto w-full">
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 w-full h-[calc(100vh-200px)] flex overflow-hidden">
+      <main className="relative z-10 flex-grow p-4 md:p-6 lg:p-8 pt-32 md:pt-36 pb-8 max-w-[1440px] mx-auto w-full">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 w-full h-[calc(100vh-220px)] md:h-[calc(100vh-240px)] flex overflow-hidden">
           {/* Sidebar */}
           <ChatSidebar
-            conversations={demoConversations}
+            conversations={conversations}
             activeConversationId={activeConversationId}
-            onConversationSelect={setActiveConversationId}
+            onConversationSelect={handleConversationSelect}
+            onAddChat={() => setIsAddChatModalOpen(true)}
           />
 
           {/* Chat Window & Input - Desktop */}
           <div className="hidden md:flex flex-1 flex-col min-w-0">
             <ChatWindow
               conversation={activeConversation}
-              messages={demoMessages}
+              messages={activeMessages}
             />
-            <ChatInput />
+            <ChatInput 
+              onSendMessage={handleSendMessage}
+            />
           </div>
 
           {/* Mobile Empty State */}
@@ -52,6 +149,13 @@ export default function ChatScreen() {
           </div>
         </div>
       </main>
+
+      {/* Add Chat Modal */}
+      <AddChatModal
+        isOpen={isAddChatModalOpen}
+        onClose={() => setIsAddChatModalOpen(false)}
+        onAddChat={handleAddConversation}
+      />
     </div>
   );
 }

@@ -2,8 +2,9 @@
 
 import React, { useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { premiumEventsData } from '@/demo';
+import { premiumExploreData } from '@/demo/exploreData';
 import SectionHeader from '@/components/SectionHeader';
 
 export default function PremiumEventPlanning() {
@@ -53,52 +54,62 @@ export default function PremiumEventPlanning() {
                 ref={scrollContainerRef}
                 className="flex overflow-x-auto gap-6 pb-8 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory"
             >
-                {premiumEventsData.map((event, index) => (
-                    <div
-                        key={index}
-                        className="flex-shrink-0 w-[300px] md:w-[340px] bg-white p-3 rounded-[24px] shadow-sm hover:shadow-lg transition-all duration-300 snap-start group"
-                    >
-                        {/* Event Image */}
-                        <div className="relative h-52 rounded-2xl overflow-hidden mb-4">
-                            <Image
-                                src={event.image}
-                                alt={event.title}
-                                fill
-                                sizes="340px"
-                                className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                loading="lazy"
-                            />
+                {premiumExploreData.map((item, index) => {
+                    // Determine the link based on item type
+                    const href = item.type === 'vendor' 
+                        ? `/vendors/profile/${item.vendorId || item.id}`
+                        : item.type === 'event'
+                        ? `/events/details/${item.id}`
+                        : '#'; // Package type - can be implemented later
 
-                            {event.premium && (
-                                <div className="absolute left-3 bottom-3 bg-[#FFC13C] px-4 py-1.5 rounded-full shadow-lg">
-                                    <span className="font-poppins text-sm text-[#4F0000] font-medium">
-                                        Premium
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+                    return (
+                        <Link
+                            key={item.id}
+                            href={href}
+                            className="flex-shrink-0 w-[300px] md:w-[340px] bg-white p-3 rounded-[24px] shadow-sm hover:shadow-lg transition-all duration-300 snap-start group"
+                        >
+                            {/* Event Image */}
+                            <div className="relative h-52 rounded-2xl overflow-hidden mb-4">
+                                <Image
+                                    src={item.image}
+                                    alt={item.name}
+                                    fill
+                                    sizes="340px"
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    loading="lazy"
+                                />
 
-                        {/* Content */}
-                        <div className="px-2 flex flex-col gap-3">
-                            <span className="font-inter font-light text-sm md:text-base text-[#535353]">
-                                {event.location}
-                            </span>
-
-                            <div className="flex flex-col gap-1">
-                                <h3 className="font-poppins font-normal text-lg md:text-xl text-[#333333] line-clamp-2">
-                                    {event.title}
-                                </h3>
-                                <span className="font-inter font-semibold text-xl text-[#4F0000]">
-                                    {event.price}
-                                </span>
+                                {item.premium && (
+                                    <div className="absolute left-3 bottom-3 bg-[#FFC13C] px-4 py-1.5 rounded-full shadow-lg">
+                                        <span className="font-poppins text-sm text-[#4F0000] font-medium">
+                                            Premium
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
-                            <button className="w-full btn-gradient text-white py-3 rounded-xl font-urbanist font-bold text-sm transition-colors">
-                                Check Availability
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                            {/* Content */}
+                            <div className="px-2 flex flex-col gap-3">
+                                <span className="font-inter font-light text-sm md:text-base text-[#535353]">
+                                    {item.location}
+                                </span>
+
+                                <div className="flex flex-col gap-1">
+                                    <h3 className="font-poppins font-normal text-lg md:text-xl text-[#333333] line-clamp-2">
+                                        {item.name}
+                                    </h3>
+                                    <span className="font-inter font-semibold text-xl text-[#4F0000]">
+                                        {item.price}
+                                    </span>
+                                </div>
+
+                                <button className="w-full btn-gradient text-white py-3 rounded-xl font-urbanist font-bold text-sm transition-colors">
+                                    Check Availability
+                                </button>
+                            </div>
+                        </Link>
+                    );
+                })}
             </div>
         </section>
     );

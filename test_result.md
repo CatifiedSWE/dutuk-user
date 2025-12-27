@@ -288,6 +288,32 @@ metadata:
           agent: "main"
           comment: "Created complete vendor profile page following HTML design and project architecture. Extended Vendor interface with Review, Portfolio, and SocialLinks interfaces. Updated demo vendors with rich profile data (portfolio images, detailed reviews, social links). Built modular sections: ProfileHeaderSection (cover image, profile pic, info, CTA buttons), PortfolioSection (Photos/Videos/Events tabs with image grid), ReviewsSection (detailed reviews with photos), SocialLinksSection (social media icons). Created dynamic route /vendors/profile/[vendorId] with 404 handling. Linked Explore page vendor cards to profile pages. Removed 'Available for Booking' and 'Gigs' components as requested. Design uses project color scheme (#7C2A2A, #FFC13C, #FDF5E6) with glassmorphism, rounded corners, responsive layouts. Added Material Symbols Outlined font support. All data is dynamic and vendor-specific."
 
+  - task: "Add clickable functionality to homepage vendor and event cards"
+    implemented: true
+    working: true
+    file: "/app/modules/homepage/sections/VendorCategories.tsx, /app/modules/homepage/sections/PremiumEventPlanning.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Updated homepage sections to use exploreData for consistency across the app. VendorCategories now uses exploreData filtered by type='vendor' instead of vendorCategories.ts. PremiumEventPlanning now uses premiumExploreData instead of premiumEvents.ts. Both sections now have clickable cards wrapped with Next.js Link components: vendor cards redirect to /vendors/profile/[vendorId] and event cards redirect to /events/details/[eventId]. This ensures single source of truth for data and easier backend integration. Old data files (vendorCategories.ts, premiumEvents.ts) are now deprecated."
+
+  - task: "Fix Material Symbols icons not displaying in event details page"
+    implemented: true
+    working: true
+    file: "/app/app/layout.tsx, /app/app/globals.css"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "Fixed Material Symbols Outlined icons not displaying properly in EventServicesSection. Root cause: layout.tsx was loading 'Material Icons' instead of 'Material Symbols Outlined'. Updated font import link in layout.tsx to use the correct Material Symbols Outlined font. Enhanced globals.css with improved Material Symbols styling including !important flag on font-family, proper font-feature-settings for ligatures, user-select none, and vertical-align middle. Added display=swap parameter to font URL for better loading performance. Icons now display correctly as symbols instead of showing alt text (event, restaurant, photo_camera, etc.)."
+
+
+
   created_by: "main_agent"
   version: "1.0"
   test_sequence: 1

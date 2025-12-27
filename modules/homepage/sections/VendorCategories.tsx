@@ -2,12 +2,17 @@
 
 import React, { useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import { vendorCategoriesData, vendorTabs } from '@/demo';
+import { exploreData } from '@/demo/exploreData';
+import { vendorTabs } from '@/demo';
 import SectionHeader from '@/components/SectionHeader';
 
 export default function VendorCategories() {
     const [activeTab, setActiveTab] = React.useState('Discover');
+
+    // Filter exploreData to show only vendors
+    const vendorData = exploreData.filter(item => item.type === 'vendor');
 
     return (
         <section className="w-full flex flex-col gap-10">
@@ -48,9 +53,10 @@ export default function VendorCategories() {
 
             {/* Vendor Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {vendorCategoriesData.map((vendor, index) => (
-                    <div
-                        key={index}
+                {vendorData.slice(0, 6).map((vendor, index) => (
+                    <Link
+                        key={vendor.id}
+                        href={`/vendors/profile/${vendor.vendorId || vendor.id}`}
                         className="flex flex-col gap-5 bg-white p-4 rounded-3xl shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 group cursor-pointer animate-fadeInUp"
                         style={{ animationDelay: `${index * 0.05}s` }}
                     >
@@ -93,7 +99,7 @@ export default function VendorCategories() {
                                 </span>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </section>

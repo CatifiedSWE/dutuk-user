@@ -99,23 +99,17 @@ function ActionButton({ icon: Icon, label, primary, onClick }: { icon: any, labe
 }
 
 /**
- * Hero Video Background with Progressive Loading
- * Shows a tiny blurred placeholder image instantly, then crossfades to video when ready
- * Used for all screen sizes for consistent, optimized experience
+ * Hero Video Background - Simplified Progressive Loading with Dual Video Crossfade
+ * Shows first frame poster image instantly, then crossfades between two videos
  */
 function HeroVideoBackground() {
     const [videoLoaded, setVideoLoaded] = useState(false);
     const [activeVideo, setActiveVideo] = useState(0);
     const video1Ref = React.useRef<HTMLVideoElement>(null);
     const video2Ref = React.useRef<HTMLVideoElement>(null);
-    
-    const videos = [
-        '/hero/hero-video-1.mp4',
-        '/hero/hero-video-2.mp4'
-    ];
 
-    // Handle video ready to play
-    const handleCanPlayThrough = () => {
+    // Handle video ready to play - hide placeholder once first video can play
+    const handleCanPlay = () => {
         setVideoLoaded(true);
     };
 
@@ -137,42 +131,37 @@ function HeroVideoBackground() {
 
     return (
         <>
-            {/* Blurred Placeholder - Shows instantly (only ~400 bytes!) */}
+            {/* First Frame Poster - Shows instantly while video loads */}
             <div 
-                className={`absolute inset-0 z-0 transition-opacity duration-1000 ease-out ${
-                    videoLoaded ? 'opacity-0' : 'opacity-100'
+                className={`absolute inset-0 z-10 transition-opacity duration-500 ease-out ${
+                    videoLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'
                 }`}
             >
-                {/* Tiny blurred image scaled up with CSS blur for smooth effect */}
                 <Image
-                    src="/hero/hero-placeholder-blur.jpg"
-                    alt="Loading..."
+                    src="/hero/hero-poster.jpg"
+                    alt="Hero Background"
                     fill
                     priority
-                    className="object-cover blur-xl scale-110"
+                    className="object-cover"
                     sizes="100vw"
                 />
             </div>
 
-            {/* Video Layer - Fades in when ready */}
-            <div 
-                className={`absolute inset-0 z-10 transition-opacity duration-1000 ease-out ${
-                    videoLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-            >
+            {/* Dual Video Layer - Crossfades between two videos */}
+            <div className="absolute inset-0 z-20">
                 {/* Video 1 */}
                 <video
                     ref={video1Ref}
                     autoPlay
                     muted
                     playsInline
-                    onCanPlayThrough={handleCanPlayThrough}
+                    onCanPlay={handleCanPlay}
                     onEnded={handleVideo1End}
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                        activeVideo === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                        activeVideo === 0 ? 'opacity-100' : 'opacity-0'
                     }`}
                 >
-                    <source src={videos[0]} type="video/mp4" />
+                    <source src="/hero/hero-video-1.mp4" type="video/mp4" />
                 </video>
                 
                 {/* Video 2 */}
@@ -183,10 +172,10 @@ function HeroVideoBackground() {
                     preload="auto"
                     onEnded={handleVideo2End}
                     className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                        activeVideo === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                        activeVideo === 1 ? 'opacity-100' : 'opacity-0'
                     }`}
                 >
-                    <source src={videos[1]} type="video/mp4" />
+                    <source src="/hero/hero-video-2.mp4" type="video/mp4" />
                 </video>
             </div>
         </>

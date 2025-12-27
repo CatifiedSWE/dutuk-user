@@ -7,7 +7,7 @@ export default function LoginScreen() {
     return (
         <GradientBackground className="flex items-center justify-center p-4 font-sans">
             {/* Main card */}
-            <div className="w-full max-w-4xl bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] grid grid-cols-1 lg:grid-cols-2 overflow-hidden z-10 relative border border-gray-100">
+            <div className="w-full max-w-5xl bg-white rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] grid grid-cols-1 lg:grid-cols-2 overflow-hidden z-10 relative border border-gray-100">
 
                 {/* Left side - decorative panel (hidden on mobile) */}
                 <div className="hidden lg:flex flex-col justify-between bg-gradient-to-br from-red-50 via-white to-red-50 p-12 relative overflow-hidden">
@@ -31,7 +31,7 @@ export default function LoginScreen() {
                     </div>
 
                     <div className="relative z-10">
-                        <p className="text-sm text-gray-500 font-medium">Trusted by professionals worldwide.</p>
+                        <p className="text-sm text-gray-500 font-medium">Secured by industry standards.</p>
                         <div className="flex gap-1 mt-2">
                             <div className="w-2 h-2 rounded-full bg-[#8B0000]"></div>
                             <div className="w-2 h-2 rounded-full bg-[#8B0000]/40"></div>
@@ -41,26 +41,30 @@ export default function LoginScreen() {
                 </div>
 
                 {/* Right side - login form */}
-                <div className="p-6 md:p-8 lg:p-12 flex flex-col justify-center bg-white relative">
-                    <div className="mb-6 md:mb-8">
-                        <h1 className="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-                        <p className="text-[#6B7280] text-sm md:text-base">Please enter your details to sign in.</p>
+                <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
+                    <div className="mb-8">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-6 text-[#8B0000]">
+                            <span className="material-icons">lock_person</span>
+                        </div>
+                        <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
+                        <p className="text-[#6B7280] leading-relaxed">
+                            Please enter your credentials to access your account.
+                        </p>
                     </div>
 
-                    <form action="#" className="space-y-4 md:space-y-5">
-                        {/* Username field */}
-                        <div className="space-y-1">
-                            <label className="block text-xs md:text-sm font-medium text-gray-700" htmlFor="username">
+                    <form action="#" className="space-y-8">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="username">
                                 Username
                             </label>
                             <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-2.5 md:pl-3 flex items-center pointer-events-none">
-                                    <span className="material-icons text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-lg md:text-xl">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="material-icons text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
                                         person_outline
                                     </span>
                                 </div>
                                 <input
-                                    className="block w-full pl-9 md:pl-10 pr-3 py-2.5 md:py-3 border border-gray-200 rounded-lg bg-[#F3F4F6] text-[#111827] placeholder-gray-400 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200"
+                                    className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
                                     id="username"
                                     name="username"
                                     placeholder="Enter your username"
@@ -69,19 +73,18 @@ export default function LoginScreen() {
                             </div>
                         </div>
 
-                        {/* Password field */}
-                        <div className="space-y-1">
-                            <label className="block text-xs md:text-sm font-medium text-gray-700" htmlFor="password">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="password">
                                 Password
                             </label>
                             <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-2.5 md:pl-3 flex items-center pointer-events-none">
-                                    <span className="material-icons text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-lg md:text-xl">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="material-icons text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
                                         lock_outline
                                     </span>
                                 </div>
                                 <input
-                                    className="block w-full pl-9 md:pl-10 pr-3 py-2.5 md:py-3 border border-gray-200 rounded-lg bg-[#F3F4F6] text-[#111827] placeholder-gray-400 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200"
+                                    className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
                                     id="password"
                                     name="password"
                                     placeholder="••••••••"
@@ -90,8 +93,7 @@ export default function LoginScreen() {
                             </div>
                         </div>
 
-                        {/* Remember me & Forgot password */}
-                        <div className="flex items-center justify-between pt-2">
+                        <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <input
                                     className="h-4 w-4 text-[#8B0000] focus:ring-[#8B0000] border-gray-300 rounded cursor-pointer transition-colors"
@@ -104,16 +106,15 @@ export default function LoginScreen() {
                                 </label>
                             </div>
                             <div className="text-sm">
-                                <a className="font-medium text-[#8B0000] hover:text-[#660000] hover:underline transition-colors" href="#">
+                                <a className="font-semibold text-[#8B0000] hover:text-[#660000] transition-colors" href="#">
                                     Forgot password?
                                 </a>
                             </div>
                         </div>
 
-                        {/* Sign in button */}
-                        <div className="pt-1 md:pt-2">
+                        <div className="pt-2">
                             <button
-                                className="w-full flex justify-center py-2.5 md:py-3 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                                 type="submit"
                             >
                                 Sign In
@@ -121,22 +122,18 @@ export default function LoginScreen() {
                         </div>
                     </form>
 
-                    {/* Divider */}
-                    <div className="mt-5 md:mt-6 lg:mt-8 relative">
+                    <div className="mt-8 relative">
                         <div aria-hidden="true" className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-100"></div>
                         </div>
                         <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-white text-gray-400 uppercase tracking-wider font-medium text-xs">
-                                or continue with
-                            </span>
+                            <span className="px-4 bg-white text-gray-400 font-medium text-xs">OR CONTINUE WITH</span>
                         </div>
                     </div>
 
-                    {/* Google login button */}
-                    <div className="mt-4 md:mt-5 lg:mt-6">
+                    <div className="mt-6">
                         <button
-                            className="w-full inline-flex justify-center items-center py-2.5 md:py-3 px-4 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all duration-200"
+                            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all duration-200"
                             type="button"
                         >
                             <svg aria-hidden="true" className="h-5 w-5 mr-3" viewBox="0 0 24 24">
@@ -145,12 +142,11 @@ export default function LoginScreen() {
                                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
                                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
                             </svg>
-                            <span>Login with Google</span>
+                            <span>Sign in with Google</span>
                         </button>
                     </div>
 
-                    {/* Sign up link */}
-                    <p className="mt-5 md:mt-6 lg:mt-8 text-center text-xs md:text-sm text-gray-500">
+                    <p className="mt-6 text-center text-sm text-gray-500">
                         Don't have an account?{' '}
                         <a className="font-semibold text-[#8B0000] hover:text-[#660000] hover:underline transition-colors" href="#">
                             Sign up

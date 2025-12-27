@@ -22,7 +22,7 @@ export default function OtpVerificationScreen() {
                             <div className="absolute inset-0 bg-white/40 backdrop-blur-sm border border-white/60 rounded-2xl shadow-lg transform -rotate-6 transition-transform duration-700 hover:-rotate-3"></div>
                             <div className="absolute inset-0 bg-white/80 backdrop-blur-md border border-white/80 rounded-2xl shadow-xl transform rotate-3 flex flex-col items-center justify-center p-8 text-center transition-transform duration-700 hover:rotate-0">
                                 <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4 text-[#8B0000]">
-                                    <span className="material-icons">lock_person</span>
+                                    <span className="material-symbols-outlined">lock_person</span>
                                 </div>
                                 <h3 className="font-display font-bold text-xl text-gray-900 mb-2">Secure Verification</h3>
                                 <p className="text-xs text-gray-500 font-sans leading-relaxed">Protecting your account with industry standard multi-factor authentication.</p>
@@ -44,7 +44,7 @@ export default function OtpVerificationScreen() {
                 <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
                     <div className="mb-8">
                         <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-6 text-[#8B0000]">
-                            <span className="material-icons">mark_email_read</span>
+                            <span className="material-symbols-outlined">mark_email_read</span>
                         </div>
                         <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-3">Verification Code</h1>
                         <p className="text-[#6B7280] leading-relaxed">
@@ -134,7 +134,7 @@ export default function OtpVerificationScreen() {
                             className="inline-flex items-center justify-center text-sm font-semibold text-[#8B0000] hover:text-[#660000] transition-colors group"
                             type="button"
                         >
-                            <span className="material-icons text-lg mr-2 group-hover:-rotate-12 transition-transform duration-300">refresh</span>
+                            <span className="material-symbols-outlined text-lg mr-2 group-hover:-rotate-12 transition-transform duration-300">refresh</span>
                             Resend Code
                         </button>
                     </div>

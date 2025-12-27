@@ -33,7 +33,7 @@ export function NameSetupScreen() {
               <div className="absolute inset-0 bg-white/40 backdrop-blur-sm border border-white/60 rounded-2xl shadow-lg transform -rotate-6 transition-transform duration-700 hover:-rotate-3"></div>
               <div className="absolute inset-0 bg-white/80 backdrop-blur-md border border-white/80 rounded-2xl shadow-xl transform rotate-3 flex flex-col items-center justify-center p-8 text-center transition-transform duration-700 hover:rotate-0">
                 <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4 text-[#8B0000]">
-                  <span className="material-icons">badge</span>
+                  <span className="material-symbols-outlined">badge</span>
                 </div>
                 <h3 className="font-['Playfair_Display'] font-bold text-xl text-gray-900 mb-2">Profile Setup</h3>
                 <p className="text-xs text-gray-500 font-sans leading-relaxed">Establish your digital identity to access all features securely.</p>
@@ -51,7 +51,7 @@ export function NameSetupScreen() {
         <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
           <div className="mb-8">
             <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-6 text-[#8B0000]">
-              <span className="material-icons">person_outline</span>
+              <span className="material-symbols-outlined">person_outline</span>
             </div>
             <h1 className="font-['Playfair_Display'] text-3xl md:text-4xl font-bold text-gray-900 mb-3">Name Setup</h1>
             <p className="text-[#6B7280] leading-relaxed">
@@ -114,7 +114,7 @@ export function NameSetupScreen() {
               className="inline-flex items-center justify-center text-sm font-semibold text-gray-500 hover:text-[#8B0000] transition-colors group"
               type="button"
             >
-              <span className="material-icons text-lg mr-2">arrow_back</span>
+              <span className="material-symbols-outlined text-lg mr-2">arrow_back</span>
               Back to Login
             </button>
           </div>

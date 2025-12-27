@@ -33,7 +33,7 @@ export function PhotoUploadScreen() {
               <div className="absolute inset-0 bg-white/40 backdrop-blur-sm border border-white/60 rounded-2xl shadow-lg transform -rotate-6 transition-transform duration-700 hover:-rotate-3"></div>
               <div className="absolute inset-0 bg-white/80 backdrop-blur-md border border-white/80 rounded-2xl shadow-xl transform rotate-3 flex flex-col items-center justify-center p-8 text-center transition-transform duration-700 hover:rotate-0">
                 <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4 text-[#8B0000]">
-                  <span className="material-icons">account_circle</span>
+                  <span className="material-symbols-outlined">account_circle</span>
                 </div>
                 <h3 className="font-['Playfair_Display'] font-bold text-xl text-gray-900 mb-2">Build Your Identity</h3>
                 <p className="text-xs text-gray-500 font-sans leading-relaxed">Add a photo to make your profile recognizable and build trust with others.</p>
@@ -51,7 +51,7 @@ export function PhotoUploadScreen() {
         <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
           <div className="mb-8">
             <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-6 text-[#8B0000]">
-              <span className="material-icons">add_a_photo</span>
+              <span className="material-symbols-outlined">add_a_photo</span>
             </div>
             <h1 className="font-['Playfair_Display'] text-3xl md:text-4xl font-bold text-gray-900 mb-3">Profile Photo</h1>
             <p className="text-[#6B7280] leading-relaxed">
@@ -72,7 +72,7 @@ export function PhotoUploadScreen() {
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                      <span className="material-icons text-3xl text-gray-400 group-hover:text-[#8B0000] transition-colors">cloud_upload</span>
+                      <span className="material-symbols-outlined text-3xl text-gray-400 group-hover:text-[#8B0000] transition-colors">cloud_upload</span>
                     </div>
                     <p className="mb-2 text-sm text-gray-500 text-center">
                       <span className="font-semibold text-[#8B0000]">Click to upload</span> or drag and drop
@@ -89,7 +89,7 @@ export function PhotoUploadScreen() {
                 className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
                 type="submit"
               >
-                Save &amp; Continue
+                Save & Continue
               </button>
             </div>
           </form>

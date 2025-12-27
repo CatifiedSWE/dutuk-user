@@ -22,7 +22,7 @@ export default function SignupScreen() {
                             <div className="absolute inset-0 bg-white/40 backdrop-blur-sm border border-white/60 rounded-2xl shadow-lg transform -rotate-6 transition-transform duration-700 hover:-rotate-3"></div>
                             <div className="absolute inset-0 bg-white/80 backdrop-blur-md border border-white/80 rounded-2xl shadow-xl transform rotate-3 flex flex-col items-center justify-center p-8 text-center transition-transform duration-700 hover:rotate-0">
                                 <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4 text-[#8B0000]">
-                                    <span className="material-icons">verified_user</span>
+                                    <span className="material-symbols-outlined">verified_user</span>
                                 </div>
                                 <h3 className="font-display font-bold text-xl text-gray-900 mb-2">Premium Access</h3>
                                 <p className="text-xs text-gray-500 font-sans leading-relaxed">Securely manage your account with our professional dashboard.</p>
@@ -31,7 +31,7 @@ export default function SignupScreen() {
                     </div>
 
                     <div className="relative z-10">
-                        <p className="text-sm text-gray-500 font-medium">Trusted by professionals worldwide.</p>
+                        <p className="text-sm text-gray-500 font-medium">Secured by industry standards.</p>
                         <div className="flex gap-1 mt-2">
                             <div className="w-2 h-2 rounded-full bg-[#8B0000]"></div>
                             <div className="w-2 h-2 rounded-full bg-[#8B0000]/40"></div>
@@ -44,11 +44,11 @@ export default function SignupScreen() {
                 <div className="p-8 md:p-12 lg:p-16 flex flex-col justify-center bg-white relative">
                     <div className="mb-8">
                         <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-6 text-[#8B0000]">
-                            <span className="material-icons">person_add</span>
+                            <span className="material-symbols-outlined">person_add</span>
                         </div>
                         <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-3">Create Account</h1>
                         <p className="text-[#6B7280] leading-relaxed">
-                            Please enter your details to sign up.
+                            Please enter your credentials to access your account.
                         </p>
                     </div>
 
@@ -59,7 +59,7 @@ export default function SignupScreen() {
                             </label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span className="material-icons text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
+                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
                                         person_outline
                                     </span>
                                 </div>
@@ -79,7 +79,7 @@ export default function SignupScreen() {
                             </label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span className="material-icons text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
+                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
                                         lock_outline
                                     </span>
                                 </div>
@@ -93,21 +93,41 @@ export default function SignupScreen() {
                             </div>
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="confirm-password">
+                                Confirm Password
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
+                                        lock_outline
+                                    </span>
+                                </div>
+                                <input
+                                    className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    id="confirm-password"
+                                    name="confirm-password"
+                                    placeholder="••••••••"
+                                    type="password"
+                                />
+                            </div>
+                        </div>
+
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <input
                                     className="h-4 w-4 text-[#8B0000] focus:ring-[#8B0000] border-gray-300 rounded cursor-pointer transition-colors"
-                                    id="terms"
-                                    name="terms"
+                                    id="remember-me"
+                                    name="remember-me"
                                     type="checkbox"
                                 />
-                                <label className="ml-2 block text-sm text-gray-600 select-none cursor-pointer" htmlFor="terms">
-                                    I agree to terms
+                                <label className="ml-2 block text-sm text-gray-600 select-none cursor-pointer" htmlFor="remember-me">
+                                    Remember me
                                 </label>
                             </div>
                             <div className="text-sm">
                                 <a className="font-semibold text-[#8B0000] hover:text-[#660000] transition-colors" href="#">
-                                    Privacy Policy
+                                    Forgot password?
                                 </a>
                             </div>
                         </div>

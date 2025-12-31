@@ -19,12 +19,12 @@ export default function VendorCategories() {
     // Show loading state
     if (loading) {
         return (
-            <section className=\"w-full flex flex-col gap-10\">
+            <section className="w-full flex flex-col gap-10">
                 <SectionHeader
-                    label=\"TOP TIER PROFESSIONALS\"
-                    titleMain=\"Discover\"
-                    titleAccent=\"Vendors\"
-                    subtitle=\"Handpicked professionals for your big day\"
+                    label="TOP TIER PROFESSIONALS"
+                    titleMain="Discover"
+                    titleAccent="Vendors"
+                    subtitle="Handpicked professionals for your big day"
                 />
                 <LoadingGrid count={6} />
             </section>
@@ -34,14 +34,14 @@ export default function VendorCategories() {
     // Show error state
     if (error) {
         return (
-            <section className=\"w-full flex flex-col gap-10\">
+            <section className="w-full flex flex-col gap-10">
                 <SectionHeader
-                    label=\"TOP TIER PROFESSIONALS\"
-                    titleMain=\"Discover\"
-                    titleAccent=\"Vendors\"
-                    subtitle=\"Handpicked professionals for your big day\"
+                    label="TOP TIER PROFESSIONALS"
+                    titleMain="Discover"
+                    titleAccent="Vendors"
+                    subtitle="Handpicked professionals for your big day"
                 />
-                <ErrorMessage message=\"Failed to load vendors. Please try again later.\" />
+                <ErrorMessage message="Failed to load vendors. Please try again later." />
             </section>
         );
     }
@@ -49,14 +49,14 @@ export default function VendorCategories() {
     // Show empty state
     if (!vendors || vendors.length === 0) {
         return (
-            <section className=\"w-full flex flex-col gap-10\">
+            <section className="w-full flex flex-col gap-10">
                 <SectionHeader
-                    label=\"TOP TIER PROFESSIONALS\"
-                    titleMain=\"Discover\"
-                    titleAccent=\"Vendors\"
-                    subtitle=\"Handpicked professionals for your big day\"
+                    label="TOP TIER PROFESSIONALS"
+                    titleMain="Discover"
+                    titleAccent="Vendors"
+                    subtitle="Handpicked professionals for your big day"
                 />
-                <EmptyState message=\"No vendors available at the moment.\" />
+                <EmptyState message="No vendors available at the moment." />
             </section>
         );
     }

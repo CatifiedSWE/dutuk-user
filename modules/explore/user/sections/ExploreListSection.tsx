@@ -7,6 +7,7 @@ import { MapPin, Star, Heart, Calendar } from 'lucide-react';
 import SectionHeader from '@/components/SectionHeader';
 import { useVendors } from '@/hooks/useVendors';
 import { useVendorServices } from '@/hooks/useVendorServices';
+import { useEvents } from '@/hooks/useEvents';
 import { LoadingGrid, LoadingEventCard } from '@/components/LoadingCard';
 import { ErrorMessage, EmptyState } from '@/components/ErrorMessage';
 
@@ -16,16 +17,23 @@ interface ExploreListSectionProps {
 }
 
 export default function ExploreListSection({ selectedFilter, searchQuery }: ExploreListSectionProps) {
-    // Fetch vendors and services from Supabase
+    // Fetch vendors from Supabase
     const { vendors, loading: vendorsLoading, error: vendorsError } = useVendors({ 
         searchQuery: searchQuery || undefined 
     });
+    
+    // Fetch services/packages from Supabase
     const { services, loading: servicesLoading, error: servicesError } = useVendorServices({ 
         serviceType: selectedFilter === 'Packages' ? 'package' : undefined 
     });
     
-    const loading = vendorsLoading || servicesLoading;
-    const error = vendorsError || servicesError;
+    // Fetch events from Supabase - NEW
+    const { events, loading: eventsLoading, error: eventsError } = useEvents({
+        searchQuery: searchQuery || undefined
+    });
+    
+    const loading = vendorsLoading || servicesLoading || eventsLoading;
+    const error = vendorsError || servicesError || eventsError;
     
     // Filter data based on selected filter
     const filteredData = useMemo(() => {
@@ -64,8 +72,28 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
             results.push(...serviceItems);
         }
         
+        // Add events if filter matches - NEW
+        if (selectedFilter === 'All' || selectedFilter === 'Events') {
+            const eventItems = events.map(event => ({
+                id: event.id,
+                type: 'event',
+                name: event.event, // 'event' field is the event name/title in Supabase
+                location: 'Chennai', // Default location
+                description: event.description,
+                companyName: event.company_name,
+                dates: event.date, // Array of dates
+                startDate: event.start_date,
+                endDate: event.end_date,
+                price: event.payment > 0 ? `₹ ${event.payment.toLocaleString()}` : 'Contact for pricing',
+                status: event.status,
+                image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop&q=75', // Default event image
+                rating: 4.5 // Default rating
+            }));
+            results.push(...eventItems);
+        }
+        
         return results;
-    }, [selectedFilter, vendors, services]);
+    }, [selectedFilter, vendors, services, events]);
     
     // Get display text for filter
     const filterDisplayText = selectedFilter === 'All' ? 'Results' : selectedFilter;

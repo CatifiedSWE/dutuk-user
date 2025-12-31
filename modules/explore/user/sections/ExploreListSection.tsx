@@ -1,60 +1,104 @@
+'use client';
+
 import React, { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Filter, Grid, List as ListIcon, MapPin, Star, Heart, Calendar } from 'lucide-react';
+import { MapPin, Star, Heart, Calendar } from 'lucide-react';
 import SectionHeader from '@/components/SectionHeader';
-import { exploreData } from '@/demo/exploreData';
+import { useVendors } from '@/hooks/useVendors';
+import { useVendorServices } from '@/hooks/useVendorServices';
+import { LoadingGrid, LoadingEventCard } from '@/components/LoadingCard';
+import { ErrorMessage, EmptyState } from '@/components/ErrorMessage';
 
 interface ExploreListSectionProps {
     selectedFilter: 'All' | 'Vendors' | 'Events' | 'Packages';
     searchQuery: string;
 }
 
-// Smart filtering function - searches across multiple fields
-function smartFilter(item: typeof exploreData[0], searchQuery: string): boolean {
-    if (!searchQuery.trim()) return true;
-    
-    const query = searchQuery.toLowerCase().trim();
-    const searchTerms = query.split(/\s+/); // Split into individual words
-    
-    // Fields to search in
-    const searchableFields = [
-        item.name,
-        item.location,
-        item.type,
-        item.vendorName || '',
-        item.price
-    ].map(field => field.toLowerCase());
-    
-    // Match if ANY search term matches ANY field (inclusive search)
-    return searchTerms.some(term => 
-        searchableFields.some(field => field.includes(term))
-    );
-}
-
 export default function ExploreListSection({ selectedFilter, searchQuery }: ExploreListSectionProps) {
-    // Filter data based on selected filter AND search query
+    // Fetch vendors and services from Supabase
+    const { vendors, loading: vendorsLoading, error: vendorsError } = useVendors({ 
+        searchQuery: searchQuery || undefined 
+    });
+    const { services, loading: servicesLoading, error: servicesError } = useVendorServices({ 
+        serviceType: selectedFilter === 'Packages' ? 'package' : undefined 
+    });
+    
+    const loading = vendorsLoading || servicesLoading;
+    const error = vendorsError || servicesError;
+    
+    // Filter data based on selected filter
     const filteredData = useMemo(() => {
-        return exploreData.filter(item => {
-            // Type filter - if "All" is selected, show all types
-            const typeMatch = selectedFilter === 'All' || (() => {
-                const filterMap: Record<string, 'vendor' | 'event' | 'package'> = {
-                    'Vendors': 'vendor',
-                    'Events': 'event',
-                    'Packages': 'package'
-                };
-                return item.type === filterMap[selectedFilter];
-            })();
-            
-            // Then apply smart search filter
-            const searchMatch = smartFilter(item, searchQuery);
-            
-            return typeMatch && searchMatch;
-        });
-    }, [selectedFilter, searchQuery]);
+        const results: any[] = [];
+        
+        // Add vendors if filter matches
+        if (selectedFilter === 'All' || selectedFilter === 'Vendors') {
+            const vendorItems = vendors.map(vendor => ({
+                id: vendor.id,
+                type: 'vendor',
+                name: vendor.company,
+                location: vendor.service_area || 'Chennai',
+                rating: vendor.avg_rating || 4.5,
+                image: vendor.logo_url || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=600&h=600&fit=crop&q=75',
+                vendorId: vendor.id,
+                vendorAvatar: vendor.logo_url,
+                category: vendor.category
+            }));
+            results.push(...vendorItems);
+        }
+        
+        // Add packages/services if filter matches
+        if (selectedFilter === 'All' || selectedFilter === 'Packages') {
+            const serviceItems = services
+                .filter(service => service.price_type === 'fixed') // Treat fixed-price services as packages
+                .map(service => ({
+                    id: service.id,
+                    type: 'package',
+                    name: service.service_name,
+                    location: 'Chennai', // Default location
+                    rating: 4.5, // Default rating
+                    price: `₹ ${service.base_price.toLocaleString()}`,
+                    image: service.featured_image || 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=600&fit=crop&q=75',
+                    serviceId: service.id
+                }));
+            results.push(...serviceItems);
+        }
+        
+        return results;
+    }, [selectedFilter, vendors, services]);
     
     // Get display text for filter
     const filterDisplayText = selectedFilter === 'All' ? 'Results' : selectedFilter;
+    
+    // Show loading state
+    if (loading) {
+        return (
+            <section className="w-full flex flex-col gap-10">
+                <SectionHeader
+                    label="CURATED SELECTION"
+                    titleMain="Discover"
+                    titleAccent={filterDisplayText}
+                    subtitle={`Browse through our curated selection of ${filterDisplayText.toLowerCase()}`}
+                />
+                <LoadingGrid count={8} />
+            </section>
+        );
+    }
+    
+    // Show error state
+    if (error) {
+        return (
+            <section className="w-full flex flex-col gap-10">
+                <SectionHeader
+                    label="CURATED SELECTION"
+                    titleMain="Discover"
+                    titleAccent={filterDisplayText}
+                    subtitle={`Browse through our curated selection of ${filterDisplayText.toLowerCase()}`}
+                />
+                <ErrorMessage message="Failed to load data. Please try again later." />
+            </section>
+        );
+    }
 
     return (
         <section className="w-full flex flex-col gap-10">
@@ -71,14 +115,13 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {filteredData.map((item, index) => (
                         item.type === 'event' ? (
-                            // Event Card Design
+                            // Event Card Design (keeping original design for events)
                             <Link
                                 href={`/events/details/${item.id}`}
                                 key={item.id}
                                 className="flex flex-col bg-white rounded-3xl shadow-lg shadow-[#4F0000]/5 hover:shadow-xl hover:shadow-[#4F0000]/10 transition-all duration-300 cursor-pointer animate-fadeInUp overflow-hidden"
                                 style={{ animationDelay: `${index * 0.05}s` }}
                             >
-                                {/* Event Image with Date Badge */}
                                 <div className="relative h-64 overflow-hidden">
                                     <Image
                                         src={item.image}
@@ -88,73 +131,20 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                                         className="object-cover"
                                         loading="lazy"
                                     />
-                                    {/* Date Badge */}
-                                    {item.dateRange && (
-                                        <div className="absolute top-4 left-4">
-                                            <div className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-full shadow-lg">
-                                                <Calendar className="w-4 h-4 text-[#4F0000]" />
-                                                <span className="font-urbanist font-medium text-sm text-[#4F0000]">
-                                                    {item.dateRange}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    {/* Heart Icon */}
                                     <button className="absolute top-4 right-4 bg-white p-2.5 rounded-full shadow-lg hover:scale-110 transition-transform">
                                         <Heart className="w-5 h-5 text-[#7C2A2A]" />
                                     </button>
                                 </div>
-
-                                {/* Event Details */}
                                 <div className="p-5 flex flex-col gap-4">
-                                    {/* Vendor Info */}
-                                    {item.vendorAvatar && item.vendorName && (
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-3">
-                                                <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                                                    <Image
-                                                        src={item.vendorAvatar}
-                                                        alt={item.vendorName}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                </div>
-                                                <span className="font-urbanist font-semibold text-[#4F0000]">
-                                                    {item.vendorName}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1">
-                                                <Star className="w-5 h-5 fill-[#7C2A2A] text-[#7C2A2A]" />
-                                                <span className="font-urbanist font-bold text-[#4F0000]">{item.rating}</span>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Event Name */}
                                     <h3 className="font-poppins font-bold text-xl text-[#4F0000]">
                                         {item.name}
                                     </h3>
-
-                                    {/* Location and View Map */}
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2 text-[#4F0000]/70">
                                             <MapPin className="w-4 h-4" />
                                             <span className="font-urbanist text-sm">{item.location}</span>
                                         </div>
-                                        <button className="font-urbanist font-medium text-sm text-[#7C2A2A] hover:underline">
-                                            View in map
-                                        </button>
                                     </div>
-
-                                    {/* Price Per Person */}
-                                    {item.pricePerPerson && (
-                                        <div className="flex items-center gap-2 bg-[#FFC13C] px-4 py-2 rounded-full w-fit">
-                                            <span className="text-2xl">₹</span>
-                                            <span className="font-poppins font-bold text-lg text-[#4F0000]">
-                                                {item.pricePerPerson}
-                                            </span>
-                                        </div>
-                                    )}
                                 </div>
                             </Link>
                         ) : (
@@ -205,7 +195,7 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                                         </h3>
                                         <div className="flex items-center gap-1 flex-shrink-0">
                                             <Star className="w-6 h-6 fill-[#FFC13C] text-[#FFC13C]" />
-                                            <span className="font-urbanist font-bold text-xl text-[#4F0000]">{item.rating}</span>
+                                            <span className="font-urbanist font-bold text-xl text-[#4F0000]">{item.rating.toFixed(1)}</span>
                                         </div>
                                     </div>
 
@@ -215,9 +205,9 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                                         <span className="font-urbanist text-base">{item.location}</span>
                                     </div>
 
-                                    {/* Price Range */}
-                                    <div className="font-poppins font-bold text-2xl text-[#4F0000] mt-3">
-                                        {item.price}
+                                    {/* Price/Category */}
+                                    <div className="font-poppins font-bold text-xl text-[#4F0000] mt-3">
+                                        {item.price || item.category || 'Contact for pricing'}
                                     </div>
                                 </div>
                             </Link>
@@ -225,11 +215,7 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                     ))}
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                    <p className="font-urbanist text-[#4F0000]/60 text-lg">
-                        No {filterDisplayText.toLowerCase()} found. Try a different filter or search term.
-                    </p>
-                </div>
+                <EmptyState message={`No ${filterDisplayText.toLowerCase()} found. Try a different filter or search term.`} />
             )}
         </section>
     );

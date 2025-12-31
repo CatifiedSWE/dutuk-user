@@ -8,6 +8,72 @@ import { useCategories } from '@/hooks/useCategories';
 import { LoadingCard } from '@/components/LoadingCard';
 import { ErrorMessage, EmptyState } from '@/components/ErrorMessage';
 
+// Default fallback images for categories based on name/icon
+const categoryImageMap: Record<string, string> = {
+    // Icon name mappings
+    'Heart': 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=600&fit=crop&q=75',
+    'Music': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop&q=75',
+    'Camera': 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&h=600&fit=crop&q=75',
+    'Film': 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600&h=600&fit=crop&q=75',
+    'Palette': 'https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=600&h=600&fit=crop&q=75',
+    'Utensils': 'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&h=600&fit=crop&q=75',
+    'PartyPopper': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=600&fit=crop&q=75',
+    'Sparkles': 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop&q=75',
+    'Gift': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&h=600&fit=crop&q=75',
+    'Cake': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&h=600&fit=crop&q=75',
+    'Star': 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&h=600&fit=crop&q=75',
+    // Category name mappings
+    'Wedding': 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=600&fit=crop&q=75',
+    'Birthday': 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=600&h=600&fit=crop&q=75',
+    'Corporate': 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=600&h=600&fit=crop&q=75',
+    'DJ': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=600&fit=crop&q=75',
+    'Photography': 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&h=600&fit=crop&q=75',
+    'Videography': 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600&h=600&fit=crop&q=75',
+    'Decoration': 'https://images.unsplash.com/photo-1478146896981-b80fe463b330?w=600&h=600&fit=crop&q=75',
+    'Catering': 'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&h=600&fit=crop&q=75',
+    'Venue': 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=600&h=600&fit=crop&q=75',
+    'Entertainment': 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop&q=75',
+    'Family': 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&h=600&fit=crop&q=75',
+    'Governance': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=600&fit=crop&q=75',
+    'Surprise': 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&h=600&fit=crop&q=75',
+    'Colleges': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=600&fit=crop&q=75',
+    'Shoot': 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&h=600&fit=crop&q=75',
+};
+
+const defaultCategoryImage = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop&q=75';
+
+// Helper function to check if a string is a valid URL
+function isValidUrl(str: string | null | undefined): boolean {
+    if (!str) return false;
+    try {
+        new URL(str);
+        return str.startsWith('http://') || str.startsWith('https://') || str.startsWith('/');
+    } catch {
+        return false;
+    }
+}
+
+// Get the appropriate image URL for a category
+function getCategoryImage(icon: string | null | undefined, categoryName: string): string {
+    // If icon is a valid URL, use it
+    if (isValidUrl(icon)) {
+        return icon!;
+    }
+    
+    // Try to find a matching image by icon name
+    if (icon && categoryImageMap[icon]) {
+        return categoryImageMap[icon];
+    }
+    
+    // Try to find a matching image by category name
+    if (categoryImageMap[categoryName]) {
+        return categoryImageMap[categoryName];
+    }
+    
+    // Return default fallback image
+    return defaultCategoryImage;
+}
+
 export default function EventCategories() {
     // Fetch categories from Supabase
     const { categories, loading, error } = useCategories();
@@ -113,7 +179,7 @@ export default function EventCategories() {
                         >
                             <div className="relative w-full aspect-square rounded-full overflow-hidden shadow-xl shadow-[#4F0000]/10 group-hover:shadow-2xl group-hover:shadow-[#4F0000]/20 transition-all duration-500 group-hover:-translate-y-2 border-[5px] border-white">
                                 <Image
-                                    src={category.icon || 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600&h=600&fit=crop&q=75'}
+                                    src={getCategoryImage(category.icon, category.name)}
                                     alt={category.name}
                                     fill
                                     sizes="(max-width: 768px) 150px, 180px"

@@ -4,15 +4,62 @@ import React, { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Filter, ChevronLeft, ChevronRight } from 'lucide-react';
-import { exploreData } from '@/demo/exploreData';
 import { vendorTabs } from '@/demo';
 import SectionHeader from '@/components/SectionHeader';
+import { useVendors } from '@/hooks/useVendors';
+import { LoadingGrid } from '@/components/LoadingCard';
+import { ErrorMessage, EmptyState } from '@/components/ErrorMessage';
 
 export default function VendorCategories() {
     const [activeTab, setActiveTab] = React.useState('Discover');
-
-    // Filter exploreData to show only vendors
-    const vendorData = exploreData.filter(item => item.type === 'vendor');
+    
+    // Fetch real vendors from Supabase
+    const { vendors, loading, error } = useVendors({ limit: 6 });
+    
+    // Show loading state
+    if (loading) {
+        return (
+            <section className=\"w-full flex flex-col gap-10\">
+                <SectionHeader
+                    label=\"TOP TIER PROFESSIONALS\"
+                    titleMain=\"Discover\"
+                    titleAccent=\"Vendors\"
+                    subtitle=\"Handpicked professionals for your big day\"
+                />
+                <LoadingGrid count={6} />
+            </section>
+        );
+    }
+    
+    // Show error state
+    if (error) {
+        return (
+            <section className=\"w-full flex flex-col gap-10\">
+                <SectionHeader
+                    label=\"TOP TIER PROFESSIONALS\"
+                    titleMain=\"Discover\"
+                    titleAccent=\"Vendors\"
+                    subtitle=\"Handpicked professionals for your big day\"
+                />
+                <ErrorMessage message=\"Failed to load vendors. Please try again later.\" />
+            </section>
+        );
+    }
+    
+    // Show empty state
+    if (!vendors || vendors.length === 0) {
+        return (
+            <section className=\"w-full flex flex-col gap-10\">
+                <SectionHeader
+                    label=\"TOP TIER PROFESSIONALS\"
+                    titleMain=\"Discover\"
+                    titleAccent=\"Vendors\"
+                    subtitle=\"Handpicked professionals for your big day\"
+                />
+                <EmptyState message=\"No vendors available at the moment.\" />
+            </section>
+        );
+    }
 
     return (
         <section className="w-full flex flex-col gap-10">

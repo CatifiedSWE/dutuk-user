@@ -38,59 +38,70 @@
 
 ---
 
-### ⏳ Phase 1: Database Schema Setup
+### ✅ Phase 1: Database Schema Setup
 
 #### 1.1 Create Conversations Table
-- [ ] Create SQL migration file `09_create_conversations_table.sql`
-- [ ] Define table structure:
-  - [ ] id (UUID, Primary Key)
-  - [ ] customer_id (UUID, references auth.users)
-  - [ ] vendor_id (UUID, references auth.users)
-  - [ ] terms_accepted_by_customer (BOOLEAN)
-  - [ ] terms_accepted_at (TIMESTAMP)
-  - [ ] payment_completed (BOOLEAN) - For contact sharing gate
-  - [ ] booking_id (UUID, references bookings/events)
-  - [ ] last_message_at (TIMESTAMP)
-  - [ ] created_at, updated_at (TIMESTAMP)
-- [ ] Add indexes for fast queries
-- [ ] Add unique constraint (customer_id + vendor_id)
-- [ ] Test table creation in Supabase
+- [x] Create SQL migration file `09_create_chat_tables.sql`
+- [x] Define table structure:
+  - [x] id (UUID, Primary Key)
+  - [x] customer_id (UUID, references auth.users)
+  - [x] vendor_id (UUID, references auth.users)
+  - [x] terms_accepted_by_customer (BOOLEAN)
+  - [x] terms_accepted_at (TIMESTAMP)
+  - [x] payment_completed (BOOLEAN) - For contact sharing gate
+  - [x] payment_completed_at (TIMESTAMP)
+  - [x] booking_id (UUID, references bookings/events)
+  - [x] last_message_at (TIMESTAMP)
+  - [x] last_message_preview (TEXT)
+  - [x] created_at, updated_at (TIMESTAMP)
+- [x] Add indexes for fast queries (4 indexes created)
+- [x] Add unique constraint (customer_id + vendor_id)
+- [ ] Test table creation in Supabase (User action required)
 
 #### 1.2 Create Messages Table
-- [ ] Create SQL migration file (or extend 09)
-- [ ] Define table structure:
-  - [ ] id (UUID, Primary Key)
-  - [ ] conversation_id (UUID, references conversations)
-  - [ ] sender_id (UUID, references auth.users)
-  - [ ] receiver_id (UUID, references auth.users)
-  - [ ] message_text (TEXT)
-  - [ ] has_attachment (BOOLEAN)
-  - [ ] attachment_url (TEXT)
-  - [ ] attachment_name (TEXT)
-  - [ ] attachment_size (TEXT)
-  - [ ] is_read (BOOLEAN)
-  - [ ] read_at (TIMESTAMP)
-  - [ ] created_at (TIMESTAMP)
-- [ ] Add indexes (conversation_id, sender_id, created_at)
-- [ ] Add trigger for updating conversations.last_message_at
-- [ ] Test table creation in Supabase
+- [x] Create SQL migration file (included in 09_create_chat_tables.sql)
+- [x] Define table structure:
+  - [x] id (UUID, Primary Key)
+  - [x] conversation_id (UUID, references conversations)
+  - [x] sender_id (UUID, references auth.users)
+  - [x] receiver_id (UUID, references auth.users)
+  - [x] message_text (TEXT)
+  - [x] has_attachment (BOOLEAN)
+  - [x] attachment_url (TEXT)
+  - [x] attachment_name (TEXT)
+  - [x] attachment_size (TEXT)
+  - [x] attachment_type (TEXT)
+  - [x] is_read (BOOLEAN)
+  - [x] read_at (TIMESTAMP)
+  - [x] created_at (TIMESTAMP)
+- [x] Add indexes (4 indexes including unread messages)
+- [x] Add trigger for updating conversations.last_message_at
+- [x] Add validation constraint (text or attachment required)
+- [ ] Test table creation in Supabase (User action required)
 
 #### 1.3 Row Level Security (RLS) Policies
-- [ ] Create RLS policy file `10_create_rls_for_chat_tables.sql`
-- [ ] Conversations policies:
-  - [ ] Users can only see their own conversations
-  - [ ] Users can create conversations
-  - [ ] Users cannot delete other's conversations
-- [ ] Messages policies:
-  - [ ] Users can only see messages in their conversations
-  - [ ] Users can insert messages they send
-  - [ ] Users cannot delete other's messages
-  - [ ] Users can update read status on received messages
-- [ ] Test RLS policies with different user roles
+- [x] Create RLS policy file `10_create_rls_for_chat_tables.sql`
+- [x] Conversations policies:
+  - [x] Users can view conversations they participate in
+  - [x] Users can create conversations
+  - [x] Users can update conversations (T&C, payment status)
+  - [x] Users cannot delete conversations (preserve history)
+- [x] Messages policies:
+  - [x] Users can view messages in their conversations
+  - [x] Users can send messages in their conversations
+  - [x] Users can mark received messages as read
+  - [x] Users cannot delete messages (preserve history)
+- [x] Enable Realtime publication for live updates
+- [x] Create helper functions (get_unread_count, mark_as_read, is_participant)
+- [x] Create conversations_with_users view for easy querying
+- [ ] Test RLS policies with different user roles (User action required)
 
-**Status:** ⏳ NOT STARTED  
+**Status:** ✅ COMPLETED (SQL files ready, awaiting execution in Supabase)  
 **Blocker:** None  
-**ETA:** TBD
+**Date Completed:** January 2025  
+**Files Created:**
+- `/app/sql-migrations/09_create_chat_tables.sql`
+- `/app/sql-migrations/10_create_rls_for_chat_tables.sql`
 
 ---
 

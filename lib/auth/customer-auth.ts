@@ -28,13 +28,12 @@ export async function signUpWithPassword(email: string, password: string) {
   
   if (error) throw error;
   
-  // Create customer profile
+  // Create customer profile (email is stored in auth.users, not customer_profiles)
   if (data.user) {
     await supabase
       .from('customer_profiles')
       .insert({
         user_id: data.user.id,
-        email: data.user.email
       });
   }
   
@@ -109,7 +108,7 @@ export async function verifyOTP(email: string, token: string) {
   
   if (error) throw error;
   
-  // Create customer profile if it doesn't exist
+  // Create customer profile if it doesn't exist (email is stored in auth.users)
   if (data.user) {
     const { data: existingProfile } = await supabase
       .from('customer_profiles')
@@ -122,7 +121,6 @@ export async function verifyOTP(email: string, token: string) {
         .from('customer_profiles')
         .insert({
           user_id: data.user.id,
-          email: data.user.email
         });
     }
   }
@@ -263,6 +261,7 @@ export async function isOnboardingComplete() {
 /**
  * Check if email exists in customer_profiles table
  * This is the source of truth for customer existence
+ * Note: email is stored in auth.users, not customer_profiles
  * @param email - Email to check
  * @returns Object with exists flag and user_id if found
  */
@@ -274,10 +273,18 @@ export async function checkCustomerExists(email: string): Promise<{
   const supabase = createClient();
   
   try {
+    // Get user from auth.users by email
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return { exists: false };
+    }
+    
+    // Check if customer profile exists for this user
     const { data, error } = await supabase
       .from('customer_profiles')
-      .select('user_id, email, full_name')
-      .eq('email', email)
+      .select('user_id, full_name')
+      .eq('user_id', user.id)
       .maybeSingle();
     
     if (error) {
@@ -393,7 +400,7 @@ export async function checkEmailInAuth(email: string): Promise<{
  * Create customer profile for existing auth user
  * Used when vendors want to access the user app
  * @param userId - User ID
- * @param email - User email
+ * @param email - User email (not stored in customer_profiles, already in auth.users)
  */
 export async function createCustomerProfileForUser(userId: string, email: string) {
   const supabase = createClient();
@@ -403,7 +410,6 @@ export async function createCustomerProfileForUser(userId: string, email: string
       .from('customer_profiles')
       .insert({
         user_id: userId,
-        email: email,
       })
       .select()
       .single();

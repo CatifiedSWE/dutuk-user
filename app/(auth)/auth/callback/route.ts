@@ -71,7 +71,6 @@ export async function GET(request: NextRequest) {
           .from('customer_profiles')
           .insert({
             user_id: data.user.id,
-            email: data.user.email,
           });
 
         if (profileError) {

@@ -72,12 +72,22 @@ export default function OtpVerificationScreen() {
         setError('');
 
         try {
+            // Check if user came from signup BEFORE clearing session storage
+            const isSignup = sessionStorage.getItem('signup_email') !== null;
+            
             await verifyOTP(email, otpCode);
+            
             // Clear session storage
             sessionStorage.removeItem('signup_email');
             sessionStorage.removeItem('login_email');
-            // Redirect to onboarding
-            router.push('/onboarding/name');
+            
+            // For new signups, always go to onboarding
+            if (isSignup) {
+                router.push('/onboarding/name');
+            } else {
+                // For existing users, let middleware determine the redirect
+                router.push('/');
+            }
         } catch (err: any) {
             setError(err.message || 'Invalid verification code');
         } finally {

@@ -204,6 +204,7 @@ export function PhotoUploadScreen() {
             <button
               className="px-4 bg-white text-gray-400 hover:text-gray-600 font-medium text-xs transition-colors"
               type="button"
+              onClick={handleSkip}
             >
               Skip for now
             </button>

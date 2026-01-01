@@ -75,8 +75,6 @@ export default function ChatSidebar({
                 <div className="relative flex-shrink-0">
                   <div className={`w-12 h-12 md:w-12 md:h-12 rounded-full bg-gray-200 overflow-hidden shadow-sm ${
                     conversation.id === activeConversationId ? 'ring-2 ring-white' : 'ring-1 ring-gray-100'
-                  } ${
-                    !conversation.isOnline ? 'grayscale opacity-70' : ''
                   }`}>
                     <img
                       alt={conversation.name}

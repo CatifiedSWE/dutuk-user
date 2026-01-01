@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Phone, Video, MoreVertical, Download, ArrowLeft } from 'lucide-react';
 import { Conversation, Message } from '@/demo/chatData';
 
@@ -11,6 +11,17 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ conversation, messages, onMobileBack }: ChatWindowProps) {
+  // Ref for auto-scrolling to bottom
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   if (!conversation) {
     return (
       <div className="flex-1 flex items-center justify-center bg-[#FDFBF9] p-8 text-center text-gray-500">
@@ -80,7 +91,10 @@ export default function ChatWindow({ conversation, messages, onMobileBack }: Cha
       </div>
 
       {/* Messages Area - Optimized for mobile with generous top padding to prevent cutoff */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 pt-8 pb-2 sm:px-3 sm:pt-8 sm:pb-2 md:px-4 md:pt-8 md:pb-3 lg:px-6 lg:pt-10 lg:pb-4 space-y-3 md:space-y-3 bg-[#FDFBF9]">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 pt-8 pb-2 sm:px-3 sm:pt-8 sm:pb-2 md:px-4 md:pt-8 md:pb-3 lg:px-6 lg:pt-10 lg:pb-4 space-y-3 md:space-y-3 bg-[#FDFBF9]"
+      >
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-400">
@@ -158,6 +172,9 @@ export default function ChatWindow({ conversation, messages, onMobileBack }: Cha
                 )}
               </div>
             ))}
+            
+            {/* Scroll anchor for auto-scroll */}
+            <div ref={messagesEndRef} />
           </>
         )}
       </div>

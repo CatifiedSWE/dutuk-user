@@ -50,7 +50,7 @@ export async function signUpWithOTP(email: string) {
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${window.location.origin}/otp`,
+      emailRedirectTo: 'http://localhost:3000/auth/callback',
       data: {
         role: 'customer'
       }
@@ -85,7 +85,7 @@ export async function signInWithOTP(email: string) {
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${window.location.origin}/otp`,
+      emailRedirectTo: 'http://localhost:3000/auth/callback',
     }
   });
   
@@ -137,7 +137,7 @@ export async function signInWithGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/onboarding/name`,
+      redirectTo: 'http://localhost:3000/auth/callback',
       queryParams: {
         access_type: 'offline',
         prompt: 'consent',
@@ -156,7 +156,7 @@ export async function sendPasswordResetEmail(email: string) {
   const supabase = createClient();
   
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/otp?type=recovery`,
+    redirectTo: 'http://localhost:3000/auth/callback',
   });
   
   if (error) throw error;

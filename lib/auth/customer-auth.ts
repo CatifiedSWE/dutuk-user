@@ -2,82 +2,117 @@ import { createClient } from '@/lib/supabase/client';
 
 export interface SignUpData {
   email: string;
-  password: string;
-  fullName: string;
-  phone?: string;
 }
 
 export interface SignInData {
   email: string;
-  password: string;
 }
 
 /**
- * Register a new customer
+ * Send OTP to email for signup
  */
-export async function signUpCustomer(data: SignUpData) {
+export async function signUpWithOTP(email: string) {
   const supabase = createClient();
   
-  // 1. Create auth user with metadata
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: data.email,
-    password: data.password,
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
     options: {
+      emailRedirectTo: `${window.location.origin}/otp`,
       data: {
-        full_name: data.fullName,
         role: 'customer'
       }
     }
   });
   
-  if (authError) throw authError;
-  
-  // 2. Create customer profile
-  if (authData.user) {
-    const { error: profileError } = await supabase
-      .from('customer_profiles')
-      .insert({
-        user_id: authData.user.id,
-        full_name: data.fullName,
-        phone: data.phone
-      });
-    
-    if (profileError) {
-      console.error('Profile creation error:', profileError);
-    }
-  }
-  
-  return authData;
+  if (error) throw error;
+  return data;
 }
 
 /**
- * Sign in existing customer
+ * Send OTP to email for login
  */
-export async function signInCustomer(data: SignInData) {
+export async function signInWithOTP(email: string) {
   const supabase = createClient();
   
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-    email: data.email,
-    password: data.password
+  const { data, error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${window.location.origin}/otp`,
+    }
   });
   
-  if (authError) throw authError;
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Verify OTP code
+ */
+export async function verifyOTP(email: string, token: string) {
+  const supabase = createClient();
   
-  // Verify user has customer role
-  const { data: profile, error: profileError } = await supabase
-    .from('user_profiles')
-    .select('role')
-    .eq('user_id', authData.user.id)
-    .single();
+  const { data, error } = await supabase.auth.verifyOtp({
+    email,
+    token,
+    type: 'email'
+  });
   
-  if (profileError) throw profileError;
+  if (error) throw error;
   
-  if (profile.role !== 'customer') {
-    await supabase.auth.signOut();
-    throw new Error('This account is not registered as a customer');
+  // Create customer profile if it doesn't exist
+  if (data.user) {
+    const { data: existingProfile } = await supabase
+      .from('customer_profiles')
+      .select('user_id')
+      .eq('user_id', data.user.id)
+      .single();
+    
+    if (!existingProfile) {
+      await supabase
+        .from('customer_profiles')
+        .insert({
+          user_id: data.user.id,
+          email: data.user.email
+        });
+    }
   }
   
-  return authData;
+  return data;
+}
+
+/**
+ * Sign in with Google OAuth
+ */
+export async function signInWithGoogle() {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${window.location.origin}/onboarding/name`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      }
+    }
+  });
+  
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Send password reset email
+ */
+export async function sendPasswordResetEmail(email: string) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/otp?type=recovery`,
+  });
+  
+  if (error) throw error;
+  return data;
 }
 
 /**
@@ -142,6 +177,7 @@ export async function updateCustomerProfile(updates: Partial<{
   state: string;
   postal_code: string;
   country: string;
+  profile_photo_url: string;
 }>) {
   const supabase = createClient();
   const user = await getCurrentUser();
@@ -157,4 +193,17 @@ export async function updateCustomerProfile(updates: Partial<{
   
   if (error) throw error;
   return data;
+}
+
+/**
+ * Check if onboarding is complete
+ * Onboarding is complete if both name and location (city) exist
+ */
+export async function isOnboardingComplete() {
+  try {
+    const profile = await getCustomerProfile();
+    return !!(profile.full_name && profile.city);
+  } catch {
+    return false;
+  }
 }

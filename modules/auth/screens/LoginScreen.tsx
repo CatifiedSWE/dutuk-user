@@ -1,9 +1,50 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
+import { signInWithOTP, signInWithGoogle } from '@/lib/auth/customer-auth';
 
 export default function LoginScreen() {
+    const router = useRouter();
+    const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [showForgotPassword, setShowForgotPassword] = useState(false);
+
+    const handleEmailLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            await signInWithOTP(email);
+            // Store email in sessionStorage for OTP verification
+            sessionStorage.setItem('login_email', email);
+            router.push('/otp');
+        } catch (err: any) {
+            setError(err.message || 'Failed to send verification code');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+            await signInWithGoogle();
+        } catch (err: any) {
+            setError(err.message || 'Failed to sign in with Google');
+            setLoading(false);
+        }
+    };
+
+    const handleForgotPassword = () => {
+        router.push('/auth/forgot-password');
+    };
+
     return (
         <GradientBackground className="flex items-center justify-center p-4 font-sans">
             {/* Main card */}
@@ -48,76 +89,60 @@ export default function LoginScreen() {
                         </div>
                         <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-3">Welcome Back</h1>
                         <p className="text-[#6B7280] leading-relaxed">
-                            Please enter your credentials to access your account.
+                            Enter your email to sign in to your account.
                         </p>
                     </div>
 
-                    <form action="#" className="space-y-8">
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-sm text-red-600">{error}</p>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleEmailLogin} className="space-y-8">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="username">
-                                Username
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="email">
+                                Email Address
                             </label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
-                                        person_outline
+                                        mail_outline
                                     </span>
                                 </div>
                                 <input
                                     className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    id="username"
-                                    name="username"
-                                    placeholder="Enter your username"
-                                    type="text"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    disabled={loading}
                                 />
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="password">
-                                Password
-                            </label>
-                            <div className="relative group">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
-                                        lock_outline
-                                    </span>
-                                </div>
-                                <input
-                                    className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    id="password"
-                                    name="password"
-                                    placeholder="••••••••"
-                                    type="password"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <input
-                                    className="h-4 w-4 text-[#8B0000] focus:ring-[#8B0000] border-gray-300 rounded cursor-pointer transition-colors"
-                                    id="remember-me"
-                                    name="remember-me"
-                                    type="checkbox"
-                                />
-                                <label className="ml-2 block text-sm text-gray-600 select-none cursor-pointer" htmlFor="remember-me">
-                                    Remember me
-                                </label>
-                            </div>
+                        <div className="flex items-center justify-end">
                             <div className="text-sm">
-                                <a className="font-semibold text-[#8B0000] hover:text-[#660000] transition-colors" href="#">
+                                <button 
+                                    type="button"
+                                    onClick={handleForgotPassword}
+                                    className="font-semibold text-[#8B0000] hover:text-[#660000] transition-colors"
+                                >
                                     Forgot password?
-                                </a>
+                                </button>
                             </div>
                         </div>
 
                         <div className="pt-2">
                             <button
-                                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 type="submit"
+                                disabled={loading}
                             >
-                                Sign In
+                                {loading ? 'Sending...' : 'Continue with Email'}
                             </button>
                         </div>
                     </form>
@@ -133,8 +158,10 @@ export default function LoginScreen() {
 
                     <div className="mt-6">
                         <button
-                            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all duration-200"
+                            className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
+                            onClick={handleGoogleLogin}
+                            disabled={loading}
                         >
                             <svg aria-hidden="true" className="h-5 w-5 mr-3" viewBox="0 0 24 24">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
@@ -148,7 +175,7 @@ export default function LoginScreen() {
 
                     <p className="mt-6 text-center text-sm text-gray-500">
                         Don't have an account?{' '}
-                        <a className="font-semibold text-[#8B0000] hover:text-[#660000] hover:underline transition-colors" href="#">
+                        <a className="font-semibold text-[#8B0000] hover:text-[#660000] hover:underline transition-colors" href="/signup">
                             Sign up
                         </a>
                     </p>

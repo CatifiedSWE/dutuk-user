@@ -1,12 +1,31 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ProgressIndicator } from '@/modules/common/shared-ui/ProgressIndicator';
+import { updateCustomerProfile } from '@/lib/auth/customer-auth';
 
 export function NameSetupScreen() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    setLoading(true);
+    setError('');
+
+    try {
+      const fullName = `${firstName} ${lastName}`.trim();
+      await updateCustomerProfile({ full_name: fullName });
+      router.push('/onboarding/location');
+    } catch (err: any) {
+      setError(err.message || 'Failed to save name');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,6 +79,12 @@ export function NameSetupScreen() {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -73,6 +98,9 @@ export function NameSetupScreen() {
                   placeholder="e.g. Alex"
                   required
                   type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -86,16 +114,20 @@ export function NameSetupScreen() {
                   placeholder="e.g. Morgan"
                   required
                   type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
 
             <div className="pt-4">
               <button
-                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 type="submit"
+                disabled={loading}
               >
-                Continue
+                {loading ? 'Saving...' : 'Continue'}
               </button>
             </div>
           </form>

@@ -1,12 +1,78 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ProgressIndicator } from '@/modules/common/shared-ui/ProgressIndicator';
+import { updateCustomerProfile } from '@/lib/auth/customer-auth';
+import { createClient } from '@/lib/supabase/client';
 
 export function PhotoUploadScreen() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    
+    const fileInput = document.getElementById('dropzone-file') as HTMLInputElement;
+    const file = fileInput?.files?.[0];
+
+    if (!file) {
+      setError('Please select a photo');
+      return;
+    }
+
+    setUploading(true);
+    setError('');
+
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) throw new Error('Not authenticated');
+
+      // Upload to Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `profile-photos/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('customer-uploads')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('customer-uploads')
+        .getPublicUrl(filePath);
+
+      // Update profile with photo URL
+      await updateCustomerProfile({ profile_photo_url: publicUrl });
+
+      router.push('/home');
+    } catch (err: any) {
+      setError(err.message || 'Failed to upload photo');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSkip = () => {
+    router.push('/home');
   };
 
   return (
@@ -60,36 +126,67 @@ export function PhotoUploadScreen() {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="photo-upload">
                 Upload Image
               </label>
               <div className="w-full">
-                <label
-                  className="flex flex-col items-center justify-center w-full h-56 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-[#F3F4F6] hover:bg-red-50 hover:border-[#8B0000]/30 transition-all duration-300 group"
-                  htmlFor="dropzone-file"
-                >
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform duration-300">
-                      <span className="material-symbols-outlined text-3xl text-gray-400 group-hover:text-[#8B0000] transition-colors">cloud_upload</span>
-                    </div>
-                    <p className="mb-2 text-sm text-gray-500 text-center">
-                      <span className="font-semibold text-[#8B0000]">Click to upload</span> or drag and drop
-                    </p>
-                    <p className="text-xs text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x800px)</p>
+                {preview ? (
+                  <div className="relative w-full h-56 border-2 border-gray-200 rounded-lg overflow-hidden">
+                    <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPreview(null);
+                        const fileInput = document.getElementById('dropzone-file') as HTMLInputElement;
+                        if (fileInput) fileInput.value = '';
+                      }}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
                   </div>
-                  <input className="hidden" id="dropzone-file" type="file" />
-                </label>
+                ) : (
+                  <label
+                    className="flex flex-col items-center justify-center w-full h-56 border-2 border-gray-200 border-dashed rounded-lg cursor-pointer bg-[#F3F4F6] hover:bg-red-50 hover:border-[#8B0000]/30 transition-all duration-300 group"
+                    htmlFor="dropzone-file"
+                  >
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-3 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <span className="material-symbols-outlined text-3xl text-gray-400 group-hover:text-[#8B0000] transition-colors">cloud_upload</span>
+                      </div>
+                      <p className="mb-2 text-sm text-gray-500 text-center">
+                        <span className="font-semibold text-[#8B0000]">Click to upload</span> or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x800px)</p>
+                    </div>
+                    <input 
+                      className="hidden" 
+                      id="dropzone-file" 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={uploading}
+                    />
+                  </label>
+                )}
               </div>
             </div>
 
             <div className="pt-2">
               <button
-                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 type="submit"
+                disabled={uploading}
               >
-                Save & Continue
+                {uploading ? 'Uploading...' : 'Save & Continue'}
               </button>
             </div>
           </form>

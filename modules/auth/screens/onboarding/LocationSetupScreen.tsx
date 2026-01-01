@@ -1,12 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ProgressIndicator } from '@/modules/common/shared-ui/ProgressIndicator';
+import { updateCustomerProfile } from '@/lib/auth/customer-auth';
 
 export function LocationSetupScreen() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const router = useRouter();
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    setLoading(true);
+    setError('');
+
+    try {
+      await updateCustomerProfile({ 
+        address,
+        city,
+        postal_code: postalCode
+      });
+      router.push('/onboarding/photo');
+    } catch (err: any) {
+      setError(err.message || 'Failed to save location');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,6 +83,12 @@ export function LocationSetupScreen() {
             </p>
           </div>
 
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2" htmlFor="address">
@@ -71,6 +100,9 @@ export function LocationSetupScreen() {
                 name="address"
                 placeholder="123 Main St"
                 type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                disabled={loading}
               />
             </div>
 
@@ -85,6 +117,10 @@ export function LocationSetupScreen() {
                   name="city"
                   placeholder="City"
                   type="text"
+                  required
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -97,16 +133,20 @@ export function LocationSetupScreen() {
                   name="zip"
                   placeholder="Zip Code"
                   type="text"
+                  value={postalCode}
+                  onChange={(e) => setPostalCode(e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
 
             <div className="pt-2">
               <button
-                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 type="submit"
+                disabled={loading}
               >
-                Save Location
+                {loading ? 'Saving...' : 'Save Location'}
               </button>
             </div>
           </form>
@@ -122,6 +162,7 @@ export function LocationSetupScreen() {
 
           <div className="mt-6 text-center">
             <button
+              onClick={() => router.push('/onboarding/photo')}
               className="inline-flex items-center justify-center text-sm font-semibold text-gray-500 hover:text-[#8B0000] transition-colors group"
               type="button"
             >

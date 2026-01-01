@@ -1,9 +1,113 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
+import { verifyOTP, signInWithOTP } from '@/lib/auth/customer-auth';
 
 export default function OtpVerificationScreen() {
+    const router = useRouter();
+    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [email, setEmail] = useState('');
+    const [timer, setTimer] = useState(300); // 5 minutes
+    const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+    useEffect(() => {
+        // Get email from sessionStorage
+        const signupEmail = sessionStorage.getItem('signup_email');
+        const loginEmail = sessionStorage.getItem('login_email');
+        setEmail(signupEmail || loginEmail || '');
+
+        // Start countdown timer
+        const interval = setInterval(() => {
+            setTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const handleChange = (index: number, value: string) => {
+        if (value.length > 1) return;
+        
+        const newOtp = [...otp];
+        newOtp[index] = value;
+        setOtp(newOtp);
+
+        // Auto-focus next input
+        if (value && index < 5) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+
+    const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+        if (e.key === 'Backspace' && !otp[index] && index > 0) {
+            inputRefs.current[index - 1]?.focus();
+        }
+    };
+
+    const handleVerify = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const otpCode = otp.join('');
+        
+        if (otpCode.length !== 6) {
+            setError('Please enter all 6 digits');
+            return;
+        }
+
+        setLoading(true);
+        setError('');
+
+        try {
+            await verifyOTP(email, otpCode);
+            // Clear session storage
+            sessionStorage.removeItem('signup_email');
+            sessionStorage.removeItem('login_email');
+            // Redirect to onboarding
+            router.push('/onboarding/name');
+        } catch (err: any) {
+            setError(err.message || 'Invalid verification code');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleResend = async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+            await signInWithOTP(email);
+            setTimer(300);
+            setOtp(['', '', '', '', '', '']);
+            inputRefs.current[0]?.focus();
+        } catch (err: any) {
+            setError(err.message || 'Failed to resend code');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const maskEmail = (email: string) => {
+        if (!email) return '';
+        const [localPart, domain] = email.split('@');
+        if (localPart.length <= 2) return email;
+        return `${localPart.substring(0, 2)}${'*'.repeat(localPart.length - 2)}@${domain}`;
+    };
+
     return (
         <GradientBackground className="flex items-center justify-center p-4 font-sans">
             {/* Main card */}
@@ -49,73 +153,53 @@ export default function OtpVerificationScreen() {
                         <h1 className="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-3">Verification Code</h1>
                         <p className="text-[#6B7280] leading-relaxed">
                             We have sent a verification code to your email <br />
-                            <span className="font-semibold text-gray-900">alex******@example.com</span>.
+                            <span className="font-semibold text-gray-900">{maskEmail(email)}</span>.
                         </p>
                     </div>
 
-                    <form action="#" className="space-y-8">
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p className="text-sm text-red-600">{error}</p>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleVerify} className="space-y-8">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="otp-1">
                                 Enter the 6-digit code
                             </label>
                             <div className="flex justify-between gap-2 md:gap-3">
-                                <input
-                                    className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    id="otp-1"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    name="otp-1"
-                                    type="text"
-                                />
-                                <input
-                                    className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    name="otp-2"
-                                    type="text"
-                                />
-                                <input
-                                    className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    name="otp-3"
-                                    type="text"
-                                />
-                                <input
-                                    className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    name="otp-4"
-                                    type="text"
-                                />
-                                <input
-                                    className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    name="otp-5"
-                                    type="text"
-                                />
-                                <input
-                                    className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
-                                    inputMode="numeric"
-                                    maxLength={1}
-                                    name="otp-6"
-                                    type="text"
-                                />
+                                {otp.map((digit, index) => (
+                                    <input
+                                        key={index}
+                                        ref={(el) => {
+                                            inputRefs.current[index] = el;
+                                        }}
+                                        className="w-10 h-12 md:w-14 md:h-14 text-center text-xl font-bold border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                        inputMode="numeric"
+                                        maxLength={1}
+                                        type="text"
+                                        value={digit}
+                                        onChange={(e) => handleChange(index, e.target.value)}
+                                        onKeyDown={(e) => handleKeyDown(index, e)}
+                                        disabled={loading}
+                                    />
+                                ))}
                             </div>
                         </div>
 
                         <div className="flex items-center justify-center text-sm">
                             <span className="text-gray-500 mr-2">Code expires in:</span>
-                            <span className="font-semibold text-[#8B0000]">04:59</span>
+                            <span className="font-semibold text-[#8B0000]">{formatTime(timer)}</span>
                         </div>
 
                         <div className="pt-2">
                             <button
-                                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0"
+                                className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 type="submit"
+                                disabled={loading || timer === 0}
                             >
-                                Verify Account
+                                {loading ? 'Verifying...' : 'Verify Account'}
                             </button>
                         </div>
                     </form>
@@ -131,8 +215,10 @@ export default function OtpVerificationScreen() {
 
                     <div className="mt-6 text-center">
                         <button
-                            className="inline-flex items-center justify-center text-sm font-semibold text-[#8B0000] hover:text-[#660000] transition-colors group"
+                            className="inline-flex items-center justify-center text-sm font-semibold text-[#8B0000] hover:text-[#660000] transition-colors group disabled:opacity-50 disabled:cursor-not-allowed"
                             type="button"
+                            onClick={handleResend}
+                            disabled={loading || timer > 240}
                         >
                             <span className="material-symbols-outlined text-lg mr-2 group-hover:-rotate-12 transition-transform duration-300">refresh</span>
                             Resend Code

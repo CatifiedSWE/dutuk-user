@@ -3,11 +3,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
-import { signUpWithOTP, signInWithGoogle } from '@/lib/auth/customer-auth';
+import { signUpWithPassword, signInWithGoogle } from '@/lib/auth/customer-auth';
 
 export default function SignupScreen() {
     const router = useRouter();
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -16,13 +20,25 @@ export default function SignupScreen() {
         setLoading(true);
         setError('');
 
+        // Validate passwords match
+        if (password !== confirmPassword) {
+            setError('Passwords do not match');
+            setLoading(false);
+            return;
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+            setError('Password must be at least 6 characters');
+            setLoading(false);
+            return;
+        }
+
         try {
-            await signUpWithOTP(email);
-            // Store email in sessionStorage for OTP verification
-            sessionStorage.setItem('signup_email', email);
-            router.push('/otp');
+            await signUpWithPassword(email, password);
+            router.push('/onboarding/name');
         } catch (err: any) {
-            setError(err.message || 'Failed to send verification code');
+            setError(err.message || 'Failed to create account');
         } finally {
             setLoading(false);
         }
@@ -119,13 +135,79 @@ export default function SignupScreen() {
                             </div>
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="password">
+                                Password
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
+                                        lock_outline
+                                    </span>
+                                </div>
+                                <input
+                                    className="block w-full pl-10 pr-12 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Create a password (min 6 characters)"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                                >
+                                    <span className="material-symbols-outlined text-gray-400 hover:text-[#8B0000] transition-colors text-xl">
+                                        {showPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="confirmPassword">
+                                Confirm Password
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
+                                        lock_outline
+                                    </span>
+                                </div>
+                                <input
+                                    className="block w-full pl-10 pr-12 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    placeholder="Confirm your password"
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                                >
+                                    <span className="material-symbols-outlined text-gray-400 hover:text-[#8B0000] transition-colors text-xl">
+                                        {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
                         <div className="pt-2">
                             <button
                                 className="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-md shadow-[#8B0000]/20 text-sm font-semibold text-white bg-[#8B0000] hover:bg-[#660000] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B0000] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                                 type="submit"
                                 disabled={loading}
                             >
-                                {loading ? 'Sending...' : 'Continue with Email'}
+                                {loading ? 'Creating Account...' : 'Create Account'}
                             </button>
                         </div>
                     </form>

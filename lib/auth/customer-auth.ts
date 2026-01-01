@@ -2,10 +2,43 @@ import { createClient } from '@/lib/supabase/client';
 
 export interface SignUpData {
   email: string;
+  password?: string;
 }
 
 export interface SignInData {
   email: string;
+  password?: string;
+}
+
+/**
+ * Sign up with email and password
+ */
+export async function signUpWithPassword(email: string, password: string) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        role: 'customer'
+      }
+    }
+  });
+  
+  if (error) throw error;
+  
+  // Create customer profile
+  if (data.user) {
+    await supabase
+      .from('customer_profiles')
+      .insert({
+        user_id: data.user.id,
+        email: data.user.email
+      });
+  }
+  
+  return data;
 }
 
 /**
@@ -22,6 +55,21 @@ export async function signUpWithOTP(email: string) {
         role: 'customer'
       }
     }
+  });
+  
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Sign in with email and password
+ */
+export async function signInWithPassword(email: string, password: string) {
+  const supabase = createClient();
+  
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   });
   
   if (error) throw error;

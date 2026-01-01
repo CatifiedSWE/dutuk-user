@@ -3,14 +3,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
-import { signInWithOTP, signInWithGoogle } from '@/lib/auth/customer-auth';
+import { signInWithPassword, signInWithGoogle } from '@/lib/auth/customer-auth';
 
 export default function LoginScreen() {
     const router = useRouter();
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [showForgotPassword, setShowForgotPassword] = useState(false);
 
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,12 +19,10 @@ export default function LoginScreen() {
         setError('');
 
         try {
-            await signInWithOTP(email);
-            // Store email in sessionStorage for OTP verification
-            sessionStorage.setItem('login_email', email);
-            router.push('/otp');
+            await signInWithPassword(email, password);
+            router.push('/home');
         } catch (err: any) {
-            setError(err.message || 'Failed to send verification code');
+            setError(err.message || 'Failed to sign in');
         } finally {
             setLoading(false);
         }
@@ -42,7 +41,7 @@ export default function LoginScreen() {
     };
 
     const handleForgotPassword = () => {
-        router.push('/auth/forgot-password');
+        router.push('/forgot-password');
     };
 
     return (
@@ -124,12 +123,45 @@ export default function LoginScreen() {
                             </div>
                         </div>
 
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="password">
+                                Password
+                            </label>
+                            <div className="relative group">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span className="material-symbols-outlined text-gray-400 group-focus-within:text-[#8B0000] transition-colors text-xl">
+                                        lock_outline
+                                    </span>
+                                </div>
+                                <input
+                                    className="block w-full pl-10 pr-12 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    disabled={loading}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+                                >
+                                    <span className="material-symbols-outlined text-gray-400 hover:text-[#8B0000] transition-colors text-xl">
+                                        {showPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
                         <div className="flex items-center justify-end">
                             <div className="text-sm">
                                 <button 
                                     type="button"
                                     onClick={handleForgotPassword}
-                                    className="font-semibold text-[#8B0000] hover:text-[#660000] transition-colors"
+                                    className="font-semibold text-[#8B0000] hover:text-[#660000] transition-colors cursor-pointer"
                                 >
                                     Forgot password?
                                 </button>
@@ -142,7 +174,7 @@ export default function LoginScreen() {
                                 type="submit"
                                 disabled={loading}
                             >
-                                {loading ? 'Sending...' : 'Continue with Email'}
+                                {loading ? 'Signing in...' : 'Sign In'}
                             </button>
                         </div>
                     </form>

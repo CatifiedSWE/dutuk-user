@@ -101,7 +101,7 @@ export default function ResetPasswordLinkSentScreen() {
 
                     <div className="mt-6 text-center">
                         <button
-                            onClick={() => router.push('/auth/forgot-password')}
+                            onClick={() => router.push('/forgot-password')}
                             className="inline-flex items-center justify-center text-sm font-semibold text-[#8B0000] hover:text-[#660000] transition-colors group"
                             type="button"
                         >

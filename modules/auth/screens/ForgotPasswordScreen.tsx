@@ -20,7 +20,7 @@ export default function ForgotPasswordScreen() {
             await sendPasswordResetEmail(email);
             // Store email for the confirmation page
             sessionStorage.setItem('reset_email', email);
-            router.push('/auth/reset-link-sent');
+            router.push('/reset-link-sent');
         } catch (err: any) {
             setError(err.message || 'Failed to send reset link');
         } finally {

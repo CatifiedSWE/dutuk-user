@@ -121,7 +121,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
 
                     {/* Login Link */}
                     <Link
-                        href="/auth/sign-in"
+                        href="/login"
                         className={`hidden md:block font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
                     >
                         Login / Sign Up
@@ -196,7 +196,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                             </div>
                             <div className="mt-4">
                                 <Link
-                                    href="/auth/sign-in"
+                                    href="/login"
                                     onClick={() => setIsMenuOpen(false)}
                                     className="block text-center w-full py-3 px-6 bg-[#4F0000] text-white font-poppins font-medium text-base rounded-lg hover:bg-[#660000] transition-colors"
                                 >

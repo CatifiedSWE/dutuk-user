@@ -55,8 +55,8 @@ export default function LoginScreen() {
                 }
             }
             
-            // Successful login - redirect to home
-            router.push('/home');
+            // Successful login - redirect to root (middleware will handle routing)
+            router.push('/');
         } catch (err: any) {
             setError(err.message || 'Failed to sign in. Please check your credentials.');
         } finally {

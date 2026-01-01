@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Search, MapPin } from 'lucide-react';
+import { Menu, X, Search, MapPin, User, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import VendorDropdown from './VendorDropdown';
+import { useAuth } from '@/hooks/useAuth';
+import { signOut } from '@/lib/auth/customer-auth';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
     variant?: 'glassmorphic' | 'solid';
@@ -14,6 +17,18 @@ interface HeaderProps {
 export default function Header({ variant = 'solid' }: HeaderProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const { user, loading, isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    // Handle logout
+    const handleLogout = async () => {
+        try {
+            await signOut();
+            router.push('/home');
+        } catch (error) {
+            console.error('Error logging out:', error);
+        }
+    };
 
     // Scroll detection
     useEffect(() => {
@@ -120,12 +135,35 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                     </div>
 
                     {/* Login Link */}
-                    <Link
-                        href="/login"
-                        className={`hidden md:block font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
-                    >
-                        Login / Sign Up
-                    </Link>
+                    {!loading && (
+                        <>
+                            {isAuthenticated ? (
+                                <div className="flex items-center gap-3">
+                                    <Link
+                                        href="/profile/overview"
+                                        className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
+                                    >
+                                        <User className="w-4 h-4" />
+                                        Profile
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    className={`hidden md:block font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
+                                >
+                                    Login / Sign Up
+                                </Link>
+                            )}
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -195,13 +233,38 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                                 </div>
                             </div>
                             <div className="mt-4">
-                                <Link
-                                    href="/login"
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className="block text-center w-full py-3 px-6 bg-[#4F0000] text-white font-poppins font-medium text-base rounded-lg hover:bg-[#660000] transition-colors"
-                                >
-                                    Login / Sign Up
-                                </Link>
+                                {!loading && (
+                                    <>
+                                        {isAuthenticated ? (
+                                            <>
+                                                <Link
+                                                    href="/profile/overview"
+                                                    onClick={() => setIsMenuOpen(false)}
+                                                    className="block text-center w-full py-3 px-6 mb-3 bg-[#4F0000] text-white font-poppins font-medium text-base rounded-lg hover:bg-[#660000] transition-colors"
+                                                >
+                                                    View Profile
+                                                </Link>
+                                                <button
+                                                    onClick={() => {
+                                                        handleLogout();
+                                                        setIsMenuOpen(false);
+                                                    }}
+                                                    className="block text-center w-full py-3 px-6 bg-gray-100 text-[#4F0000] font-poppins font-medium text-base rounded-lg hover:bg-gray-200 transition-colors"
+                                                >
+                                                    Logout
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <Link
+                                                href="/login"
+                                                onClick={() => setIsMenuOpen(false)}
+                                                className="block text-center w-full py-3 px-6 bg-[#4F0000] text-white font-poppins font-medium text-base rounded-lg hover:bg-[#660000] transition-colors"
+                                            >
+                                                Login / Sign Up
+                                            </Link>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </motion.div>

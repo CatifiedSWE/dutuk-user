@@ -3,7 +3,15 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
-import { signInWithPassword, signInWithGoogle } from '@/lib/auth/customer-auth';
+import { 
+    signInWithPassword, 
+    signInWithGoogle, 
+    getCurrentUser, 
+    createCustomerProfileForUser 
+} from '@/lib/auth/customer-auth';
+import { validateEmail } from '@/lib/validation';
+import FormError from '@/components/ui/FormError';
+import InfoMessage from '@/components/ui/InfoMessage';
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -12,17 +20,45 @@ export default function LoginScreen() {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [infoMessage, setInfoMessage] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [emailTouched, setEmailTouched] = useState(false);
 
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setInfoMessage('');
+        setEmailTouched(true);
+
+        // Validate email format
+        if (!validateEmail(email)) {
+            setEmailError('Please enter a valid email address');
+            setError('Please enter a valid email address');
+            setLoading(false);
+            return;
+        }
 
         try {
-            await signInWithPassword(email, password);
+            // Sign in with Supabase Auth
+            const authData = await signInWithPassword(email, password);
+            
+            if (authData.user) {
+                // CRITICAL: Check if customer_profiles entry exists
+                // This handles cross-app scenario where vendors want to use User App
+                try {
+                    await createCustomerProfileForUser(authData.user.id, authData.user.email || email);
+                    setInfoMessage('Welcome! Setting up your account...');
+                } catch (profileError) {
+                    // If profile creation fails, it might already exist - that's okay
+                    console.log('Customer profile handling:', profileError);
+                }
+            }
+            
+            // Successful login - redirect to home
             router.push('/home');
         } catch (err: any) {
-            setError(err.message || 'Failed to sign in');
+            setError(err.message || 'Failed to sign in. Please check your credentials.');
         } finally {
             setLoading(false);
         }
@@ -93,9 +129,11 @@ export default function LoginScreen() {
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-sm text-red-600">{error}</p>
-                        </div>
+                        <FormError message={error} />
+                    )}
+
+                    {infoMessage && (
+                        <InfoMessage message={infoMessage} variant="success" />
                     )}
 
                     <form onSubmit={handleEmailLogin} className="space-y-8">
@@ -110,17 +148,33 @@ export default function LoginScreen() {
                                     </span>
                                 </div>
                                 <input
-                                    className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    className={`block w-full pl-10 pr-4 py-3.5 border rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+                                        emailError && emailTouched
+                                            ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
+                                            : 'border-gray-200 focus:ring-[#8B0000]/20 focus:border-[#8B0000]'
+                                    }`}
                                     id="email"
                                     name="email"
                                     placeholder="Enter your email"
                                     type="email"
                                     value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    onChange={(e) => {
+                                        setEmail(e.target.value);
+                                        if (emailTouched && validateEmail(e.target.value)) {
+                                            setEmailError('');
+                                        }
+                                    }}
+                                    onBlur={() => setEmailTouched(true)}
                                     required
                                     disabled={loading}
                                 />
                             </div>
+                            {emailError && emailTouched && (
+                                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-xs">error</span>
+                                    {emailError}
+                                </p>
+                            )}
                         </div>
 
                         <div>

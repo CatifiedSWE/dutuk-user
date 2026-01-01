@@ -1,9 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
-import { signUpWithPassword, signInWithGoogle } from '@/lib/auth/customer-auth';
+import { signUpWithPassword, signInWithGoogle, checkCustomerExists } from '@/lib/auth/customer-auth';
+import { validateEmail, validatePassword, validatePasswordMatch } from '@/lib/validation';
+import ValidationHint from '@/components/ui/ValidationHint';
+import FormError from '@/components/ui/FormError';
+import InfoMessage from '@/components/ui/InfoMessage';
 
 export default function SignupScreen() {
     const router = useRouter();
@@ -14,11 +18,73 @@ export default function SignupScreen() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [infoMessage, setInfoMessage] = useState('');
+    
+    // Validation states
+    const [emailTouched, setEmailTouched] = useState(false);
+    const [passwordTouched, setPasswordTouched] = useState(false);
+    const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
+    const [emailError, setEmailError] = useState('');
+    const [passwordValidation, setPasswordValidation] = useState(validatePassword(''));
+    const [confirmPasswordError, setConfirmPasswordError] = useState('');
+
+    // Validate email on change
+    useEffect(() => {
+        if (emailTouched && email) {
+            if (!validateEmail(email)) {
+                setEmailError('Please enter a valid email address');
+            } else {
+                setEmailError('');
+            }
+        } else if (emailTouched && !email) {
+            setEmailError('Email is required');
+        }
+    }, [email, emailTouched]);
+
+    // Validate password on change
+    useEffect(() => {
+        if (password) {
+            const validation = validatePassword(password);
+            setPasswordValidation(validation);
+        }
+    }, [password]);
+
+    // Validate confirm password on change
+    useEffect(() => {
+        if (confirmPasswordTouched && confirmPassword) {
+            if (!validatePasswordMatch(password, confirmPassword)) {
+                setConfirmPasswordError('Passwords do not match');
+            } else {
+                setConfirmPasswordError('');
+            }
+        }
+    }, [password, confirmPassword, confirmPasswordTouched]);
 
     const handleEmailSignup = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setInfoMessage('');
+
+        // Mark all fields as touched
+        setEmailTouched(true);
+        setPasswordTouched(true);
+        setConfirmPasswordTouched(true);
+
+        // Validate email
+        if (!email || !validateEmail(email)) {
+            setError('Please enter a valid email address');
+            setLoading(false);
+            return;
+        }
+
+        // Validate password
+        const passwordValidationResult = validatePassword(password);
+        if (!passwordValidationResult.isValid) {
+            setError(passwordValidationResult.errors[0]);
+            setLoading(false);
+            return;
+        }
 
         // Validate passwords match
         if (password !== confirmPassword) {
@@ -27,18 +93,40 @@ export default function SignupScreen() {
             return;
         }
 
-        // Validate password length
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters');
-            setLoading(false);
-            return;
-        }
-
         try {
+            // CRITICAL: Check if email already exists in customer_profiles
+            const customerCheck = await checkCustomerExists(email);
+            
+            if (customerCheck.exists) {
+                // Email already registered as a customer
+                setError('This email is already registered. Please login instead.');
+                setInfoMessage('You already have an account. Redirecting to login...');
+                
+                // Redirect to login after 2 seconds
+                setTimeout(() => {
+                    router.push('/login');
+                }, 2000);
+                
+                setLoading(false);
+                return;
+            }
+
+            // Email doesn't exist in customer_profiles, proceed with signup
             await signUpWithPassword(email, password);
             router.push('/onboarding/name');
         } catch (err: any) {
-            setError(err.message || 'Failed to create account');
+            // Handle Supabase auth errors
+            if (err.message?.includes('already registered') || err.message?.includes('already exists')) {
+                // This means the email exists in auth.users (could be a vendor)
+                setError('This email is already registered as a vendor. Please login to access the user platform.');
+                setInfoMessage('Redirecting to login...');
+                
+                setTimeout(() => {
+                    router.push('/login');
+                }, 2000);
+            } else {
+                setError(err.message || 'Failed to create account. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -105,12 +193,14 @@ export default function SignupScreen() {
                     </div>
 
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-sm text-red-600">{error}</p>
-                        </div>
+                        <FormError message={error} />
                     )}
 
-                    <form onSubmit={handleEmailSignup} className="space-y-8">
+                    {infoMessage && (
+                        <InfoMessage message={infoMessage} variant="info" />
+                    )}
+
+                    <form onSubmit={handleEmailSignup} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-4" htmlFor="email">
                                 Email Address
@@ -122,17 +212,28 @@ export default function SignupScreen() {
                                     </span>
                                 </div>
                                 <input
-                                    className="block w-full pl-10 pr-4 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    className={`block w-full pl-10 pr-4 py-3.5 border rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+                                        emailError
+                                            ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
+                                            : 'border-gray-200 focus:ring-[#8B0000]/20 focus:border-[#8B0000]'
+                                    }`}
                                     id="email"
                                     name="email"
                                     placeholder="Enter your email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
+                                    onBlur={() => setEmailTouched(true)}
                                     required
                                     disabled={loading}
                                 />
                             </div>
+                            {emailError && emailTouched && (
+                                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-xs">error</span>
+                                    {emailError}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -146,13 +247,18 @@ export default function SignupScreen() {
                                     </span>
                                 </div>
                                 <input
-                                    className="block w-full pl-10 pr-12 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    className={`block w-full pl-10 pr-12 py-3.5 border rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+                                        !passwordValidation.isValid && passwordTouched
+                                            ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
+                                            : 'border-gray-200 focus:ring-[#8B0000]/20 focus:border-[#8B0000]'
+                                    }`}
                                     id="password"
                                     name="password"
-                                    placeholder="Create a password (min 6 characters)"
+                                    placeholder="Create a password"
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    onBlur={() => setPasswordTouched(true)}
                                     required
                                     disabled={loading}
                                 />
@@ -166,6 +272,9 @@ export default function SignupScreen() {
                                     </span>
                                 </button>
                             </div>
+                            {password && (
+                                <ValidationHint validation={passwordValidation} />
+                            )}
                         </div>
 
                         <div>
@@ -179,13 +288,18 @@ export default function SignupScreen() {
                                     </span>
                                 </div>
                                 <input
-                                    className="block w-full pl-10 pr-12 py-3.5 border border-gray-200 rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8B0000]/20 focus:border-[#8B0000] transition-all duration-200 shadow-sm"
+                                    className={`block w-full pl-10 pr-12 py-3.5 border rounded-lg bg-[#F3F4F6] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all duration-200 shadow-sm ${
+                                        confirmPasswordError && confirmPasswordTouched
+                                            ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
+                                            : 'border-gray-200 focus:ring-[#8B0000]/20 focus:border-[#8B0000]'
+                                    }`}
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     placeholder="Confirm your password"
                                     type={showConfirmPassword ? 'text' : 'password'}
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
+                                    onBlur={() => setConfirmPasswordTouched(true)}
                                     required
                                     disabled={loading}
                                 />
@@ -199,6 +313,12 @@ export default function SignupScreen() {
                                     </span>
                                 </button>
                             </div>
+                            {confirmPasswordError && confirmPasswordTouched && (
+                                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1">
+                                    <span className="material-symbols-outlined text-xs">error</span>
+                                    {confirmPasswordError}
+                                </p>
+                            )}
                         </div>
 
                         <div className="pt-2">

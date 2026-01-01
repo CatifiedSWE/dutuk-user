@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { getCurrentUser } from '@/lib/auth/customer-auth';
+import { getCurrentUser, isVendor } from '@/lib/auth/customer-auth';
 
 export interface BookingRequestData {
+  vendor_id?: string; // Vendor user_id to prevent self-booking
   company_name: string;
   event_type: string;
   description: string;
@@ -32,10 +33,16 @@ export function useBookingRequest() {
         throw new Error('You must be logged in to send a booking request');
       }
       
+      // CRITICAL: Prevent vendors from booking their own services
+      if (requestData.vendor_id && user.id === requestData.vendor_id) {
+        throw new Error('You cannot book your own services. Please use a different account to book this vendor.');
+      }
+      
       const { data, error: insertError } = await supabase
         .from('requests')
         .insert({
           customer_id: user.id,
+          vendor_id: requestData.vendor_id, // Add vendor_id if provided
           customer_name: requestData.customer_name,
           customer_email: user.email,
           customer_phone: requestData.customer_phone,

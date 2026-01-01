@@ -382,6 +382,9 @@ const WHATSAPP_PATTERN = /whatsapp|wa\.me|watsapp/gi;
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
 | 2025-01-XX | Phase 0 | Created initial checklist | Main Agent |
+| 2025-01-XX | Phase 1 | Created conversations and messages tables | Main Agent |
+| 2025-01-XX | Phase 1 | Created RLS policies for chat security | Main Agent |
+| 2025-01-XX | Phase 1 | Added helper functions and triggers | Main Agent |
 
 ---
 

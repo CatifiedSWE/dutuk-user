@@ -46,11 +46,12 @@ export async function signUpWithPassword(email: string, password: string) {
  */
 export async function signUpWithOTP(email: string) {
   const supabase = createClient();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: 'http://localhost:3000/auth/callback',
+      emailRedirectTo: `${baseUrl}/auth/callback`,
       data: {
         role: 'customer'
       }
@@ -81,11 +82,12 @@ export async function signInWithPassword(email: string, password: string) {
  */
 export async function signInWithOTP(email: string) {
   const supabase = createClient();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   const { data, error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: 'http://localhost:3000/auth/callback',
+      emailRedirectTo: `${baseUrl}/auth/callback`,
     }
   });
   
@@ -133,11 +135,12 @@ export async function verifyOTP(email: string, token: string) {
  */
 export async function signInWithGoogle() {
   const supabase = createClient();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: 'http://localhost:3000/auth/callback',
+      redirectTo: `${baseUrl}/auth/callback`,
       queryParams: {
         access_type: 'offline',
         prompt: 'consent',
@@ -154,9 +157,10 @@ export async function signInWithGoogle() {
  */
 export async function sendPasswordResetEmail(email: string) {
   const supabase = createClient();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
   
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'http://localhost:3000/auth/callback',
+    redirectTo: `${baseUrl}/auth/callback?next=/reset-password`,
   });
   
   if (error) throw error;

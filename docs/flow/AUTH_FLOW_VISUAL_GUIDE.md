@@ -359,5 +359,63 @@ breaking the entire site. RLS policies provide the final security layer.
 
 ---
 
+## OAuth Callback Handler
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    OAUTH CALLBACK FLOW (/auth/callback)                      │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+User clicks "Sign in with Google" or receives OTP/Password Reset email
+                    │
+                    ├─→ Redirected to OAuth provider (Google)
+                    │
+                    ├─→ User authorizes
+                    │
+                    └─→ Redirected back to /auth/callback?code=xxx
+                              │
+                    ┌─────────▼─────────┐
+                    │ Extract auth code │
+                    └─────────┬─────────┘
+                              │
+                    ┌─────────▼──────────┐
+                    │ Exchange code for  │
+                    │ session (Supabase) │
+                    └─────────┬──────────┘
+                              │
+                    ┌─────────▼─────────┐
+                    │ Check if customer │
+                    │ profile exists    │
+                    └─────────┬─────────┘
+                              │
+                      ┌───────┴────────┐
+                     No               Yes
+                      │                │
+              ┌───────▼────────┐      │
+              │ Create profile │      │
+              │ in DB          │      │
+              └───────┬────────┘      │
+                      │               │
+                      └───────┬───────┘
+                              │
+                    ┌─────────▼──────────┐
+                    │ Check onboarding   │
+                    │ complete?          │
+                    └─────────┬──────────┘
+                              │
+                      ┌───────┴────────┐
+                  Complete         Incomplete
+                      │                │
+              ┌───────▼────────┐ ┌────▼──────────────┐
+              │ Redirect to    │ │ Redirect to       │
+              │ /home          │ │ /onboarding/name  │
+              └────────────────┘ └───────────────────┘
+
+Handles: Google OAuth, OTP verification, Password reset flows
+```
+
+---
+
 **Implementation Complete:** January 2025  
+**Last Updated:** January 2025 - Added OAuth callback handler  
 **Status:** All routing guards active and functional ✅

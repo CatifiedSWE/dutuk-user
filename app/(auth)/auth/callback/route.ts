@@ -17,6 +17,9 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
   const next = requestUrl.searchParams.get('next') || '/home';
+  
+  // Use environment variable for base URL to avoid 0.0.0.0 issues
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 
   if (code) {
     const cookieStore = await cookies();
@@ -50,7 +53,7 @@ export async function GET(request: NextRequest) {
       console.error('Error exchanging code for session:', error);
       // Redirect to login with error
       return NextResponse.redirect(
-        new URL(`/login?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
+        `${baseUrl}/login?error=${encodeURIComponent(error.message)}`
       );
     }
 
@@ -77,7 +80,7 @@ export async function GET(request: NextRequest) {
         }
 
         // New user - redirect to onboarding
-        return NextResponse.redirect(new URL('/onboarding/name', requestUrl.origin));
+        return NextResponse.redirect(`${baseUrl}/onboarding/name`);
       }
 
       // Check if onboarding is complete
@@ -85,14 +88,14 @@ export async function GET(request: NextRequest) {
 
       if (onboardingComplete) {
         // Redirect to home or the 'next' parameter
-        return NextResponse.redirect(new URL(next, requestUrl.origin));
+        return NextResponse.redirect(`${baseUrl}${next}`);
       } else {
         // Redirect to onboarding
-        return NextResponse.redirect(new URL('/onboarding/name', requestUrl.origin));
+        return NextResponse.redirect(`${baseUrl}/onboarding/name`);
       }
     }
   }
 
   // If no code or something went wrong, redirect to home
-  return NextResponse.redirect(new URL('/home', requestUrl.origin));
+  return NextResponse.redirect(`${baseUrl}/home`);
 }

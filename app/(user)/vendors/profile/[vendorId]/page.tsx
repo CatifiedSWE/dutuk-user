@@ -78,15 +78,21 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
     id: vendor.id,
     name: vendor.company,
     username: `@${vendor.company.toLowerCase().replace(/\s+/g, '')}`,
-    rating: vendor.avg_rating || 4.5,
-    totalReviews: vendor.total_reviews || 0,
-    location: vendor.service_area || 'Chennai',
-    genres: vendor.subcategories || [vendor.category || 'Event Services'],
-    joinedYear: new Date(vendor.created_at).getFullYear(),
-    about: vendor.description || 'Professional event services provider',
+    email: 'contact@vendor.com', // Not in database - placeholder
+    phone: '+91-0000000000', // Not in database - placeholder
+    description: vendor.description || 'Professional event services provider',
+    logo: vendor.logo_url || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=300&h=300&fit=crop&q=75',
     coverImage: vendor.logo_url || 'https://images.unsplash.com/photo-1519167758481-83f29da8ae8d?w=1200&h=400&fit=crop&q=75',
     profileImage: vendor.logo_url || 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=300&h=300&fit=crop&q=75',
-    online: vendor.is_active || false,
+    rating: vendor.avg_rating || 4.5,
+    totalEvents: vendor.years_in_business ? vendor.years_in_business * 10 : 0, // Estimate based on years in business
+    reviewCount: vendor.total_reviews || 0,
+    verified: !!vendor.verified_at, // Convert verified_at to boolean
+    specialties: vendor.subcategories || [vendor.category || 'Event Services'],
+    musicGenres: vendor.subcategories || [],
+    location: vendor.service_area || 'Chennai',
+    joinedDate: vendor.created_at || new Date().toISOString(),
+    joinedYear: new Date(vendor.created_at).getFullYear().toString(),
     portfolio: {
       photos: [],
       videos: [],
@@ -96,7 +102,8 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
     socialLinks: {
       facebook: '',
       instagram: ''
-    }
+    },
+    isOnline: vendor.is_active || false
   };
 
   return (

@@ -2,15 +2,15 @@
 
 import React, { useRef, useEffect } from 'react';
 import { Phone, Video, MoreVertical, Download, ArrowLeft } from 'lucide-react';
-import { Conversation, Message } from '@/demo/chatData';
 
 interface ChatWindowProps {
-  conversation: Conversation | null;
-  messages: Message[];
+  conversation: any;
+  messages: any[];
   onMobileBack?: () => void;
+  loading?: boolean;
 }
 
-export default function ChatWindow({ conversation, messages, onMobileBack }: ChatWindowProps) {
+export default function ChatWindow({ conversation, messages, onMobileBack, loading = false }: ChatWindowProps) {
   // Ref for auto-scrolling to bottom
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);

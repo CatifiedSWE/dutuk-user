@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react';
 import { Search, Edit } from 'lucide-react';
-import { Conversation } from '@/demo/chatData';
 
 interface ChatSidebarProps {
-  conversations: Conversation[];
+  conversations: any[];
   activeConversationId?: string;
   onConversationSelect?: (id: string) => void;
   onAddChat?: () => void;

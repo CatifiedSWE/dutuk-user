@@ -287,6 +287,12 @@ frontend:
         - working: true
           agent: "main"
           comment: "Implemented complete mobile responsive navigation with dual navigation system: 1) Top Navigation - Profile icon (left), App logo (center), Notifications icon with badge (right). 2) Bottom Navigation - Home, Explore, Chat with active states. 3) Profile Menu - Slides up from bottom, auth-aware (shows user info when logged in, Login/Sign Up when logged out). 4) MainLayout wrapper - Manages desktop/mobile navigation display. 5) Updated all pages (Home, Explore, Chat, Vendor Profile, Event Details, Profile). 6) Responsive across all screen sizes (mobile 375px, tablet 768px, desktop 1920px+). Uses existing color scheme, smooth animations, touch-friendly spacing."
+        - working: true
+          agent: "main"
+          comment: "MOBILE NAVBAR IMPROVEMENTS - Enhanced mobile navigation based on design reference: 1) Top Bar - Reorganized layout with Logo on LEFT, Notification bell and Profile icon grouped on RIGHT. Logo color changed to maroon (#7C2A2A). Profile icon has ring effect when authenticated. 2) Bottom Navigation - Changed active state from maroon BACKGROUND to maroon ICON COLOR (#7C2A2A). Active icons now have strokeWidth 2.5, inactive icons are gray-400. No background color on active state for cleaner design. 3) Profile Popup - Complete UI overhaul with gradient card (from-[#7C2A2A] to-[#4F0000]) for user info, glassmorphism effects on avatar (bg-white/20 backdrop-blur-sm), enhanced backdrop with blur, icon containers for menu items with rounded backgrounds, ChevronRight navigation indicators, improved animations with opacity transitions, active scale effects on buttons, better spacing and typography. All changes maintain app's design system with smooth transitions and mobile-optimized touch targets."
+        - working: true
+          agent: "main"
+          comment: "PROFILE POPUP FIXES - Fixed two critical issues: 1) Changed welcome text from 'Welcome to EventPlanner!' to 'Welcome to Dutuk!' for correct branding. 2) Increased bottom padding from pb-8 to pb-16 to ensure Login/Sign Up button is fully visible above bottom navigation bar. Added safe-area-inset-bottom support for devices with home indicators. Created comprehensive documentation at /app/docs/summary/MOBILE_DUAL_NAVIGATION.md explaining the dual navigation architecture, components, design system, and implementation details."
 
 
 backend:

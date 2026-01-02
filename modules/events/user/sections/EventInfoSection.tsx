@@ -1,6 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { AuthGateModal } from '@/components/modals/AuthGateModal';
+import { BookingConfirmationModal } from '@/components/modals/BookingConfirmationModal';
 
 interface EventInfoSectionProps {
   title: string;
@@ -10,6 +13,22 @@ interface EventInfoSectionProps {
 }
 
 export default function EventInfoSection({ title, subtitle, price, priceNote }: EventInfoSectionProps) {
+  const { isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [isBooked, setIsBooked] = useState(false);
+
+  const handleCheckAvailability = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowBookingModal(true);
+    }
+  };
+
+  const handleBookingComplete = () => {
+    setIsBooked(true);
+  };
   return (
     <div className="bg-white rounded-[32px] shadow-lg shadow-[#4F0000]/5 p-6 md:p-10 border border-white/50">
       <div className="flex flex-col lg:flex-row justify-between lg:items-center gap-8">
@@ -25,9 +44,12 @@ export default function EventInfoSection({ title, subtitle, price, priceNote }: 
           </div>
           
           {/* CTA Button */}
-          <button className="bg-[#7C2A2A] hover:bg-[#5A1F1F] text-white px-8 py-3.5 rounded-xl font-semibold flex items-center gap-3 transition-all shadow-lg shadow-[#7C2A2A]/20 active:scale-95 w-full md:w-auto justify-center md:justify-start">
+          <button 
+            onClick={handleCheckAvailability}
+            className="bg-[#7C2A2A] hover:bg-[#5A1F1F] text-white px-8 py-3.5 rounded-xl font-semibold flex items-center gap-3 transition-all shadow-lg shadow-[#7C2A2A]/20 active:scale-95 w-full md:w-auto justify-center md:justify-start"
+          >
             <span className="material-symbols-outlined">calendar_month</span>
-            Check availability
+            Book Now
           </button>
         </div>
         
@@ -41,6 +63,15 @@ export default function EventInfoSection({ title, subtitle, price, priceNote }: 
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <AuthGateModal open={showAuthModal} onOpenChange={setShowAuthModal} />
+      <BookingConfirmationModal 
+        open={showBookingModal} 
+        onOpenChange={setShowBookingModal}
+        onBookingComplete={handleBookingComplete}
+        eventTitle={title}
+      />
     </div>
   );
 }

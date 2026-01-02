@@ -1,15 +1,34 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Vendor } from '@/domain/vendor';
 import { Calendar, MapPin, Music, Star, MessageCircle, Share2 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { AuthGateModal } from '@/components/modals/AuthGateModal';
+import { BookingConfirmationModal } from '@/components/modals/BookingConfirmationModal';
 
 interface ProfileHeaderSectionProps {
   vendor: Vendor;
 }
 
 export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
+  const { isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [isBooked, setIsBooked] = useState(false);
+
+  const handleBookNow = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowBookingModal(true);
+    }
+  };
+
+  const handleBookingComplete = () => {
+    setIsBooked(true);
+  };
   return (
     <div className="relative group">
       {/* Cover Image */}
@@ -89,14 +108,19 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
 
               {/* Action Buttons */}
               <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                <button className="group flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover shadow-lg shadow-primary/25 transition-all active:scale-95">
+                <button 
+                  onClick={handleBookNow}
+                  className="group flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover shadow-lg shadow-primary/25 transition-all active:scale-95"
+                >
                   <Calendar className="w-5 h-5" />
                   Book Now
                 </button>
-                <button className="group flex items-center justify-center gap-2 px-8 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:border-primary hover:text-primary hover:bg-red-50/50 transition-all active:scale-95">
-                  <MessageCircle className="w-5 h-5" />
-                  Message
-                </button>
+                {isBooked && (
+                  <button className="group flex items-center justify-center gap-2 px-8 py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:border-primary hover:text-primary hover:bg-red-50/50 transition-all active:scale-95">
+                    <MessageCircle className="w-5 h-5" />
+                    Message
+                  </button>
+                )}
                 <button className="p-3 rounded-xl border border-gray-200 text-gray-500 hover:text-primary hover:border-primary transition-colors flex items-center justify-center">
                   <Share2 className="w-5 h-5" />
                 </button>
@@ -105,6 +129,15 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <AuthGateModal open={showAuthModal} onOpenChange={setShowAuthModal} />
+      <BookingConfirmationModal 
+        open={showBookingModal} 
+        onOpenChange={setShowBookingModal}
+        onBookingComplete={handleBookingComplete}
+        vendorName={vendor.name}
+      />
     </div>
   );
 }

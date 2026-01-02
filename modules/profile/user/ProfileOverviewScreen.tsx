@@ -213,9 +213,9 @@ export default function ProfileOverviewScreen() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between -mt-16 mb-6">
               <div className="flex flex-col md:flex-row md:items-end gap-4">
                 <div className="relative w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden bg-gray-100 group">
-                  {profile.profile_photo_url ? (
+                  {profile.avatar_url ? (
                     <Image
-                      src={profile.profile_photo_url}
+                      src={profile.avatar_url}
                       alt={profile.full_name || 'Profile'}
                       fill
                       className="object-cover"

@@ -206,6 +206,20 @@ body {
   animation-fill-mode: both;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
 /* Reduce animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
 

@@ -16,7 +16,7 @@ interface CustomerProfile {
   state: string | null;
   postal_code: string | null;
   country: string | null;
-  profile_photo_url: string | null;
+  avatar_url: string | null;
   created_at: string;
 }
 

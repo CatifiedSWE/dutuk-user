@@ -107,9 +107,9 @@ export default function ProfileOverviewScreen() {
       if (!user) throw new Error('Not authenticated');
 
       // Delete old photo if exists
-      if (profile?.profile_photo_url) {
+      if (profile?.avatar_url) {
         try {
-          const oldPath = profile.profile_photo_url.split('/customer-profile-images/')[1];
+          const oldPath = profile.avatar_url.split('/customer-profile-images/')[1];
           if (oldPath) {
             await supabase.storage
               .from('customer-profile-images')

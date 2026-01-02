@@ -10,10 +10,12 @@
 */
 
 :root {
-  --background: #F9FAFB;
-  --foreground: #111827;
-  --primary: #7C2A2A;
-  --secondary: #FFC13C;
+  --background: 210 20% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 0 67% 32%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 41 100% 62%;
+  --secondary-foreground: 0 67% 32%;
   --text-dark: #270100;
   --text-light: #FFFFFF;
 

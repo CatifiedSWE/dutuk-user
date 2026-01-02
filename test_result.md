@@ -297,7 +297,7 @@ frontend:
   - task: "Authentication Gate for Event Booking"
     implemented: true
     working: true
-    file: "/app/components/modals/AuthGateModal.tsx, /app/components/modals/BookingConfirmationModal.tsx, /app/modules/vendors/user/sections/ProfileHeaderSection.tsx, /app/modules/events/user/sections/EventInfoSection.tsx"
+    file: "/app/components/modals/AuthGateModal.tsx, /app/components/modals/BookingConfirmationModal.tsx, /app/modules/vendors/user/sections/ProfileHeaderSection.tsx, /app/modules/events/user/sections/EventInfoSection.tsx, /app/app/globals.css"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
@@ -308,6 +308,9 @@ frontend:
         - working: true
           agent: "main"
           comment: "DEPLOYMENT FIX - Fixed TypeScript build error in BookingConfirmationModal.tsx. The Calendar component was missing required 'formatters' and 'components' props causing Vercel deployment to fail. Added empty objects for both props (formatters={{}} and components={{}}) which satisfies TypeScript while using default implementations from the Calendar component. Build now passes successfully (npm run build completed with no errors). Project is now deployment-ready for Vercel."
+        - working: true
+          agent: "main"
+          comment: "BUTTON VISIBILITY FIX - Fixed 'Book Now' button visibility issue in VendorProfileScreen. Root cause: CSS variable --primary was defined as hex color #7C2A2A but Tailwind config expected HSL format for hsl(var(--primary)). This caused bg-primary class to fail, rendering button invisible (white text on white background) until hover. Solution: Updated globals.css to use HSL format for all theme colors: --primary: 0 67% 32% (maroon), --primary-foreground: 0 0% 100% (white), --secondary: 41 100% 62% (gold), --secondary-foreground: 0 67% 32% (maroon), --background: 210 20% 98%, --foreground: 222.2 84% 4.9%. Book Now buttons now properly visible on both Vendor Profile and Event Detail pages. Build passes successfully."
 
   - task: "Deployment Readiness"
     implemented: true

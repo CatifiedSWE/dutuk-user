@@ -1,7 +1,5 @@
 import { notFound } from 'next/navigation';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import GradientBackground from '@/components/GradientBackground';
+import MainLayout from '@/components/layouts/MainLayout';
 import { EventDetailScreen } from '@/modules/events/user';
 import { getEventById } from '@/demo/eventsData';
 
@@ -21,13 +19,9 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
   }
 
   return (
-    <GradientBackground>
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Header variant="solid" />
-      </div>
+    <MainLayout variant="solid">
       <EventDetailScreen event={event} />
-      <Footer />
-    </GradientBackground>
+    </MainLayout>
   );
 }
 

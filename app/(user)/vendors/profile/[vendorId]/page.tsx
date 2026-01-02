@@ -2,9 +2,7 @@
 
 import { use } from 'react';
 import { notFound } from 'next/navigation';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import GradientBackground from '@/components/GradientBackground';
+import MainLayout from '@/components/layouts/MainLayout';
 import { VendorProfileScreen } from '@/modules/vendors/user';
 import { useVendor } from '@/hooks/useVendors';
 import { ErrorMessage } from '@/components/ErrorMessage';
@@ -25,10 +23,7 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
   // Show loading state
   if (loading) {
     return (
-      <GradientBackground>
-        <div className="fixed top-0 left-0 right-0 z-50">
-          <Header variant="solid" />
-        </div>
+      <MainLayout variant="solid">
         <div className="min-h-screen bg-background-light pt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="animate-pulse">
@@ -46,25 +41,20 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
             </div>
           </div>
         </div>
-        <Footer />
-      </GradientBackground>
+      </MainLayout>
     );
   }
   
   // Show error state
   if (error) {
     return (
-      <GradientBackground>
-        <div className="fixed top-0 left-0 right-0 z-50">
-          <Header variant="solid" />
-        </div>
+      <MainLayout variant="solid">
         <div className="min-h-screen bg-background-light pt-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <ErrorMessage message="Failed to load vendor profile. Please try again later." />
           </div>
         </div>
-        <Footer />
-      </GradientBackground>
+      </MainLayout>
     );
   }
 
@@ -107,12 +97,8 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
   };
 
   return (
-    <GradientBackground>
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Header variant="solid" />
-      </div>
+    <MainLayout variant="solid">
       <VendorProfileScreen vendor={vendorData} />
-      <Footer />
-    </GradientBackground>
+    </MainLayout>
   );
 }

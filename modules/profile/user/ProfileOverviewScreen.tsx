@@ -143,7 +143,7 @@ export default function ProfileOverviewScreen() {
         .getPublicUrl(filePath);
 
       // Update profile with photo URL
-      await updateCustomerProfile({ profile_photo_url: publicUrl });
+      await updateCustomerProfile({ avatar_url: publicUrl });
 
       // Refresh profile data
       await fetchProfileData();

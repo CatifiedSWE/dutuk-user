@@ -16,6 +16,22 @@ export function PhotoUploadScreen() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      setError('File size must be less than 5MB');
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      setError('Please upload a valid image file (JPEG, PNG, WebP, or GIF)');
+      return;
+    }
+
+    setError('');
+
     // Show preview
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -46,18 +62,24 @@ export function PhotoUploadScreen() {
 
       // Upload to Supabase Storage
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `profile-photos/${fileName}`;
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `profile-photos/${user.id}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('customer-uploads')
-        .upload(filePath, file);
+        .from('customer-profile-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw new Error(uploadError.message || 'Failed to upload photo');
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('customer-uploads')
+        .from('customer-profile-images')
         .getPublicUrl(filePath);
 
       // Update profile with photo URL
@@ -65,7 +87,8 @@ export function PhotoUploadScreen() {
 
       router.push('/home');
     } catch (err: any) {
-      setError(err.message || 'Failed to upload photo');
+      console.error('Error uploading photo:', err);
+      setError(err.message || 'Failed to upload photo. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -165,13 +188,13 @@ export function PhotoUploadScreen() {
                       <p className="mb-2 text-sm text-gray-500 text-center">
                         <span className="font-semibold text-[#8B0000]">Click to upload</span> or drag and drop
                       </p>
-                      <p className="text-xs text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x800px)</p>
+                      <p className="text-xs text-gray-400">PNG, JPG, WebP or GIF (MAX. 5MB)</p>
                     </div>
                     <input 
                       className="hidden" 
                       id="dropzone-file" 
                       type="file" 
-                      accept="image/*"
+                      accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                       onChange={handleFileChange}
                       disabled={uploading}
                     />

@@ -242,8 +242,8 @@ SELECT
     cp.avatar_url as customer_avatar,
     cu.email as customer_email,
     
-    -- Vendor details (from user_profiles and companies)
-    up.full_name as vendor_name,
+    -- Vendor details (from companies table)
+    comp.company as vendor_name,
     comp.logo_url as vendor_avatar,
     comp.company as vendor_company,
     vu.email as vendor_email
@@ -251,7 +251,6 @@ SELECT
 FROM public.conversations c
 LEFT JOIN public.customer_profiles cp ON c.customer_id = cp.user_id
 LEFT JOIN auth.users cu ON c.customer_id = cu.id
-LEFT JOIN public.user_profiles up ON c.vendor_id = up.user_id
 LEFT JOIN public.companies comp ON c.vendor_id = comp.user_id
 LEFT JOIN auth.users vu ON c.vendor_id = vu.id;
 

@@ -83,7 +83,7 @@ export function PhotoUploadScreen() {
         .getPublicUrl(filePath);
 
       // Update profile with photo URL
-      await updateCustomerProfile({ profile_photo_url: publicUrl });
+      await updateCustomerProfile({ avatar_url: publicUrl });
 
       router.push('/home');
     } catch (err: any) {

@@ -227,7 +227,7 @@ export async function updateCustomerProfile(updates: Partial<{
   state: string;
   postal_code: string;
   country: string;
-  profile_photo_url: string;
+  avatar_url: string;
 }>) {
   const supabase = createClient();
   const user = await getCurrentUser();

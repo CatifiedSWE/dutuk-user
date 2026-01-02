@@ -102,6 +102,8 @@ export function BookingConfirmationModal({
                 onSelect={setDate}
                 defaultMonth={new Date(2025, 7, 1)}
                 className="w-full"
+                formatters={{}}
+                components={{}}
                 classNames={{
                   months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
                   month: 'space-y-4',

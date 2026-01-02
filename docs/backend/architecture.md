@@ -8,7 +8,7 @@ Dutuk uses **Supabase (PostgreSQL)** as the backend database with comprehensive 
 
 ### Core Tables
 
-The application uses **14 tables** supporting both customer and vendor features:
+The application uses **16 tables** supporting both customer and vendor features:
 
 #### 1. **user_profiles**
 Base user table for authentication and role management.
@@ -243,6 +243,53 @@ Vendor availability calendar.
 - created_at: TIMESTAMP
 ```
 
+#### 15. **conversations**
+Chat conversations between customers and vendors.
+```sql
+- id: UUID (Primary Key)
+- customer_id: UUID (FK to auth.users) - Customer participant
+- vendor_id: UUID (FK to auth.users) - Vendor participant
+- terms_accepted_by_customer: BOOLEAN (default: false) - T&C acceptance flag
+- terms_accepted_at: TIMESTAMP - When T&C was accepted
+- payment_completed: BOOLEAN (default: false) - Payment gate for contact sharing
+- payment_completed_at: TIMESTAMP - When payment was completed
+- booking_id: UUID (FK to events, nullable) - Links to booking/event
+- last_message_at: TIMESTAMP (default: NOW())
+- last_message_preview: TEXT - Preview of last message
+- created_at: TIMESTAMP
+- updated_at: TIMESTAMP
+- UNIQUE(customer_id, vendor_id) - One conversation per customer-vendor pair
+```
+- **Purpose**: Tracks chat metadata and enforces business rules (T&C, contact blocking)
+- **Business Rules**: 
+  - Users must accept T&C before first message
+  - Contact info blocked until payment_completed = true
+  - One conversation per customer-vendor pair
+- **Auto-Updated**: last_message_at and last_message_preview via trigger
+
+#### 16. **messages**
+Individual messages within conversations.
+```sql
+- id: UUID (Primary Key)
+- conversation_id: UUID (FK to conversations) - Parent conversation
+- sender_id: UUID (FK to auth.users) - Message sender
+- receiver_id: UUID (FK to auth.users) - Message recipient
+- message_text: TEXT (NOT NULL) - Message content
+- has_attachment: BOOLEAN (default: false) - Attachment flag
+- attachment_url: TEXT - Supabase Storage URL
+- attachment_name: TEXT - Original filename
+- attachment_size: TEXT - Human-readable size
+- attachment_type: TEXT - MIME type or extension
+- is_read: BOOLEAN (default: false) - Read status
+- read_at: TIMESTAMP - When message was read
+- created_at: TIMESTAMP
+- CHECK: Must have either message_text OR attachment
+```
+- **Purpose**: Stores actual message content with attachment support
+- **Real-time**: Enabled for instant message delivery
+- **Read Tracking**: is_read and read_at for message status
+- **Validation**: Messages must have text or attachment (enforced by CHECK constraint)
+
 ## Database Features
 
 ### Row Level Security (RLS)
@@ -250,7 +297,15 @@ All tables have comprehensive RLS policies:
 - **Public Read**: Categories, active vendor_services, events
 - **User-Scoped**: customer_profiles, favorites, notifications (users can only access their own)
 - **Vendor-Scoped**: companies, vendor_services (vendors manage their own)
+- **Chat-Scoped**: conversations, messages (participants can only access their own conversations)
 - **Anonymous Access**: Browse services and events without authentication
+
+**Chat-Specific RLS Policies:**
+- Users can view/update conversations they participate in (as customer or vendor)
+- Users can view/send messages only in their own conversations
+- Users can mark received messages as read
+- Users cannot delete conversations or messages (history preservation)
+- Real-time enabled for instant message delivery
 
 ### Triggers & Functions
 
@@ -258,6 +313,7 @@ All tables have comprehensive RLS policies:
 1. `handle_new_user()` - Creates user_profile with 'customer' role on signup
 2. `update_company_rating()` - Recalculates avg_rating when reviews change
 3. `handle_updated_at()` - Auto-updates updated_at timestamps
+4. `update_conversation_on_message()` - Updates conversation metadata when new message is sent
 
 **Helper Functions:**
 1. `is_vendor(user_id)` - Check if user is a vendor
@@ -267,6 +323,12 @@ All tables have comprehensive RLS policies:
 5. `mark_notification_read()` - Mark single notification as read
 6. `mark_all_notifications_read()` - Mark all user notifications as read
 7. `search_vendors()` - Full-text search for vendors
+8. `get_unread_count(user_id)` - Get unread message counts per conversation
+9. `mark_conversation_as_read(conversation_id, user_id)` - Mark all messages as read
+10. `is_conversation_participant(conversation_id, user_id)` - Check conversation access
+
+**Database Views:**
+1. `conversations_with_users` - Conversations with full participant details (customer name, vendor name, avatars, emails)
 
 ### Indexes
 Optimized for common queries:
@@ -274,6 +336,7 @@ Optimized for common queries:
 - Full-text search on vendor_services (service name + description)
 - Category-based filtering (vendor_services, companies)
 - User-scoped queries (customer_profiles, favorites, notifications)
+- Chat queries (conversations by customer/vendor, messages by conversation, unread messages)
 
 ## API Integration
 
@@ -359,6 +422,36 @@ useFavorites() - Manage favorites
   • Returns: { favorites, toggleFavorite, isFavorite, loading, error }
 ```
 
+#### Chat Hooks
+
+**Location**: `/hooks/useConversations.ts`
+```typescript
+useConversations() - Fetch user's conversations
+  • Real-time updates enabled
+  • Returns: { data, loading, error }
+
+useConversation(id: string) - Get single conversation
+  • Returns: { data, loading, error }
+
+useCreateConversation() - Start new conversation
+  • Returns: { createConversation, loading, error }
+```
+
+**Location**: `/hooks/useMessages.ts`
+```typescript
+useMessages(conversationId: string) - Fetch messages
+  • Real-time updates enabled
+  • Returns: { data, loading, error }
+
+useSendMessage() - Send new message
+  • Validates contact info before sending
+  • Handles T&C enforcement
+  • Returns: { sendMessage, loading, error }
+
+useMarkAsRead() - Mark messages as read
+  • Returns: { markAsRead, loading, error }
+```
+
 ### Supabase RPC Functions
 
 The following server-side functions can be called from the client:
@@ -382,6 +475,23 @@ supabase.rpc('mark_all_notifications_read')
 supabase.rpc('search_vendors', {
   search_query: 'text',
   category_filter: 'category' // optional
+})
+
+// Get unread message count
+supabase.rpc('get_unread_count', {
+  user_id_param: 'uuid'
+})
+
+// Mark conversation as read
+supabase.rpc('mark_conversation_as_read', {
+  conversation_id_param: 'uuid',
+  user_id_param: 'uuid'
+})
+
+// Check if user is conversation participant
+supabase.rpc('is_conversation_participant', {
+  conversation_id_param: 'uuid',
+  user_id_param: 'uuid'
 })
 ```
 
@@ -432,6 +542,8 @@ Database schema is managed through SQL migrations located in `/sql-migrations/`:
 2. **06_create_rls_for_new_tables.sql** - RLS policies and helper functions
 3. **07_seed_categories.sql** - Initial category data
 4. **08_enable_events_rls.sql** - Public read access for events
+5. **09_create_chat_tables.sql** - Chat conversations and messages tables
+6. **10_create_rls_for_chat_tables.sql** - Chat RLS policies and helper functions
 
 ## Security Features
 
@@ -479,6 +591,8 @@ Redirects to /home (onboarding complete)
 | `payments` | Payment records | No | Own only |
 | `earnings` | Vendor earnings | No | Vendors: own |
 | `dates` | Vendor availability | No | Vendors: own |
+| `conversations` | Chat conversations | No | Participants only |
+| `messages` | Chat messages | No | Participants only |
 
 ## Performance Optimization
 

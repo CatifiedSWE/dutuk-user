@@ -78,7 +78,7 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                 id: event.id,
                 type: 'event',
                 name: event.event, // 'event' field is the event name/title in Supabase
-                location: 'Chennai', // Default location
+                location: event.location || 'Chennai', // Use location from DB, fallback to Chennai
                 description: event.description,
                 companyName: event.company_name,
                 dates: event.date, // Array of dates
@@ -86,7 +86,8 @@ export default function ExploreListSection({ selectedFilter, searchQuery }: Expl
                 endDate: event.end_date,
                 price: event.payment > 0 ? `₹ ${event.payment.toLocaleString()}` : 'Contact for pricing',
                 status: event.status,
-                image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop&q=75', // Default event image
+                // Use image_url from database, fallback to default if not available
+                image: event.image_url || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop&q=75',
                 rating: 4.5 // Default rating
             }));
             results.push(...eventItems);

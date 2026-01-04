@@ -17,6 +17,8 @@ export interface EventData {
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   start_date: string | null;
   end_date: string | null;
+  location: string | null; // Event location/venue
+  image_url: string | null; // Event banner image
   created_at: string;
   updated_at: string;
 }

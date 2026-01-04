@@ -102,7 +102,9 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: Copy the exact design from Repo B (https://github.com/Melvinkheturus/dutuk-webapp) to Repo A while maintaining the structure and hierarchy of Repo A. This is a design-only update for the homepage.
+user_problem_statement: |
+  Original: Copy the exact design from Repo B to Repo A while maintaining structure.
+  Current Issue: Fix events functionality on explore page - events showing 404 error when clicked, and event images not fetched properly from database.
 
 frontend:
   - task: "Copy Header design from Repo B"
@@ -512,4 +514,17 @@ agent_communication:
         - working: true
           agent: "main"
           comment: "MOBILE ALIGNMENT & TEXT SIZE FIXES - Updated mobile layout to match reference design exactly. Changes: 1) Hero Section - Changed text alignment from center to LEFT on mobile (md:center on desktop). Greeting 'Good Morning, Name' now left-aligned on mobile. Reduced mobile text size: heading from text-3xl to text-2xl, description from text-sm to text-xs, maintains full size on desktop. Hid 'Welcome Back' badge on mobile (hidden md:inline-flex). Reduced vertical padding and spacing on mobile (py-12, gap-5, gap-3). Search bar now full-width and left-aligned on mobile. 2) Browse Categories - Reduced heading text size on mobile from text-3xl to text-2xl. Reduced card sizes on mobile: images from 128px to 112px (w-28 h-28). Reduced category name text from text-base to text-sm on mobile. Reduced gaps between cards from gap-6 to gap-4 on mobile. All elements maintain larger sizes on desktop. Layout now perfectly matches EventPlanner reference with left-aligned text, compact spacing, and smaller mobile typography while keeping desktop experience unchanged. Files modified: AuthenticatedHeroSection.tsx, BrowseCategoriesSection.tsx."
+
+
+  - task: "Fix Events Functionality - 404 Error and Image Fetching"
+    implemented: true
+    working: true
+    file: "/app/hooks/useEvents.ts, /app/modules/explore/user/sections/ExploreListSection.tsx, /app/app/(user)/events/details/[eventId]/page.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "main"
+          comment: "EVENTS FUNCTIONALITY FIXED - Resolved two critical bugs with events on explore page: 1) 404 ERROR FIX - Root cause: Event details page was using demo data (eventsData.ts) to fetch events by ID, but explore page was showing events from Supabase database. The IDs didn't match, causing 404 errors when clicking events from explore page. Solution: Converted event details page from server component to client component using useEvent hook. Implemented hybrid approach: First tries to fetch event from Supabase by ID, transforms it to EventDetail format with all required fields (title, subtitle, description, coverImage, price, location, dateRange, vendorName, etc.). If not found in Supabase, falls back to demo data for backward compatibility. Added proper loading states with LoadingCard components and error handling with ErrorMessage component. 2) IMAGE FETCHING FIX - Root cause: ExploreListSection.tsx was using hardcoded default image URL for all events instead of fetching from database field. Solution: Updated EventData interface in useEvents.ts to include image_url and location fields that were missing. Updated ExploreListSection.tsx line 90 to use event.image_url from database with fallback to default image if null. Also updated line 81 to use event.location from database with fallback to 'Chennai'. Files modified: /app/hooks/useEvents.ts (added image_url and location fields to EventData interface), /app/modules/explore/user/sections/ExploreListSection.tsx (lines 81, 90 - use database fields instead of hardcoded values), /app/app/(user)/events/details/[eventId]/page.tsx (complete rewrite from server to client component with Supabase integration). All events from Supabase now display correctly with their actual images, locations, and clicking them navigates to working detail pages without 404 errors. Demo events also still work for backward compatibility."
 

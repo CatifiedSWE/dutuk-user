@@ -1,6 +1,10 @@
-export function LoadingCard() {
+interface LoadingCardProps {
+  className?: string;
+}
+
+export function LoadingCard({ className }: LoadingCardProps) {
   return (
-    <div className="flex flex-col gap-5 bg-white p-4 rounded-3xl shadow-lg animate-pulse">
+    <div className={`flex flex-col gap-5 bg-white p-4 rounded-3xl shadow-lg animate-pulse ${className || ''}`}>
       {/* Image Skeleton */}
       <div className="h-60 rounded-2xl bg-gray-200" />
       

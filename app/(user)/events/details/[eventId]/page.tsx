@@ -22,6 +22,12 @@ export default function EventDetailPage() {
   useEffect(() => {
     if (loading) return;
 
+    console.log('Event fetch completed:', { 
+      eventId, 
+      supabaseEvent: supabaseEvent ? 'found' : 'not found', 
+      error: error ? error.message : 'no error' 
+    });
+
     // If found in Supabase, transform it to EventDetail format
     if (supabaseEvent) {
       const transformedEvent: EventDetail = {
@@ -55,11 +61,14 @@ export default function EventDetailPage() {
       setEvent(transformedEvent);
     } 
     // If not in Supabase, try demo data
-    else {
+    else if (!error) {
+      // Only try demo data if there wasn't an error (event just doesn't exist)
       const demoEvent = getEventById(eventId);
       if (demoEvent) {
+        console.log('Using demo event data');
         setEvent(demoEvent);
       } else {
+        console.log('Event not found in Supabase or demo data');
         setNotFoundError(true);
       }
     }
@@ -71,9 +80,9 @@ export default function EventDetailPage() {
       <MainLayout variant="solid">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-24">
           <div className="space-y-8">
-            <LoadingCard height="h-96" />
-            <LoadingCard height="h-64" />
-            <LoadingCard height="h-48" />
+            <LoadingCard className="h-96" />
+            <LoadingCard className="h-64" />
+            <LoadingCard className="h-48" />
           </div>
         </div>
       </MainLayout>

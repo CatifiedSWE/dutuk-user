@@ -98,6 +98,7 @@ export function useEvent(eventId: string) {
     async function fetchEvent() {
       try {
         setLoading(true);
+        setError(null);
         const supabase = createClient();
         
         const { data, error: fetchError } = await supabase
@@ -106,9 +107,18 @@ export function useEvent(eventId: string) {
           .eq('id', eventId)
           .single();
         
-        if (fetchError) throw fetchError;
-        
-        setEvent(data);
+        // Only throw error if it's not a "not found" error
+        if (fetchError) {
+          // PGRST116 is the error code for "no rows returned" from .single()
+          if (fetchError.code === 'PGRST116') {
+            console.log('Event not found in database:', eventId);
+            setEvent(null);
+          } else {
+            throw fetchError;
+          }
+        } else {
+          setEvent(data);
+        }
       } catch (err) {
         setError(err as Error);
         console.error('Error fetching event:', err);

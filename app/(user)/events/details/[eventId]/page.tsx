@@ -17,10 +17,15 @@ export default function EventDetailPage() {
   // Try to fetch from Supabase first
   const { event: supabaseEvent, loading, error } = useEvent(eventId);
   const [event, setEvent] = useState<EventDetail | null>(null);
-  const [notFoundError, setNotFoundError] = useState(false);
+  // Track when we've finished processing all data sources
+  const [dataProcessed, setDataProcessed] = useState(false);
+  const [shouldShow404, setShouldShow404] = useState(false);
 
   useEffect(() => {
-    if (loading) return;
+    // Don't process until Supabase loading is complete
+    if (loading) {
+      return;
+    }
 
     console.log('Event fetch completed:', { 
       eventId, 
@@ -30,6 +35,7 @@ export default function EventDetailPage() {
 
     // If found in Supabase, transform it to EventDetail format
     if (supabaseEvent) {
+      console.log('Transforming Supabase event:', supabaseEvent.event);
       const transformedEvent: EventDetail = {
         id: supabaseEvent.id,
         title: supabaseEvent.event || 'Untitled Event',
@@ -59,23 +65,30 @@ export default function EventDetailPage() {
         reviews: []
       };
       setEvent(transformedEvent);
+      setDataProcessed(true);
     } 
-    // If not in Supabase, try demo data
+    // If not in Supabase, try demo data (only if no fetch error)
     else if (!error) {
-      // Only try demo data if there wasn't an error (event just doesn't exist)
       const demoEvent = getEventById(eventId);
       if (demoEvent) {
-        console.log('Using demo event data');
+        console.log('Using demo event data for:', eventId);
         setEvent(demoEvent);
+        setDataProcessed(true);
       } else {
-        console.log('Event not found in Supabase or demo data');
-        setNotFoundError(true);
+        // Event not found in either Supabase or demo data
+        console.log('Event not found in Supabase or demo data:', eventId);
+        setShouldShow404(true);
+        setDataProcessed(true);
       }
+    } else {
+      // There was a fetch error - mark as processed but don't 404
+      console.log('Fetch error occurred:', error.message);
+      setDataProcessed(true);
     }
   }, [supabaseEvent, loading, error, eventId]);
 
-  // Show loading state
-  if (loading) {
+  // Show loading state while fetching OR while processing data
+  if (loading || (!dataProcessed && !error)) {
     return (
       <MainLayout variant="solid">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-24">
@@ -89,12 +102,12 @@ export default function EventDetailPage() {
     );
   }
 
-  // Show error or not found
-  if (notFoundError || (!loading && !event)) {
+  // Show 404 only after we've confirmed event doesn't exist in any source
+  if (shouldShow404) {
     notFound();
   }
 
-  // Show error message if there's a fetch error
+  // Show error message if there's a fetch error and no event
   if (error && !event) {
     return (
       <MainLayout variant="solid">
@@ -105,9 +118,25 @@ export default function EventDetailPage() {
     );
   }
 
+  // Show event details
+  if (event) {
+    return (
+      <MainLayout variant="solid">
+        <EventDetailScreen event={event} />
+      </MainLayout>
+    );
+  }
+
+  // Fallback loading (should not reach here normally)
   return (
     <MainLayout variant="solid">
-      {event && <EventDetailScreen event={event} />}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pt-24">
+        <div className="space-y-8">
+          <LoadingCard className="h-96" />
+          <LoadingCard className="h-64" />
+          <LoadingCard className="h-48" />
+        </div>
+      </div>
     </MainLayout>
   );
 }

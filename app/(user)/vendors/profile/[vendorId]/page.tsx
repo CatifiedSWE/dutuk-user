@@ -16,7 +16,7 @@ interface VendorProfilePageProps {
 export default function VendorProfilePage({ params }: VendorProfilePageProps) {
   // Unwrap the params promise
   const { vendorId } = use(params);
-  
+
   // Fetch vendor from Supabase
   const { vendor, loading, error } = useVendor(vendorId);
 
@@ -44,7 +44,7 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
       </MainLayout>
     );
   }
-  
+
   // Show error state
   if (error) {
     return (
@@ -66,6 +66,7 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
   // Transform Supabase vendor data to match Vendor interface expected by VendorProfileScreen
   const vendorData = {
     id: vendor.id,
+    userId: vendor.user_id, // Auth user ID for conversation creation
     name: vendor.company,
     username: `@${vendor.company.toLowerCase().replace(/\s+/g, '')}`,
     email: 'contact@vendor.com', // Not in database - placeholder

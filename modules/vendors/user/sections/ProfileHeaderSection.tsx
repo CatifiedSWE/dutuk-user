@@ -108,7 +108,7 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
 
               {/* Action Buttons */}
               <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                <button 
+                <button
                   onClick={handleBookNow}
                   className="group flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover shadow-lg shadow-primary/25 transition-all active:scale-95"
                 >
@@ -132,10 +132,11 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
 
       {/* Modals */}
       <AuthGateModal open={showAuthModal} onOpenChange={setShowAuthModal} />
-      <BookingConfirmationModal 
-        open={showBookingModal} 
+      <BookingConfirmationModal
+        open={showBookingModal}
         onOpenChange={setShowBookingModal}
         onBookingComplete={handleBookingComplete}
+        vendorId={vendor.userId}
         vendorName={vendor.name}
       />
     </div>

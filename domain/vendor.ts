@@ -25,6 +25,7 @@ export interface SocialLinks {
 
 export interface Vendor {
   id: string;
+  userId?: string; // Vendor's auth user ID for conversation creation
   name: string;
   username: string;
   email: string;

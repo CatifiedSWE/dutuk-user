@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ChatSidebar from './sections/ChatSidebar';
 import ChatWindow from './sections/ChatWindow';
 import ChatInput from './sections/ChatInput';
@@ -9,57 +10,94 @@ import TermsConditionsModal from './components/TermsConditionsModal';
 import { useConversations, useAcceptTerms } from '@/hooks/useConversations';
 import { useMessages, useSendMessage } from '@/hooks/useMessages';
 import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function ChatScreen() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
-  
+
+  // Get query parameters from URL (from booking redirect)
+  const conversationIdFromUrl = searchParams.get('conversationId');
+  const vendorIdFromUrl = searchParams.get('vendorId');
+  const bookingDateFromUrl = searchParams.get('bookingDate');
+  const notesFromUrl = searchParams.get('notes');
+
   // Fetch conversations
   const { conversations: rawConversations, loading: conversationsLoading, error: conversationsError, refetch: refetchConversations } = useConversations();
-  
+
   // Active conversation state
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
-  
+
   // Mobile view state
   const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
-  
+
   // Modal states
   const [isAddChatModalOpen, setIsAddChatModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
-  
+
+  // Track if booking context has been sent
+  const [bookingContextSent, setBookingContextSent] = useState(false);
+
   // Hooks for terms and messaging
   const { acceptTerms, loading: acceptingTerms } = useAcceptTerms();
   const { sendMessage, loading: sendingMessage, error: sendError } = useSendMessage();
-  
+
   // Get active conversation details
   const activeConversation = rawConversations.find((c) => c.id === activeConversationId);
-  
+
   // Determine if user is customer or vendor in active conversation
   const isCustomer = activeConversation?.customer_id === user?.id;
   const otherParticipantId = isCustomer ? activeConversation?.vendor_id : activeConversation?.customer_id;
-  
+
   // Fetch messages for active conversation
   const { messages: rawMessages, loading: messagesLoading } = useMessages(
     activeConversationId,
     activeConversation?.payment_completed || false
   );
-  
-  // Set first conversation as active on load
+
+  // Handle conversation selection from URL params (booking redirect)
   useEffect(() => {
-    if (!activeConversationId && rawConversations.length > 0) {
+    if (conversationIdFromUrl && rawConversations.length > 0) {
+      const conversationExists = rawConversations.find(c => c.id === conversationIdFromUrl);
+      if (conversationExists) {
+        setActiveConversationId(conversationIdFromUrl);
+        setIsMobileChatOpen(true);
+
+        // Show welcome toast for booking
+        if (bookingDateFromUrl && !bookingContextSent) {
+          const bookingDate = new Date(bookingDateFromUrl);
+          toast.success(`Booking inquiry started for ${bookingDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+          })}`, {
+            duration: 5000,
+          });
+        }
+
+        // Clear URL params after processing
+        router.replace('/chat', { scroll: false });
+      }
+    }
+  }, [conversationIdFromUrl, rawConversations, bookingDateFromUrl, bookingContextSent, router]);
+
+  // Set first conversation as active on load (if not from URL)
+  useEffect(() => {
+    if (!activeConversationId && !conversationIdFromUrl && rawConversations.length > 0) {
       setActiveConversationId(rawConversations[0].id);
     }
-  }, [rawConversations, activeConversationId]);
-  
+  }, [rawConversations, activeConversationId, conversationIdFromUrl]);
+
   // Transform conversations for sidebar display
   const conversations = useMemo(() => {
     return rawConversations.map((conv) => {
       const isUserCustomer = conv.customer_id === user?.id;
       const otherPartyName = isUserCustomer ? (conv.vendor_name || conv.vendor_company || 'Vendor') : (conv.customer_name || 'Customer');
       const otherPartyAvatar = isUserCustomer ? (conv.vendor_avatar || '') : (conv.customer_avatar || '');
-      
+
       return {
         id: conv.id,
         name: otherPartyName,
@@ -73,7 +111,7 @@ export default function ChatScreen() {
       };
     });
   }, [rawConversations, user, activeConversationId]);
-  
+
   // Transform messages for display
   const messages = useMemo(() => {
     return rawMessages.map((msg) => ({
@@ -87,29 +125,29 @@ export default function ChatScreen() {
       attachmentName: msg.attachment_name || undefined,
     }));
   }, [rawMessages, user]);
-  
+
   // Handle conversation selection
   const handleConversationSelect = useCallback((id: string) => {
     setActiveConversationId(id);
     setIsMobileChatOpen(true);
   }, []);
-  
+
   // Handle back button on mobile
   const handleMobileBack = useCallback(() => {
     setIsMobileChatOpen(false);
   }, []);
-  
+
   // Handle sending a message
   const handleSendMessage = useCallback(async (text: string) => {
     if (!text.trim() || !activeConversationId || !otherParticipantId) return;
-    
+
     // Check if terms need to be accepted
     if (isCustomer && !activeConversation?.terms_accepted_by_customer) {
       setPendingMessage(text);
       setIsTermsModalOpen(true);
       return;
     }
-    
+
     // Send message
     const result = await sendMessage(
       {
@@ -119,21 +157,21 @@ export default function ChatScreen() {
       },
       activeConversation?.payment_completed || false
     );
-    
+
     if (!result.success && result.error) {
       alert(result.error); // Show contact filter error
     }
   }, [activeConversationId, otherParticipantId, isCustomer, activeConversation, sendMessage]);
-  
+
   // Handle T&C acceptance
   const handleAcceptTerms = useCallback(async () => {
     if (!activeConversationId) return;
-    
+
     const success = await acceptTerms(activeConversationId);
-    
+
     if (success) {
       setIsTermsModalOpen(false);
-      
+
       // Send the pending message
       if (pendingMessage && otherParticipantId) {
         await sendMessage(
@@ -146,31 +184,31 @@ export default function ChatScreen() {
         );
         setPendingMessage(null);
       }
-      
+
       // Refetch conversations to update terms status
       refetchConversations();
     }
   }, [activeConversationId, pendingMessage, otherParticipantId, acceptTerms, sendMessage, refetchConversations]);
-  
+
   // Handle T&C decline
   const handleDeclineTerms = useCallback(() => {
     setIsTermsModalOpen(false);
     setPendingMessage(null);
-    
+
     // Optionally redirect to vendor profile
     if (activeConversation) {
       const vendorId = activeConversation.vendor_id;
       // router.push(`/vendors/profile/${vendorId}`);
     }
   }, [activeConversation]);
-  
+
   // Handle adding a new conversation (placeholder)
   const handleAddConversation = useCallback((name: string, avatarUrl: string) => {
     // TODO: Implement conversation creation
     console.log('Create conversation with:', name);
     setIsAddChatModalOpen(false);
   }, []);
-  
+
   // Loading state
   if (conversationsLoading) {
     return (
@@ -182,7 +220,7 @@ export default function ChatScreen() {
       </div>
     );
   }
-  
+
   // Error state
   if (conversationsError) {
     return (
@@ -199,7 +237,7 @@ export default function ChatScreen() {
       </div>
     );
   }
-  
+
   // Empty state
   if (conversations.length === 0) {
     return (
@@ -210,7 +248,7 @@ export default function ChatScreen() {
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-100 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-50 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
         </div>
-        
+
         <main className="relative z-10 flex-1 min-h-0 px-4 py-4 max-w-[1600px] mx-auto w-full flex items-center justify-center">
           <div className="text-center">
             <div className="w-24 h-24 bg-[#FDF5E6] rounded-full flex items-center justify-center mx-auto mb-6">
@@ -229,7 +267,7 @@ export default function ChatScreen() {
       </div>
     );
   }
-  
+
   return (
     <div className="h-full flex flex-col font-poppins">
       {/* Background Pattern */}
@@ -242,7 +280,7 @@ export default function ChatScreen() {
       {/* Main Chat Container */}
       <main className="relative z-10 flex-1 min-h-0 px-1.5 py-2 sm:px-2 sm:py-2.5 md:px-3 md:py-3 lg:p-4 max-w-[1600px] mx-auto w-full flex">
         <div className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl border border-gray-100 w-full h-full flex overflow-hidden mt-3 md:mt-0">
-          
+
           {/* Sidebar */}
           <div className={`${isMobileChatOpen ? 'hidden' : 'flex'} md:flex w-full md:w-auto`}>
             <ChatSidebar
@@ -262,7 +300,7 @@ export default function ChatScreen() {
                 onMobileBack={handleMobileBack}
                 loading={messagesLoading}
               />
-              <ChatInput 
+              <ChatInput
                 onSendMessage={handleSendMessage}
                 disabled={sendingMessage}
                 paymentCompleted={activeConversation.payment_completed}
@@ -287,7 +325,7 @@ export default function ChatScreen() {
         onClose={() => setIsAddChatModalOpen(false)}
         onAddChat={handleAddConversation}
       />
-      
+
       {/* Terms & Conditions Modal */}
       <TermsConditionsModal
         isOpen={isTermsModalOpen}
@@ -310,7 +348,7 @@ function formatTimestamp(timestamp: string): string {
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
-  
+
   if (diffMins < 1) return 'Just now';
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });

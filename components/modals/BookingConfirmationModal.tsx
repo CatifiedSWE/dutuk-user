@@ -9,8 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Calendar as CalendarIcon, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import { useCreateConversation } from '@/hooks/useConversations';
+import { Calendar as CalendarIcon, Send, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { useCreateOrder } from '@/hooks/useOrders';
 import { toast } from 'sonner';
 
 interface BookingConfirmationModalProps {
@@ -31,7 +31,7 @@ export function BookingConfirmationModal({
   eventTitle,
 }: BookingConfirmationModalProps) {
   const router = useRouter();
-  const { createConversation, loading: creatingConversation } = useCreateConversation();
+  const { createOrder, loading: creatingOrder } = useCreateOrder();
 
   // Set default date to tomorrow
   const tomorrow = new Date();
@@ -61,8 +61,17 @@ export function BookingConfirmationModal({
     setIsSubmitting(true);
 
     try {
-      // Create or get existing conversation with the vendor
-      const conversationId = await createConversation(vendorId);
+      // Create order (NOT conversation) - vendor must accept first
+      const result = await createOrder({
+        vendorId,
+        eventDate: date,
+        notes: bookingNotes || undefined,
+        title: eventTitle || `Booking with ${vendorName || 'Vendor'}`,
+      });
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create booking');
+      }
 
       // Call the completion callback
       if (onBookingComplete) {
@@ -73,23 +82,17 @@ export function BookingConfirmationModal({
       onOpenChange(false);
 
       // Show success message
-      toast.success('Booking request sent! Redirecting to chat...', {
-        icon: <CheckCircle2 className="w-5 h-5 text-green-500" />,
+      toast.success('Booking request sent!', {
+        description: `${vendorName || 'Vendor'} will review your request and accept or decline. You'll be notified when they respond!`,
+        icon: <Clock className="w-5 h-5 text-amber-500" />,
+        duration: 6000,
       });
 
-      // Navigate to chat page with conversation selected
-      // Include booking details in query params for context
-      const params = new URLSearchParams({
-        conversationId,
-        vendorId,
-        bookingDate: date.toISOString(),
-        ...(bookingNotes && { notes: bookingNotes }),
-      });
-
-      router.push(`/chat?${params.toString()}`);
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-      toast.error('Failed to connect with vendor. Please try again.');
+      // Stay on current page (don't navigate away) - vendor profile is still useful
+      // The user can check their bookings later from the profile/orders page
+    } catch (error: any) {
+      console.error('Error creating booking:', error);
+      toast.error(error.message || 'Failed to send booking request. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -105,11 +108,11 @@ export function BookingConfirmationModal({
         <div className="bg-gradient-to-r from-[#7C2A2A] to-[#A84444] px-8 py-6">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-white font-serif">
-              Booking Confirmation
+              Book {vendorName || 'Vendor'}
             </DialogTitle>
-            {(vendorName || eventTitle) && (
+            {eventTitle && (
               <p className="text-white/80 text-sm mt-1">
-                {vendorName || eventTitle}
+                {eventTitle}
               </p>
             )}
           </DialogHeader>
@@ -135,15 +138,17 @@ export function BookingConfirmationModal({
                 </p>
               </div>
 
-              {/* Info Card */}
+              {/* Info Card - Updated messaging */}
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 rounded-2xl p-5">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <Clock className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-amber-800">What happens next?</p>
-                    <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                      After confirming, you'll be connected with {vendorName || 'the vendor'} via chat to discuss details and finalize your booking.
-                    </p>
+                    <p className="text-sm font-medium text-amber-800">How it works</p>
+                    <ul className="text-xs text-amber-700 mt-2 space-y-1 leading-relaxed">
+                      <li>1. Your booking request will be sent to {vendorName || 'the vendor'}</li>
+                      <li>2. Wait for them to accept your request</li>
+                      <li>3. Once accepted, you can chat to finalize details</li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -151,18 +156,18 @@ export function BookingConfirmationModal({
               {/* Confirm Booking Button */}
               <button
                 onClick={handleConfirmBooking}
-                disabled={isSubmitting || creatingConversation || !date}
+                disabled={isSubmitting || creatingOrder || !date}
                 className="flex items-center justify-center gap-3 w-full px-6 py-4 bg-gradient-to-r from-[#7C2A2A] to-[#A84444] hover:from-[#5A1F1F] hover:to-[#7C2A2A] text-white font-semibold rounded-2xl transition-all shadow-lg shadow-[#7C2A2A]/25 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
               >
-                {isSubmitting || creatingConversation ? (
+                {isSubmitting || creatingOrder ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Connecting...
+                    Sending Request...
                   </>
                 ) : (
                   <>
                     <Send className="w-5 h-5" />
-                    Confirm Booking & Chat
+                    Send Booking Request
                   </>
                 )}
               </button>

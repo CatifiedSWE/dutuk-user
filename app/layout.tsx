@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 const inter = Inter({
@@ -33,7 +34,16 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Urbanist:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
       </head>
-      <body className={poppins.className} suppressHydrationWarning>{children}</body>
+      <body className={poppins.className} suppressHydrationWarning>
+        {children}
+        <Toaster
+          position="top-center"
+          richColors
+          expand={true}
+          closeButton
+        />
+      </body>
     </html>
   );
 }
+

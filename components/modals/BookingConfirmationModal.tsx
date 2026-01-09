@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Calendar as CalendarIcon, Send, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { Calendar as CalendarIcon, Send, CheckCircle2, AlertCircle, Clock, Edit3 } from 'lucide-react';
 import { useCreateOrder } from '@/hooks/useOrders';
 import { toast } from 'sonner';
 
@@ -39,8 +39,12 @@ export function BookingConfirmationModal({
   tomorrow.setHours(0, 0, 0, 0);
 
   const [date, setDate] = useState<Date | undefined>(tomorrow);
+  const [customEventTitle, setCustomEventTitle] = useState('');
   const [bookingNotes, setBookingNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Max title length to prevent UI overflow
+  const MAX_TITLE_LENGTH = 50;
 
   // Get today's date at midnight for comparison
   const today = new Date();
@@ -62,11 +66,14 @@ export function BookingConfirmationModal({
 
     try {
       // Create order (NOT conversation) - vendor must accept first
+      // Use custom title if provided, otherwise use a descriptive default
+      const orderTitle = customEventTitle.trim() || `Event on ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+
       const result = await createOrder({
         vendorId,
         eventDate: date,
         notes: bookingNotes || undefined,
-        title: eventTitle || `Booking with ${vendorName || 'Vendor'}`,
+        title: orderTitle,
       });
 
       if (!result.success) {
@@ -121,8 +128,31 @@ export function BookingConfirmationModal({
         <div className="p-8 overflow-y-auto max-h-[calc(90vh-120px)]">
           {/* Two-column layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - Event Description */}
+            {/* Left Column - Event Details */}
             <div className="space-y-6">
+              {/* Event Title Input - NEW */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  <Edit3 className="w-4 h-4 inline mr-2" />
+                  Event Title
+                </label>
+                <input
+                  type="text"
+                  value={customEventTitle}
+                  onChange={(e) => setCustomEventTitle(e.target.value.slice(0, MAX_TITLE_LENGTH))}
+                  className="w-full px-5 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#7C2A2A] focus:border-transparent text-gray-700 text-base transition-all placeholder:text-gray-400 hover:border-gray-300"
+                  placeholder="e.g., Wedding Reception, Birthday Party..."
+                  maxLength={MAX_TITLE_LENGTH}
+                />
+                <p className="text-xs text-gray-400 mt-2 flex justify-between">
+                  <span>A short title to help the vendor identify your booking</span>
+                  <span className={customEventTitle.length >= MAX_TITLE_LENGTH - 5 ? 'text-amber-500' : ''}>
+                    {customEventTitle.length}/{MAX_TITLE_LENGTH}
+                  </span>
+                </p>
+              </div>
+
+              {/* Event Notes */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-3">
                   Tell us about your event
@@ -130,7 +160,7 @@ export function BookingConfirmationModal({
                 <textarea
                   value={bookingNotes}
                   onChange={(e) => setBookingNotes(e.target.value)}
-                  className="w-full h-48 px-5 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#7C2A2A] focus:border-transparent resize-none text-gray-700 text-base leading-relaxed transition-all placeholder:text-gray-400 hover:border-gray-300"
+                  className="w-full h-36 px-5 py-4 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-[#7C2A2A] focus:border-transparent resize-none text-gray-700 text-base leading-relaxed transition-all placeholder:text-gray-400 hover:border-gray-300"
                   placeholder="Share details about your event: music preferences, special requirements, budget range, expected guest count, etc."
                 />
                 <p className="text-xs text-gray-400 mt-2">

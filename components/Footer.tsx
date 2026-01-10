@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Instagram, Linkedin, Facebook, Twitter, ArrowRight, Mail } from 'lucide-react';
+import { Instagram, Linkedin, Facebook, ArrowRight, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Footer() {
@@ -12,7 +12,7 @@ export default function Footer() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FFC13C] via-[#FDF5E6] to-[#FFC13C]" />
             <div className="absolute -top-[200px] -right-[200px] w-[500px] h-[500px] bg-[#7C2A2A]/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute top-[20%] left-[10%] w-[300px] h-[300px] bg-[#FFC13C]/10 rounded-full blur-3xl pointer-events-none" />
-            
+
             {/* Concentric Arcs - Top Right */}
             <div className="absolute -top-40 -right-40 w-[600px] h-[600px] pointer-events-none opacity-5">
                 <div className="absolute inset-0 rounded-full border-2 border-[#A0522D]"></div>
@@ -21,7 +21,7 @@ export default function Footer() {
                 <div className="absolute inset-24 rounded-full border-2 border-[#A0522D]"></div>
                 <div className="absolute inset-32 rounded-full border-2 border-[#A0522D]"></div>
             </div>
-            
+
             {/* Concentric Arcs - Bottom Left */}
             <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] pointer-events-none opacity-5">
                 <div className="absolute inset-0 rounded-full border-2 border-[#A0522D]"></div>
@@ -29,7 +29,7 @@ export default function Footer() {
                 <div className="absolute inset-16 rounded-full border-2 border-[#A0522D]"></div>
                 <div className="absolute inset-24 rounded-full border-2 border-[#A0522D]"></div>
             </div>
-            
+
             {/* Concentric Arcs - Middle Right */}
             <div className="absolute top-1/2 -right-20 w-[400px] h-[400px] pointer-events-none opacity-5">
                 <div className="absolute inset-0 rounded-full border-2 border-[#A0522D]"></div>
@@ -87,7 +87,11 @@ export default function Footer() {
                             <SocialIcon icon={Instagram} href="#" />
                             <SocialIcon icon={Facebook} href="#" />
                             <SocialIcon icon={Linkedin} href="#" />
-                            <SocialIcon icon={Twitter} href="#" />
+                            <a href="#" className="p-2.5 bg-white/10 hover:bg-[#FFC13C] hover:text-[#270100] rounded-full transition-all duration-300 group">
+                                <svg className="w-5 h-5 text-white group-hover:text-[#270100]" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                </svg>
+                            </a>
                         </div>
                     </div>
 

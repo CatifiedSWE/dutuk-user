@@ -46,9 +46,9 @@ export default function MobileProfileMenu({ isOpen, onClose }: MobileProfileMenu
                         initial={{ y: '100%', opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: '100%', opacity: 0 }}
-                        transition={{ 
-                            type: 'spring', 
-                            damping: 30, 
+                        transition={{
+                            type: 'spring',
+                            damping: 30,
                             stiffness: 300,
                             opacity: { duration: 0.2 }
                         }}
@@ -107,7 +107,23 @@ export default function MobileProfileMenu({ isOpen, onClose }: MobileProfileMenu
                                             </div>
                                             <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#7C2A2A] transition-colors" />
                                         </Link>
-                                        
+
+                                        <Link
+                                            href="/bookings"
+                                            onClick={onClose}
+                                            className="flex items-center justify-between py-4 px-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-all duration-200 group"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-full bg-[#7C2A2A]/10 flex items-center justify-center">
+                                                    <svg className="w-5 h-5 text-[#7C2A2A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                    </svg>
+                                                </div>
+                                                <span className="text-base font-semibold text-gray-800">My Bookings</span>
+                                            </div>
+                                            <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-[#7C2A2A] transition-colors" />
+                                        </Link>
+
                                         <Link
                                             href="/profile/settings"
                                             onClick={onClose}

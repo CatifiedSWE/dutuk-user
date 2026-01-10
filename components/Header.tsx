@@ -124,6 +124,12 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                                         <User className="w-4 h-4" />
                                         Profile
                                     </Link>
+                                    <Link
+                                        href="/bookings"
+                                        className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
+                                    >
+                                        My Bookings
+                                    </Link>
                                     <button
                                         onClick={handleLogout}
                                         className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}

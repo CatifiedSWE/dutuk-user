@@ -35,6 +35,7 @@ export function BookingConfirmationModal({
   const { createOrder, loading: creatingOrder } = useCreateOrder();
   const {
     blockedDates,
+    availableDates,
     loading: loadingAvailability,
     isDateBlocked,
     getBlockReason,
@@ -268,6 +269,14 @@ export function BookingConfirmationModal({
                     onSelect={handleDateSelect}
                     defaultMonth={date}
                     disabled={disabledDates}
+                    modifiers={{
+                      available: availableDates.map(d => new Date(d + 'T00:00:00')),
+                      blocked: blockedDates.map(b => new Date(b.date + 'T00:00:00')),
+                    }}
+                    modifiersClassNames={{
+                      available: 'ring-2 ring-green-400 ring-inset bg-green-50 text-green-700 font-semibold',
+                      blocked: 'bg-red-100 text-red-400 line-through',
+                    }}
                     className="w-full"
                     classNames={{
                       months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
@@ -287,7 +296,7 @@ export function BookingConfirmationModal({
                       selected: 'bg-[#7C2A2A] text-white hover:bg-[#5A1F1F] hover:text-white focus:bg-[#7C2A2A] focus:text-white rounded-xl font-semibold shadow-lg shadow-[#7C2A2A]/30',
                       today: 'bg-[#FFC13C]/20 text-[#7C2A2A] font-bold ring-2 ring-[#FFC13C] ring-inset rounded-xl',
                       outside: 'text-gray-300 opacity-50',
-                      disabled: 'text-gray-300 opacity-40 cursor-not-allowed hover:bg-transparent line-through',
+                      disabled: 'text-gray-300 opacity-40 cursor-not-allowed hover:bg-transparent',
                       hidden: 'invisible',
                     }}
                   />
@@ -309,11 +318,21 @@ export function BookingConfirmationModal({
                 </div>
               </div>
 
-              {/* Past Date Warning */}
-              <p className="text-xs text-gray-400 text-center flex items-center justify-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5" />
-                Past dates are not available for booking
-              </p>
+              {/* Calendar Legend */}
+              <div className="flex items-center justify-center gap-6 text-xs text-gray-500">
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-green-50 ring-2 ring-green-400 ring-inset"></div>
+                  <span>Available</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-red-100"></div>
+                  <span>Unavailable</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 rounded bg-[#7C2A2A]"></div>
+                  <span>Selected</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>

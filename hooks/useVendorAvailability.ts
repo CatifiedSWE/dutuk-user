@@ -79,7 +79,7 @@ export function useVendorAvailability(vendorId: string | undefined) {
 
             // Add unavailable dates from vendor settings
             (datesData || []).forEach((d) => {
-                if (d.status === 'unavailable') {
+                if (d.status === 'unavailable' || d.status === 'blocked') {
                     blocked.push({
                         date: d.date,
                         reason: 'unavailable',

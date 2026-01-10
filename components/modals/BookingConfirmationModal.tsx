@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar } from '@/components/ui/calendar';
 import {
@@ -9,8 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Calendar as CalendarIcon, Send, CheckCircle2, AlertCircle, Clock, Edit3 } from 'lucide-react';
+import { Calendar as CalendarIcon, Send, CheckCircle2, AlertCircle, Clock, Edit3, Loader2 } from 'lucide-react';
 import { useCreateOrder } from '@/hooks/useOrders';
+import { useVendorAvailability } from '@/hooks/useVendorAvailability';
 import { toast } from 'sonner';
 
 interface BookingConfirmationModalProps {
@@ -32,6 +33,13 @@ export function BookingConfirmationModal({
 }: BookingConfirmationModalProps) {
   const router = useRouter();
   const { createOrder, loading: creatingOrder } = useCreateOrder();
+  const {
+    blockedDates,
+    loading: loadingAvailability,
+    isDateBlocked,
+    getBlockReason,
+    getBlockedDateObjects
+  } = useVendorAvailability(vendorId);
 
   // Set default date to tomorrow
   const tomorrow = new Date();
@@ -50,9 +58,38 @@ export function BookingConfirmationModal({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Compute disabled dates: past dates + vendor blocked dates
+  const disabledDates = useMemo(() => {
+    const blockedDateObjects = getBlockedDateObjects();
+    return [
+      { before: today }, // Disable past dates
+      ...blockedDateObjects, // Disable vendor blocked dates
+    ];
+  }, [today, getBlockedDateObjects]);
+
+  // Handle date selection with availability check
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate && isDateBlocked(selectedDate)) {
+      const reason = getBlockReason(selectedDate);
+      if (reason === 'booked') {
+        toast.error('This date is already booked');
+      } else {
+        toast.error('Vendor is unavailable on this date');
+      }
+      return;
+    }
+    setDate(selectedDate);
+  };
+
   const handleConfirmBooking = async () => {
     if (!date) {
       toast.error('Please select a date for your booking');
+      return;
+    }
+
+    // Double-check availability
+    if (isDateBlocked(date)) {
+      toast.error('This date is not available. Please select another date.');
       return;
     }
 
@@ -104,9 +141,6 @@ export function BookingConfirmationModal({
       setIsSubmitting(false);
     }
   };
-
-  // Function to disable past dates
-  const disabledDays = { before: today };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -222,35 +256,42 @@ export function BookingConfirmationModal({
 
               {/* Calendar Container */}
               <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  defaultMonth={date}
-                  disabled={disabledDays}
-                  className="w-full"
-                  classNames={{
-                    months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
-                    month: 'space-y-4 w-full',
-                    caption: 'flex justify-center pt-1 relative items-center',
-                    caption_label: 'text-sm font-semibold text-gray-700',
-                    nav: 'space-x-1 flex items-center',
-                    button_previous: 'h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-lg p-0 opacity-70 hover:opacity-100 transition-all',
-                    button_next: 'h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-lg p-0 opacity-70 hover:opacity-100 transition-all',
-                    table: 'w-full border-collapse',
-                    weekdays: 'flex justify-between mb-2',
-                    weekday: 'text-gray-400 rounded-md w-10 font-medium text-[0.75rem] uppercase tracking-wide flex-1 text-center',
-                    week: 'flex w-full mt-1 justify-between',
-                    day: 'text-center text-sm p-0 relative flex-1 [&:has([aria-selected])]:bg-[#7C2A2A]/10 rounded-xl',
-                    range_start: 'day-range-start',
-                    range_end: 'day-range-end',
-                    selected: 'bg-[#7C2A2A] text-white hover:bg-[#5A1F1F] hover:text-white focus:bg-[#7C2A2A] focus:text-white rounded-xl font-semibold shadow-lg shadow-[#7C2A2A]/30',
-                    today: 'bg-[#FFC13C]/20 text-[#7C2A2A] font-bold ring-2 ring-[#FFC13C] ring-inset rounded-xl',
-                    outside: 'text-gray-300 opacity-50',
-                    disabled: 'text-gray-300 opacity-40 cursor-not-allowed hover:bg-transparent line-through',
-                    hidden: 'invisible',
-                  }}
-                />
+                {loadingAvailability ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-6 h-6 animate-spin text-[#7C2A2A]" />
+                    <span className="ml-2 text-gray-500">Loading availability...</span>
+                  </div>
+                ) : (
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={handleDateSelect}
+                    defaultMonth={date}
+                    disabled={disabledDates}
+                    className="w-full"
+                    classNames={{
+                      months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
+                      month: 'space-y-4 w-full',
+                      caption: 'flex justify-center pt-1 relative items-center',
+                      caption_label: 'text-sm font-semibold text-gray-700',
+                      nav: 'space-x-1 flex items-center',
+                      button_previous: 'h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-lg p-0 opacity-70 hover:opacity-100 transition-all',
+                      button_next: 'h-8 w-8 bg-gray-100 hover:bg-gray-200 rounded-lg p-0 opacity-70 hover:opacity-100 transition-all',
+                      table: 'w-full border-collapse',
+                      weekdays: 'flex justify-between mb-2',
+                      weekday: 'text-gray-400 rounded-md w-10 font-medium text-[0.75rem] uppercase tracking-wide flex-1 text-center',
+                      week: 'flex w-full mt-1 justify-between',
+                      day: 'text-center text-sm p-0 relative flex-1 [&:has([aria-selected])]:bg-[#7C2A2A]/10 rounded-xl',
+                      range_start: 'day-range-start',
+                      range_end: 'day-range-end',
+                      selected: 'bg-[#7C2A2A] text-white hover:bg-[#5A1F1F] hover:text-white focus:bg-[#7C2A2A] focus:text-white rounded-xl font-semibold shadow-lg shadow-[#7C2A2A]/30',
+                      today: 'bg-[#FFC13C]/20 text-[#7C2A2A] font-bold ring-2 ring-[#FFC13C] ring-inset rounded-xl',
+                      outside: 'text-gray-300 opacity-50',
+                      disabled: 'text-gray-300 opacity-40 cursor-not-allowed hover:bg-transparent line-through',
+                      hidden: 'invisible',
+                    }}
+                  />
+                )}
               </div>
 
               {/* Selected Date Display */}

@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Vendor } from '@/domain/vendor';
-import { Calendar, MapPin, Music, Star, MessageCircle, Share2 } from 'lucide-react';
+import { Calendar, MapPin, Music, Star, MessageCircle, Share2, Heart } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { AuthGateModal } from '@/components/modals/AuthGateModal';
 import { BookingConfirmationModal } from '@/components/modals/BookingConfirmationModal';
+import { useVendorSaveState } from '@/hooks/useSavedVendors';
+import { toast } from 'sonner';
 
 interface ProfileHeaderSectionProps {
   vendor: Vendor;
@@ -17,6 +19,9 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [isBooked, setIsBooked] = useState(false);
+
+  // Save state
+  const { isSaved, toggling, toggleSave } = useVendorSaveState(vendor.userId);
 
   const handleBookNow = () => {
     if (!isAuthenticated) {
@@ -29,6 +34,25 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
   const handleBookingComplete = () => {
     setIsBooked(true);
   };
+
+  const handleSaveClick = async () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
+
+    const success = await toggleSave();
+    if (success) {
+      if (isSaved) {
+        toast.success('Removed from saved vendors');
+      } else {
+        toast.success('Vendor saved!');
+      }
+    } else {
+      toast.error('Failed to update saved vendors');
+    }
+  };
+
   return (
     <div className="relative group">
       {/* Cover Image */}
@@ -121,6 +145,17 @@ export function ProfileHeaderSection({ vendor }: ProfileHeaderSectionProps) {
                     Message
                   </button>
                 )}
+                <button
+                  onClick={handleSaveClick}
+                  disabled={toggling}
+                  className={`p-3 rounded-xl border transition-all flex items-center justify-center ${isSaved
+                      ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100'
+                      : 'border-gray-200 text-gray-500 hover:text-red-500 hover:border-red-300'
+                    } ${toggling ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  title={isSaved ? 'Remove from saved' : 'Save vendor'}
+                >
+                  <Heart className={`w-5 h-5 ${isSaved ? 'fill-current' : ''}`} />
+                </button>
                 <button className="p-3 rounded-xl border border-gray-200 text-gray-500 hover:text-primary hover:border-primary transition-colors flex items-center justify-center">
                   <Share2 className="w-5 h-5" />
                 </button>

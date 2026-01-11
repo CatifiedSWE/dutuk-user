@@ -5,11 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Bell, User } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotifications } from '@/hooks/useNotifications';
 import MobileProfileMenu from './MobileProfileMenu';
 
 export default function MobileTopNav() {
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const { user, isAuthenticated } = useAuth();
+    const { unreadCount } = useNotifications();
 
     return (
         <>
@@ -38,14 +40,19 @@ export default function MobileTopNav() {
                     {/* Right Side Icons */}
                     <div className="flex items-center gap-3">
                         {/* Notifications Icon */}
-                        <button
+                        <Link
+                            href="/chat"
                             className="p-2 rounded-full hover:bg-gray-100 transition-colors relative"
                             aria-label="Notifications"
                         >
                             <Bell className="w-6 h-6 text-[#7C2A2A]" />
                             {/* Notification Badge */}
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                        </button>
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full px-1 border-2 border-white">
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            )}
+                        </Link>
 
                         {/* Profile Icon */}
                         <button
@@ -75,3 +82,4 @@ export default function MobileTopNav() {
         </>
     );
 }
+

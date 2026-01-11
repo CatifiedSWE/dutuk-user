@@ -59,21 +59,8 @@ export function useVendorAvailability(vendorId: string | undefined) {
                 throw datesError;
             }
 
-            // Fetch dates with approved/pending orders for this vendor
-            const today = new Date().toISOString().split('T')[0];
-            const { data: ordersData, error: ordersError } = await supabase
-                .from('orders')
-                .select('event_date')
-                .eq('vendor_id', vendorId)
-                .in('status', ['approved', 'pending'])
-                .gte('event_date', today);
-
-            if (ordersError) {
-                console.error('Error fetching vendor orders:', ordersError);
-                throw ordersError;
-            }
-
-            // Process dates data
+            // Process dates data - only use vendor's explicit availability settings
+            // Note: We don't block based on orders - vendors can accept multiple bookings per date
             const blocked: BlockedDate[] = [];
             const available: string[] = [];
 
@@ -86,21 +73,6 @@ export function useVendorAvailability(vendorId: string | undefined) {
                     });
                 } else if (d.status === 'available') {
                     available.push(d.date);
-                }
-            });
-
-            // Add booked dates from orders
-            const bookedDatesSet = new Set<string>();
-            (ordersData || []).forEach((order) => {
-                if (order.event_date && !bookedDatesSet.has(order.event_date)) {
-                    bookedDatesSet.add(order.event_date);
-                    // Only add to blocked if not already marked as unavailable
-                    if (!blocked.some(b => b.date === order.event_date)) {
-                        blocked.push({
-                            date: order.event_date,
-                            reason: 'booked',
-                        });
-                    }
                 }
             });
 

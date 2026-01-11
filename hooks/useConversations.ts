@@ -21,7 +21,7 @@ export interface Conversation {
   last_message_preview: string | null;
   created_at: string;
   updated_at: string;
-  
+
   // Joined data from view
   customer_name: string | null;
   customer_avatar: string | null;
@@ -104,29 +104,65 @@ export function useConversations() {
     fetchConversations();
   }, [fetchConversations]);
 
-  // Real-time subscription for conversation updates
+  // Real-time subscription for conversation and message updates
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel('conversations-changes')
+    // Subscribe to new conversations where user is involved
+    const conversationsChannel = supabase
+      .channel('user-conversations')
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'conversations',
-          filter: `customer_id=eq.${user.id},vendor_id=eq.${user.id}`,
         },
-        () => {
-          // Refetch conversations on any change
+        (payload) => {
+          // Check if user is part of this conversation
+          const conv = payload.new as any;
+          if (conv.customer_id === user.id || conv.vendor_id === user.id) {
+            fetchConversations();
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'conversations',
+        },
+        (payload) => {
+          // Check if user is part of this conversation
+          const conv = payload.new as any;
+          if (conv.customer_id === user.id || conv.vendor_id === user.id) {
+            fetchConversations();
+          }
+        }
+      )
+      .subscribe();
+
+    // Subscribe to new messages - this updates last_message_at and triggers list refresh
+    const messagesChannel = supabase
+      .channel('user-messages-list')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+        },
+        (payload) => {
+          // Refetch conversations to update the list ordering and unread counts
           fetchConversations();
         }
       )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(conversationsChannel);
+      supabase.removeChannel(messagesChannel);
     };
   }, [user, supabase, fetchConversations]);
 

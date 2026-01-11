@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, MapPin, User, LogOut } from 'lucide-react';
+import { Search, MapPin, User, LogOut, Bell, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import VendorDropdown from './VendorDropdown';
 import { useAuth } from '@/hooks/useAuth';
 import { signOut } from '@/lib/auth/customer-auth';
 import { useRouter } from 'next/navigation';
+import { useNotifications } from '@/hooks/useNotifications';
 
 interface HeaderProps {
     variant?: 'glassmorphic' | 'solid';
@@ -17,6 +18,26 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const { user, loading, isAuthenticated } = useAuth();
     const router = useRouter();
+    const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+    const [showNotifications, setShowNotifications] = useState(false);
+    const notificationRef = useRef<HTMLDivElement>(null);
+
+    // Click outside handler
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+                setShowNotifications(false);
+            }
+        }
+
+        if (showNotifications) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showNotifications]);
 
     // Handle logout
     const handleLogout = async () => {
@@ -117,6 +138,85 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                         <>
                             {isAuthenticated ? (
                                 <div className="flex items-center gap-3">
+                                    {/* Notification Bell */}
+                                    <div className="relative" ref={notificationRef}>
+                                        <button
+                                            onClick={() => setShowNotifications(!showNotifications)}
+                                            className={`relative p-2 rounded-full transition-colors hover:bg-black/10 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
+                                        >
+                                            <Bell className="w-5 h-5" />
+                                            {unreadCount > 0 && (
+                                                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full px-1">
+                                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                                </span>
+                                            )}
+                                        </button>
+
+                                        {/* Notification Dropdown */}
+                                        {showNotifications && (
+                                            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50">
+                                                <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                                                    <h3 className="font-semibold text-gray-800">Notifications</h3>
+                                                    {unreadCount > 0 && (
+                                                        <button
+                                                            onClick={() => markAllAsRead()}
+                                                            className="text-xs text-[#7C2A2A] hover:underline"
+                                                        >
+                                                            Mark all as read
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                <div className="max-h-[300px] overflow-y-auto">
+                                                    {notifications.length === 0 ? (
+                                                        <div className="p-6 text-center text-gray-500">
+                                                            <Bell className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                                                            <p className="text-sm">No notifications yet</p>
+                                                        </div>
+                                                    ) : (
+                                                        notifications.slice(0, 5).map((notif) => (
+                                                            <Link
+                                                                key={notif.id}
+                                                                href={notif.link || '#'}
+                                                                onClick={() => {
+                                                                    markAsRead(notif.id);
+                                                                    setShowNotifications(false);
+                                                                }}
+                                                                className={`block p-4 hover:bg-gray-50 border-b border-gray-50 transition-colors ${!notif.read ? 'bg-amber-50/50' : ''}`}
+                                                            >
+                                                                <div className="flex items-start gap-3">
+                                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${notif.type === 'message' ? 'bg-blue-100 text-blue-600' :
+                                                                        notif.type === 'booking_accepted' ? 'bg-green-100 text-green-600' :
+                                                                            'bg-red-100 text-red-600'
+                                                                        }`}>
+                                                                        {notif.type === 'message' ? <MessageCircle className="w-4 h-4" /> :
+                                                                            notif.type === 'booking_accepted' ? <CheckCircle className="w-4 h-4" /> :
+                                                                                <XCircle className="w-4 h-4" />}
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <p className="text-sm font-medium text-gray-800 truncate">{notif.title}</p>
+                                                                        <p className="text-xs text-gray-500 line-clamp-2">{notif.message}</p>
+                                                                    </div>
+                                                                    {!notif.read && (
+                                                                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-2"></div>
+                                                                    )}
+                                                                </div>
+                                                            </Link>
+                                                        ))
+                                                    )}
+                                                </div>
+                                                {notifications.length > 5 && (
+                                                    <Link
+                                                        href="/chat"
+                                                        onClick={() => setShowNotifications(false)}
+                                                        className="block p-3 text-center text-sm text-[#7C2A2A] hover:bg-gray-50 border-t border-gray-100"
+                                                    >
+                                                        View all messages
+                                                    </Link>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+
                                     <Link
                                         href="/profile/overview"
                                         className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}

@@ -1,19 +1,138 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
-import { Phone, Video, MoreVertical, Download, ArrowLeft } from 'lucide-react';
+import React, { useRef, useEffect, useState } from 'react';
+import { Phone, Video, MoreVertical, Download, ArrowLeft, X, FileText, Image as ImageIcon } from 'lucide-react';
+
+interface Message {
+  id: string;
+  senderId: string;
+  text: string;
+  timestamp: string;
+  isOwn: boolean;
+  hasAttachment?: boolean;
+  attachmentUrl?: string;
+  attachmentName?: string;
+  attachmentSize?: string;
+  attachmentType?: string;
+}
 
 interface ChatWindowProps {
   conversation: any;
-  messages: any[];
+  messages: Message[];
   onMobileBack?: () => void;
   loading?: boolean;
+}
+
+// Helper to check if attachment is an image
+function isImageAttachment(type?: string): boolean {
+  if (!type) return false;
+  return type.startsWith('image/');
+}
+
+// Image Lightbox Component
+function ImageLightbox({
+  src,
+  alt,
+  onClose
+}: {
+  src: string;
+  alt: string;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <button
+        className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors"
+        onClick={onClose}
+      >
+        <X className="w-6 h-6" />
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        className="max-w-full max-h-full object-contain rounded-lg"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>
+  );
+}
+
+// Attachment Display Component
+function AttachmentDisplay({
+  url,
+  name,
+  size,
+  type,
+  isOwn,
+  onImageClick
+}: {
+  url: string;
+  name?: string;
+  size?: string;
+  type?: string;
+  isOwn: boolean;
+  onImageClick: (url: string) => void;
+}) {
+  const isImage = isImageAttachment(type);
+
+  if (isImage) {
+    return (
+      <div
+        className="mt-2 cursor-pointer group/img"
+        onClick={() => onImageClick(url)}
+      >
+        <img
+          src={url}
+          alt={name || 'Attachment'}
+          className="max-w-[250px] max-h-[200px] rounded-lg object-cover shadow-sm group-hover/img:opacity-90 transition-opacity"
+        />
+        {name && (
+          <p className={`text-[10px] mt-1 ${isOwn ? 'text-white/70' : 'text-gray-400'}`}>
+            {name}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  // Document/File attachment
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`mt-2 md:mt-3 flex items-center gap-2 md:gap-3 p-2.5 md:p-3 rounded-xl border transition-all cursor-pointer group/file ${isOwn
+          ? 'bg-white/10 border-white/10 hover:bg-white/20'
+          : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+        }`}
+    >
+      <div className={`w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center shadow-sm group-hover/file:scale-105 transition-transform flex-shrink-0 ${isOwn ? 'bg-white text-[#7C2A2A]' : 'bg-[#7C2A2A] text-white'
+        }`}>
+        <FileText className="w-5 h-5 md:w-6 md:h-6" />
+      </div>
+      <div className="flex-1 min-w-0 pr-1 md:pr-2">
+        <p className={`font-medium text-xs md:text-sm truncate ${isOwn ? 'text-white' : 'text-gray-900'}`}>
+          {name || 'File attachment'}
+        </p>
+        <p className={`text-[10px] md:text-xs ${isOwn ? 'text-white/70' : 'text-gray-500'}`}>
+          {size || 'Download'}
+        </p>
+      </div>
+      <Download className={`w-4 h-4 md:w-5 md:h-5 flex-shrink-0 ${isOwn ? 'text-white/70' : 'text-gray-400'}`} />
+    </a>
+  );
 }
 
 export default function ChatWindow({ conversation, messages, onMobileBack, loading = false }: ChatWindowProps) {
   // Ref for auto-scrolling to bottom
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  // Lightbox state
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -52,7 +171,7 @@ export default function ChatWindow({ conversation, messages, onMobileBack, loadi
               <ArrowLeft className="w-5 h-5" />
             </button>
           )}
-          
+
           <div className="relative flex-shrink-0">
             <div className="w-9 h-9 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-full bg-gray-50 p-0.5 ring-1 ring-[#7C2A2A]/10">
               <img
@@ -74,7 +193,7 @@ export default function ChatWindow({ conversation, messages, onMobileBack, loadi
             )}
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="flex items-center gap-0.5 md:gap-1 flex-shrink-0">
           <button className="w-9 h-9 md:w-9 md:h-9 lg:w-10 lg:h-10 flex items-center justify-center text-gray-400 hover:text-[#7C2A2A] hover:bg-[#FFF0F0] rounded-full transition-colors active:scale-95" title="Voice Call">
@@ -91,7 +210,7 @@ export default function ChatWindow({ conversation, messages, onMobileBack, loadi
       </div>
 
       {/* Messages Area - Optimized for mobile with generous top padding to prevent cutoff */}
-      <div 
+      <div
         ref={messagesContainerRef}
         className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 pt-8 pb-2 sm:px-3 sm:pt-8 sm:pb-2 md:px-4 md:pt-8 md:pb-3 lg:px-6 lg:pt-10 lg:pb-4 space-y-3 md:space-y-3 bg-[#FDFBF9]"
       >
@@ -120,28 +239,23 @@ export default function ChatWindow({ conversation, messages, onMobileBack, loadi
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex flex-col ${
-                  message.isOwn ? 'items-end ml-auto max-w-[85%] sm:max-w-[80%] md:max-w-[85%] lg:max-w-[70%]' : 'items-start mr-auto max-w-[85%] sm:max-w-[80%] md:max-w-[85%] lg:max-w-[70%] group'
-                }`}
+                className={`flex flex-col ${message.isOwn ? 'items-end ml-auto max-w-[85%] sm:max-w-[80%] md:max-w-[85%] lg:max-w-[70%]' : 'items-start mr-auto max-w-[85%] sm:max-w-[80%] md:max-w-[85%] lg:max-w-[70%] group'
+                  }`}
               >
                 {message.isOwn ? (
                   // Own Message (Right side - User)
                   <>
                     <div className="bg-[#7C2A2A] p-3 px-4 sm:p-3 sm:px-4 md:p-4 md:px-5 rounded-2xl rounded-br-md shadow-lg text-white text-sm md:text-[15px] leading-relaxed break-words">
                       {message.text}
-                      {message.hasFile && (
-                        <div className="mt-2 md:mt-3 flex items-center gap-2 md:gap-3 bg-white/10 p-2.5 md:p-3 rounded-xl border border-white/10 hover:bg-white/20 transition-all cursor-pointer group/file">
-                          <div className="w-9 h-9 md:w-10 md:h-10 bg-white rounded-lg flex items-center justify-center text-[#7C2A2A] shadow-sm group-hover/file:scale-105 transition-transform flex-shrink-0">
-                            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                          </div>
-                          <div className="flex-1 min-w-0 pr-1 md:pr-2">
-                            <p className="font-medium text-xs md:text-sm truncate">{message.fileName}</p>
-                            <p className="text-[10px] md:text-xs text-white/70">{message.fileSize}</p>
-                          </div>
-                          <Download className="w-4 h-4 md:w-5 md:h-5 text-white/70 flex-shrink-0" />
-                        </div>
+                      {message.hasAttachment && message.attachmentUrl && (
+                        <AttachmentDisplay
+                          url={message.attachmentUrl}
+                          name={message.attachmentName}
+                          size={message.attachmentSize}
+                          type={message.attachmentType}
+                          isOwn={true}
+                          onImageClick={setLightboxImage}
+                        />
                       )}
                     </div>
                     <div className="flex items-center gap-1 mt-1 md:mt-1.5 mr-1">
@@ -165,6 +279,16 @@ export default function ChatWindow({ conversation, messages, onMobileBack, loadi
                       </div>
                       <div className="bg-white p-3 px-4 sm:p-3 sm:px-4 md:p-4 md:px-5 rounded-2xl rounded-bl-md shadow-sm text-gray-800 text-sm md:text-[15px] leading-relaxed border border-gray-100 break-words">
                         {message.text}
+                        {message.hasAttachment && message.attachmentUrl && (
+                          <AttachmentDisplay
+                            url={message.attachmentUrl}
+                            name={message.attachmentName}
+                            size={message.attachmentSize}
+                            type={message.attachmentType}
+                            isOwn={false}
+                            onImageClick={setLightboxImage}
+                          />
+                        )}
                       </div>
                     </div>
                     <span className="text-[9px] md:text-[10px] font-medium text-gray-400 mt-1 md:mt-1.5 ml-[36px] md:ml-[52px]">{message.timestamp}</span>
@@ -172,12 +296,21 @@ export default function ChatWindow({ conversation, messages, onMobileBack, loadi
                 )}
               </div>
             ))}
-            
+
             {/* Scroll anchor for auto-scroll */}
             <div ref={messagesEndRef} />
           </>
         )}
       </div>
+
+      {/* Image Lightbox */}
+      {lightboxImage && (
+        <ImageLightbox
+          src={lightboxImage}
+          alt="Attachment"
+          onClose={() => setLightboxImage(null)}
+        />
+      )}
     </>
   );
 }

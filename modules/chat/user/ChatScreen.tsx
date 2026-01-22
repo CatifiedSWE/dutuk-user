@@ -10,6 +10,7 @@ import TermsConditionsModal from './components/TermsConditionsModal';
 import { useConversations, useAcceptTerms } from '@/hooks/useConversations';
 import { useMessages, useSendMessage } from '@/hooks/useMessages';
 import { useAuth } from '@/hooks/useAuth';
+import { AttachmentData } from '@/hooks/useChatAttachments';
 import { toast } from 'sonner';
 
 export default function ChatScreen() {
@@ -123,6 +124,8 @@ export default function ChatScreen() {
       hasAttachment: msg.has_attachment,
       attachmentUrl: msg.attachment_url || undefined,
       attachmentName: msg.attachment_name || undefined,
+      attachmentSize: msg.attachment_size || undefined,
+      attachmentType: msg.attachment_type || undefined,
     }));
   }, [rawMessages, user]);
 
@@ -138,7 +141,7 @@ export default function ChatScreen() {
   }, []);
 
   // Handle sending a message
-  const handleSendMessage = useCallback(async (text: string) => {
+  const handleSendMessage = useCallback(async (text: string, attachment?: AttachmentData) => {
     if (!text.trim() || !activeConversationId || !otherParticipantId) return;
 
     // Check if terms need to be accepted
@@ -148,18 +151,19 @@ export default function ChatScreen() {
       return;
     }
 
-    // Send message
+    // Send message with optional attachment
     const result = await sendMessage(
       {
         conversationId: activeConversationId,
         receiverId: otherParticipantId,
         text: text.trim(),
+        attachment: attachment,
       },
       activeConversation?.payment_completed || false
     );
 
     if (!result.success && result.error) {
-      alert(result.error); // Show contact filter error
+      toast.error(result.error); // Show contact filter error as toast
     }
   }, [activeConversationId, otherParticipantId, isCustomer, activeConversation, sendMessage]);
 
@@ -304,6 +308,7 @@ export default function ChatScreen() {
                 onSendMessage={handleSendMessage}
                 disabled={sendingMessage}
                 paymentCompleted={activeConversation.payment_completed}
+                conversationId={activeConversationId}
               />
             </div>
           ) : (

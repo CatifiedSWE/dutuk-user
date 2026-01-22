@@ -17,8 +17,8 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
   // Unwrap the params promise
   const { vendorId } = use(params);
 
-  // Fetch vendor from Supabase
-  const { vendor, loading, error } = useVendor(vendorId);
+  // Fetch vendor from Supabase (now includes portfolio items)
+  const { vendor, portfolioItems, loading, error } = useVendor(vendorId);
 
   // Show loading state
   if (loading) {
@@ -63,6 +63,20 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
     notFound();
   }
 
+  // Helper to detect if URL is a video
+  const isVideoUrl = (url: string): boolean => {
+    return /\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(url);
+  };
+
+  // Separate portfolio items into photos and videos
+  const portfolioPhotos = portfolioItems
+    .filter((item: any) => item.image_url && !isVideoUrl(item.image_url))
+    .map((item: any) => item.image_url);
+
+  const portfolioVideos = portfolioItems
+    .filter((item: any) => item.image_url && isVideoUrl(item.image_url))
+    .map((item: any) => item.image_url);
+
   // Transform Supabase vendor data to match Vendor interface expected by VendorProfileScreen
   const vendorData = {
     id: vendor.id,
@@ -85,8 +99,8 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
     joinedDate: vendor.created_at || new Date().toISOString(),
     joinedYear: new Date(vendor.created_at).getFullYear().toString(),
     portfolio: {
-      photos: [],
-      videos: [],
+      photos: portfolioPhotos,
+      videos: portfolioVideos,
       events: []
     },
     reviews: [],

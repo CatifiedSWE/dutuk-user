@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
 import { 
     signInWithPassword, 
@@ -15,6 +15,7 @@ import InfoMessage from '@/components/ui/InfoMessage';
 
 export default function LoginScreen() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,9 @@ export default function LoginScreen() {
     const [infoMessage, setInfoMessage] = useState('');
     const [emailError, setEmailError] = useState('');
     const [emailTouched, setEmailTouched] = useState(false);
+
+    // Get redirect parameter from URL
+    const redirectUrl = searchParams.get('redirect');
 
     const handleEmailLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,8 +59,14 @@ export default function LoginScreen() {
                 }
             }
             
-            // Successful login - redirect to root (middleware will handle routing)
-            router.push('/');
+            // Successful login - check for redirect URL
+            if (redirectUrl) {
+                // Redirect to the stored return URL (e.g., event wizard)
+                router.push(redirectUrl);
+            } else {
+                // Default redirect to root (middleware will handle routing)
+                router.push('/');
+            }
         } catch (err: any) {
             setError(err.message || 'Failed to sign in. Please check your credentials.');
         } finally {

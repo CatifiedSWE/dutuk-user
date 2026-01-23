@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, ArrowRight, Check, Calendar, Users, Wallet,
@@ -10,10 +10,17 @@ import {
 } from 'lucide-react';
 import { useEventWizardStore, WizardVendorItem } from '@/store/useEventWizardStore';
 import { useFlowEvents } from '@/hooks/useFlowEvents';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
+import AuthRequiredModal from '@/components/modals/AuthRequiredModal';
+import { 
+    isReturningFromAuth, 
+    getStepFromUrl, 
+    clearWizardReturnPath 
+} from '@/lib/utils/wizardRedirect';
 
 const OCCASIONS = [
     { id: 'wedding', name: 'Wedding', icon: Heart },
@@ -56,15 +63,19 @@ const GUEST_MILESTONES = [
 
 export default function EventPlanWizard() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     const {
         occasion, eventDate, guestCount, budgetMin, budgetMax, selectedItems,
-        setOccasion, setEventDate, setGuestCount, setBudget, clearWizard
+        currentStep: storedStep,
+        setOccasion, setEventDate, setGuestCount, setBudget, setCurrentStep: setStoredStep, clearWizard
     } = useEventWizardStore();
 
+    const { user, loading: authLoading } = useAuth();
     const { createEventBundle, loading, error } = useFlowEvents();
 
     // Hydrate date from store (zustand persist stores as string)
@@ -75,6 +86,32 @@ export default function EventPlanWizard() {
             setHydratedDate(new Date(eventDate));
         }
     }, [eventDate]);
+
+    // Handle returning from auth
+    useEffect(() => {
+        if (isReturningFromAuth(searchParams)) {
+            // Get step from URL or use stored step
+            const urlStep = getStepFromUrl(searchParams);
+            const stepToRestore = urlStep || storedStep || 5;
+            
+            // Restore step
+            setCurrentStep(stepToRestore);
+            
+            // Show success message
+            toast.success('Welcome back! Resuming your event planning...', {
+                duration: 3000,
+            });
+            
+            // Clear return path
+            clearWizardReturnPath();
+            
+            // Clean URL
+            router.replace('/events/plan', { scroll: false });
+        } else if (storedStep && storedStep !== currentStep) {
+            // Restore from stored step on initial mount
+            setCurrentStep(storedStep);
+        }
+    }, [searchParams, storedStep]);
 
     const canProceed = () => {
         switch (currentStep) {
@@ -89,29 +126,33 @@ export default function EventPlanWizard() {
 
     const handleNext = () => {
         if (currentStep < STEPS.length && canProceed()) {
-            setCurrentStep(currentStep + 1);
+            const nextStep = currentStep + 1;
+            setCurrentStep(nextStep);
+            setStoredStep(nextStep); // Save to store
         }
     };
 
     const handleBack = () => {
         if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
+            const prevStep = currentStep - 1;
+            setCurrentStep(prevStep);
+            setStoredStep(prevStep); // Save to store
         }
     };
 
     const handleSubmit = async () => {
+        // Check authentication first
+        if (!user && !authLoading) {
+            // User not authenticated - show auth modal
+            setStoredStep(currentStep); // Save current step
+            setShowAuthModal(true);
+            return;
+        }
+
+        // User is authenticated, proceed with submission
         setIsSubmitting(true);
 
         try {
-            const supabase = (await import('@/lib/supabase/client')).createClient();
-            const { data: { user } } = await supabase.auth.getUser();
-
-            if (!user) {
-                toast.error('Please log in to create an event');
-                router.push('/auth/login?redirect=/events/plan');
-                return;
-            }
-
             const eventId = await createEventBundle({
                 title: `${occasion} Event`,
                 event_date: hydratedDate?.toISOString().split('T')[0] || '',
@@ -161,6 +202,13 @@ export default function EventPlanWizard() {
 
     return (
         <div className="min-h-screen bg-[#FDF5E6] overflow-x-hidden">
+            {/* Auth Required Modal */}
+            <AuthRequiredModal
+                open={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                currentStep={currentStep}
+            />
+
             {/* Clean Progress Header */}
             <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200/80 shadow-sm">
                 <div className="container mx-auto px-4 py-4">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
 import { signUpWithPassword, signInWithGoogle, checkCustomerExists } from '@/lib/auth/customer-auth';
 import { validateEmail, validatePassword, validatePasswordMatch } from '@/lib/validation';
@@ -11,6 +11,7 @@ import InfoMessage from '@/components/ui/InfoMessage';
 
 export default function SignupScreen() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,6 +28,9 @@ export default function SignupScreen() {
     const [emailError, setEmailError] = useState('');
     const [passwordValidation, setPasswordValidation] = useState(validatePassword(''));
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+
+    // Get redirect parameter from URL
+    const redirectUrl = searchParams.get('redirect');
 
     // Validate email on change
     useEffect(() => {
@@ -102,9 +106,13 @@ export default function SignupScreen() {
                 setError('This email is already registered. Please login instead.');
                 setInfoMessage('You already have an account. Redirecting to login...');
                 
-                // Redirect to login after 2 seconds
+                // Redirect to login after 2 seconds, preserve redirect URL
                 setTimeout(() => {
-                    router.push('/login');
+                    if (redirectUrl) {
+                        router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+                    } else {
+                        router.push('/login');
+                    }
                 }, 2000);
                 
                 setLoading(false);
@@ -113,7 +121,17 @@ export default function SignupScreen() {
 
             // Email doesn't exist in customer_profiles, proceed with signup
             await signUpWithPassword(email, password);
-            router.push('/onboarding/name');
+            
+            // After signup, check if we have a redirect URL
+            if (redirectUrl) {
+                // For wizard flow, redirect to onboarding first, then to wizard
+                // Store redirect URL for after onboarding
+                sessionStorage.setItem('post-onboarding-redirect', redirectUrl);
+                router.push('/onboarding/name');
+            } else {
+                // Default onboarding flow
+                router.push('/onboarding/name');
+            }
         } catch (err: any) {
             // Handle Supabase auth errors
             if (err.message?.includes('already registered') || err.message?.includes('already exists')) {
@@ -122,7 +140,11 @@ export default function SignupScreen() {
                 setInfoMessage('Redirecting to login...');
                 
                 setTimeout(() => {
-                    router.push('/login');
+                    if (redirectUrl) {
+                        router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`);
+                    } else {
+                        router.push('/login');
+                    }
                 }, 2000);
             } else {
                 setError(err.message || 'Failed to create account. Please try again.');

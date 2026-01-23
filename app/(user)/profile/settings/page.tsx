@@ -1,9 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function ProfileSettingsPage() {
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
+function ProfileSettingsContent() {
   const router = useRouter();
 
   return (
@@ -24,5 +28,20 @@ export default function ProfileSettingsPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function ProfileSettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#FDF5E6] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <div className="w-16 h-16 border-4 border-[#7C2A2A]/20 border-t-[#7C2A2A] rounded-full animate-spin"></div>
+          <p className="text-sm text-[#4F0000]/60">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ProfileSettingsContent />
+    </Suspense>
   );
 }

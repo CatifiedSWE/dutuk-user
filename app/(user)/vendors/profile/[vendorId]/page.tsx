@@ -1,6 +1,6 @@
 'use client';
 
-import { use } from 'react';
+import { Suspense, use } from 'react';
 import { notFound } from 'next/navigation';
 import MainLayout from '@/components/layouts/MainLayout';
 import { VendorProfileScreen } from '@/modules/vendors/user';
@@ -13,10 +13,10 @@ interface VendorProfilePageProps {
   }>;
 }
 
-export default function VendorProfilePage({ params }: VendorProfilePageProps) {
-  // Unwrap the params promise
-  const { vendorId } = use(params);
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
+function VendorProfileContent({ vendorId }: { vendorId: string }) {
   // Fetch vendor from Supabase (now includes portfolio items)
   const { vendor, portfolioItems, loading, error } = useVendor(vendorId);
 
@@ -115,5 +115,23 @@ export default function VendorProfilePage({ params }: VendorProfilePageProps) {
     <MainLayout variant="solid">
       <VendorProfileScreen vendor={vendorData} />
     </MainLayout>
+  );
+}
+
+export default function VendorProfilePage({ params }: VendorProfilePageProps) {
+  // Unwrap the params promise
+  const { vendorId } = use(params);
+
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDF5E6] via-[#FFF8F0] to-[#FDF5E6]">
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <div className="w-16 h-16 border-4 border-[#7C2A2A]/20 border-t-[#7C2A2A] rounded-full animate-spin"></div>
+          <p className="text-sm text-[#4F0000]/60">Loading vendor profile...</p>
+        </div>
+      </div>
+    }>
+      <VendorProfileContent vendorId={vendorId} />
+    </Suspense>
   );
 }

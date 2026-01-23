@@ -1,11 +1,15 @@
 'use client';
 
+import { Suspense } from 'react';
 import React from 'react';
 import Link from 'next/link';
 import { useSavedVendors } from '@/hooks/useSavedVendors';
 import { Heart, MapPin, ArrowLeft, RefreshCw, Star } from 'lucide-react';
 
-export default function SavedVendorsPage() {
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
+function SavedVendorsContent() {
     const { savedVendors, loading, error, refetch } = useSavedVendors();
 
     return (
@@ -147,4 +151,19 @@ export default function SavedVendorsPage() {
             </div>
         </div>
     );
+}
+
+export default function SavedVendorsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4 animate-pulse">
+          <div className="w-16 h-16 border-4 border-[#7C2A2A]/20 border-t-[#7C2A2A] rounded-full animate-spin"></div>
+          <p className="text-sm text-[#4F0000]/60">Loading saved vendors...</p>
+        </div>
+      </div>
+    }>
+      <SavedVendorsContent />
+    </Suspense>
+  );
 }

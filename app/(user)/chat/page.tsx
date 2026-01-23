@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import MobileTopNav from '@/components/mobile/MobileTopNav';
 import MobileBottomNav from '@/components/mobile/MobileBottomNav';
@@ -16,7 +17,9 @@ export default function ChatPage() {
       
       {/* Chat Content - Fill remaining space with proper padding for mobile nav */}
       <div className="flex-1 min-h-0 overflow-hidden relative z-10 pt-16 lg:pt-0 pb-20 lg:pb-0">
-        <ChatScreen />
+        <Suspense fallback={<div className="flex items-center justify-center h-full">Loading...</div>}>
+          <ChatScreen />
+        </Suspense>
       </div>
 
       {/* Mobile Bottom Navigation */}

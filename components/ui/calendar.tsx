@@ -6,10 +6,20 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react"
-import { DayPicker, getDefaultClassNames } from "react-day-picker";
+import { DayPicker, getDefaultClassNames, type DayPickerProps } from "react-day-picker";
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
+
+export type CalendarProps = DayPickerProps & {
+  className?: string;
+  classNames?: any;
+  showOutsideDays?: boolean;
+  captionLayout?: string;
+  buttonVariant?: "link" | "outline" | "default" | "destructive" | "secondary" | "ghost";
+  formatters?: any;
+  components?: any;
+}
 
 function Calendar({
   className,
@@ -17,10 +27,10 @@ function Calendar({
   showOutsideDays = true,
   captionLayout = "label",
   buttonVariant = "ghost",
-  formatters,
-  components,
+  formatters = {},
+  components = {},
   ...props
-}) {
+}: CalendarProps) {
   const defaultClassNames = getDefaultClassNames()
 
   return (
@@ -140,7 +150,7 @@ function CalendarDayButton({
   day,
   modifiers,
   ...props
-}) {
+}: any) {
   const defaultClassNames = getDefaultClassNames()
 
   const ref = React.useRef(null)

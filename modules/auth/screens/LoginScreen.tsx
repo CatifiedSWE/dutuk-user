@@ -9,6 +9,7 @@ import {
     getCurrentUser, 
     createCustomerProfileForUser 
 } from '@/lib/auth/customer-auth';
+import { getPostAuthRedirect, clearPostAuthRedirect } from '@/lib/utils/authRedirect';
 import { validateEmail } from '@/lib/validation';
 import FormError from '@/components/ui/FormError';
 import InfoMessage from '@/components/ui/InfoMessage';
@@ -61,11 +62,19 @@ export default function LoginScreen() {
             
             // Successful login - check for redirect URL
             if (redirectUrl) {
-                // Redirect to the stored return URL (e.g., event wizard)
+                // Redirect to the stored return URL (from URL parameter)
+                clearPostAuthRedirect(); // Clear any localStorage redirect
                 router.push(redirectUrl);
             } else {
-                // Default redirect to root (middleware will handle routing)
-                router.push('/');
+                // Check if there's a redirect in localStorage
+                const savedRedirect = getPostAuthRedirect();
+                if (savedRedirect) {
+                    clearPostAuthRedirect();
+                    router.push(savedRedirect);
+                } else {
+                    // Default redirect to root (middleware will handle routing)
+                    router.push('/');
+                }
             }
         } catch (err: any) {
             setError(err.message || 'Failed to sign in. Please check your credentials.');

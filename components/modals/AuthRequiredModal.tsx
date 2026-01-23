@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Dialog,
   DialogContent,
@@ -11,12 +10,12 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Lock, ArrowRight, Sparkles } from 'lucide-react';
-import { saveWizardReturnPath, buildWizardReturnUrl } from '@/lib/utils/wizardRedirect';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 interface AuthRequiredModalProps {
   open: boolean;
   onClose: () => void;
-  currentStep: number;
+  currentStep?: number;
   wizardPath?: string;
 }
 
@@ -26,24 +25,16 @@ export default function AuthRequiredModal({
   currentStep,
   wizardPath = '/events/plan'
 }: AuthRequiredModalProps) {
-  const router = useRouter();
+  const { redirectToLogin, redirectToSignup } = useAuthRedirect();
 
   const handleSignIn = () => {
-    // Save return path before redirecting
-    const returnUrl = buildWizardReturnUrl(wizardPath, currentStep);
-    saveWizardReturnPath(returnUrl, currentStep);
-    
-    // Redirect to login with return URL
-    router.push(`/login?redirect=${encodeURIComponent(returnUrl)}`);
+    // The hook automatically captures the current location
+    redirectToLogin();
   };
 
   const handleSignUp = () => {
-    // Save return path before redirecting
-    const returnUrl = buildWizardReturnUrl(wizardPath, currentStep);
-    saveWizardReturnPath(returnUrl, currentStep);
-    
-    // Redirect to signup with return URL
-    router.push(`/signup?redirect=${encodeURIComponent(returnUrl)}`);
+    // The hook automatically captures the current location
+    redirectToSignup();
   };
 
   return (

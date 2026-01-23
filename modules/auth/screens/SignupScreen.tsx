@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import GradientBackground from '@/components/GradientBackground';
 import { signUpWithPassword, signInWithGoogle, checkCustomerExists } from '@/lib/auth/customer-auth';
+import { getPostAuthRedirect, clearPostAuthRedirect } from '@/lib/utils/authRedirect';
 import { validateEmail, validatePassword, validatePasswordMatch } from '@/lib/validation';
 import ValidationHint from '@/components/ui/ValidationHint';
 import FormError from '@/components/ui/FormError';
@@ -128,11 +129,18 @@ export default function SignupScreen() {
             
             // After signup, check if we have a redirect URL
             if (redirectUrl) {
-                // For wizard flow, redirect to onboarding first, then to wizard
-                // Store redirect URL for after onboarding
+                // For wizard flow or any other flow, redirect to onboarding first, then to target
+                // Store redirect URL for after onboarding (keep both systems for compatibility)
                 sessionStorage.setItem('post-onboarding-redirect', redirectUrl);
                 router.push('/onboarding/name');
             } else {
+                // Check if there's a redirect in localStorage
+                const savedRedirect = getPostAuthRedirect();
+                if (savedRedirect) {
+                    // Store for after onboarding
+                    sessionStorage.setItem('post-onboarding-redirect', savedRedirect);
+                    clearPostAuthRedirect();
+                }
                 // Default onboarding flow
                 router.push('/onboarding/name');
             }

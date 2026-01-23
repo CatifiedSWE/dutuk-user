@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Search, MapPin, User, LogOut, Bell, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import VendorDropdown from './VendorDropdown';
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { signOut } from '@/lib/auth/customer-auth';
 import { useRouter } from 'next/navigation';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -17,6 +18,7 @@ interface HeaderProps {
 export default function Header({ variant = 'solid' }: HeaderProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const { user, loading, isAuthenticated } = useAuth();
+    const { redirectToLogin } = useAuthRedirect();
     const router = useRouter();
     const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
     const [showNotifications, setShowNotifications] = useState(false);
@@ -239,12 +241,12 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                                     </button>
                                 </div>
                             ) : (
-                                <Link
-                                    href="/login"
-                                    className={`hidden md:block font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
+                                <button
+                                    onClick={redirectToLogin}
+                                    className={`hidden md:block font-poppins font-medium text-sm transition-colors hover:opacity-80 cursor-pointer ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
                                 >
                                     Login / Sign Up
-                                </Link>
+                                </button>
                             )}
                         </>
                     )}

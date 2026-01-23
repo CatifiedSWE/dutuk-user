@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { LogIn, UserPlus } from 'lucide-react';
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 interface AuthGateModalProps {
   open: boolean;
@@ -17,16 +17,16 @@ interface AuthGateModalProps {
 }
 
 export function AuthGateModal({ open, onOpenChange }: AuthGateModalProps) {
-  const router = useRouter();
+  const { redirectToLogin, redirectToSignup } = useAuthRedirect();
 
   const handleLogin = () => {
     onOpenChange(false);
-    router.push('/login');
+    redirectToLogin();
   };
 
   const handleSignup = () => {
     onOpenChange(false);
-    router.push('/signup');
+    redirectToSignup();
   };
 
   return (

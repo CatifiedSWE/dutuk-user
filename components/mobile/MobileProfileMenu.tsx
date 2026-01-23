@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, Settings, LogOut, LogIn, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { signOut } from '@/lib/auth/customer-auth';
 import { useRouter } from 'next/navigation';
 
@@ -15,6 +16,7 @@ interface MobileProfileMenuProps {
 
 export default function MobileProfileMenu({ isOpen, onClose }: MobileProfileMenuProps) {
     const { user, isAuthenticated, loading } = useAuth();
+    const { redirectToLogin } = useAuthRedirect();
     const router = useRouter();
 
     const handleLogout = async () => {
@@ -25,6 +27,11 @@ export default function MobileProfileMenu({ isOpen, onClose }: MobileProfileMenu
         } catch (error) {
             console.error('Error logging out:', error);
         }
+    };
+
+    const handleLoginClick = () => {
+        onClose();
+        redirectToLogin();
     };
 
     return (
@@ -161,14 +168,13 @@ export default function MobileProfileMenu({ isOpen, onClose }: MobileProfileMenu
                                         <p className="text-sm text-gray-600 mb-8 px-4">
                                             Sign in to access your profile, bookings, and exclusive features
                                         </p>
-                                        <Link
-                                            href="/login"
-                                            onClick={onClose}
+                                        <button
+                                            onClick={handleLoginClick}
                                             className="inline-flex items-center justify-center gap-3 py-4 px-10 bg-gradient-to-r from-[#7C2A2A] to-[#4F0000] text-white font-bold rounded-xl hover:shadow-xl active:scale-[0.98] transition-all duration-200"
                                         >
                                             <LogIn className="w-5 h-5" />
                                             <span>Login / Sign Up</span>
-                                        </Link>
+                                        </button>
                                     </div>
                                 </>
                             )}

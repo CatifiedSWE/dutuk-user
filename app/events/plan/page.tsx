@@ -61,7 +61,7 @@ const GUEST_MILESTONES = [
     { count: 500, label: 'Grand' },
 ];
 
-export default function EventPlanWizard() {
+function EventPlanWizardContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [currentStep, setCurrentStep] = useState(1);
@@ -668,5 +668,21 @@ function SummaryRow({ icon, label, value }: { icon: React.ReactNode; label: stri
                 <p className="font-poppins font-semibold text-gray-800">{value}</p>
             </div>
         </div>
+    );
+}
+
+// Wrap in Suspense for useSearchParams() support
+export default function EventPlanWizard() {
+    return (
+        <React.Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[#FDF5E6]">
+                <div className="text-center">
+                    <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#4F0000] border-r-transparent"></div>
+                    <p className="mt-4 text-sm text-gray-600 font-poppins">Loading Event Wizard...</p>
+                </div>
+            </div>
+        }>
+            <EventPlanWizardContent />
+        </React.Suspense>
     );
 }

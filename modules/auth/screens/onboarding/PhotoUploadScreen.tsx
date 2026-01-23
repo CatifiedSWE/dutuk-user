@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ProgressIndicator } from '@/modules/common/shared-ui/ProgressIndicator';
 import { updateCustomerProfile } from '@/lib/auth/customer-auth';
@@ -11,6 +11,27 @@ export function PhotoUploadScreen() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check auth status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { getCurrentUser } = await import('@/lib/auth/customer-auth');
+        const user = await getCurrentUser();
+        if (!user) {
+          setError('Session expired. Please log in again.');
+          setTimeout(() => router.push('/login'), 2000);
+        }
+      } catch (err) {
+        setError('Session expired. Please log in again.');
+        setTimeout(() => router.push('/login'), 2000);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+    checkAuth();
+  }, [router]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,7 +79,11 @@ export function PhotoUploadScreen() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       
-      if (!user) throw new Error('Not authenticated');
+      if (!user) {
+        setError('Session expired. Please log in again.');
+        setTimeout(() => router.push('/login'), 2000);
+        return;
+      }
 
       // Upload to Supabase Storage
       const fileExt = file.name.split('.').pop();
@@ -88,7 +113,12 @@ export function PhotoUploadScreen() {
       router.push('/home');
     } catch (err: any) {
       console.error('Error uploading photo:', err);
-      setError(err.message || 'Failed to upload photo. Please try again.');
+      if (err.message?.includes('Not authenticated') || err.message?.includes('session')) {
+        setError('Session expired. Please log in again.');
+        setTimeout(() => router.push('/login'), 2000);
+      } else {
+        setError(err.message || 'Failed to upload photo. Please try again.');
+      }
     } finally {
       setUploading(false);
     }
@@ -97,6 +127,18 @@ export function PhotoUploadScreen() {
   const handleSkip = () => {
     router.push('/home');
   };
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#8B0000] border-r-transparent"></div>
+          <p className="mt-4 text-sm text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">

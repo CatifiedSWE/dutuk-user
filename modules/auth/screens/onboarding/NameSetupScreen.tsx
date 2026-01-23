@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ProgressIndicator } from '@/modules/common/shared-ui/ProgressIndicator';
 import { updateCustomerProfile } from '@/lib/auth/customer-auth';
@@ -11,6 +11,27 @@ export function NameSetupScreen() {
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check auth status on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { getCurrentUser } = await import('@/lib/auth/customer-auth');
+        const user = await getCurrentUser();
+        if (!user) {
+          setError('Session expired. Please log in again.');
+          setTimeout(() => router.push('/login'), 2000);
+        }
+      } catch (err) {
+        setError('Session expired. Please log in again.');
+        setTimeout(() => router.push('/login'), 2000);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+    checkAuth();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,11 +43,28 @@ export function NameSetupScreen() {
       await updateCustomerProfile({ full_name: fullName });
       router.push('/onboarding/location');
     } catch (err: any) {
-      setError(err.message || 'Failed to save name');
+      if (err.message?.includes('Not authenticated') || err.message?.includes('session')) {
+        setError('Session expired. Please log in again.');
+        setTimeout(() => router.push('/login'), 2000);
+      } else {
+        setError(err.message || 'Failed to save name');
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#8B0000] border-r-transparent"></div>
+          <p className="mt-4 text-sm text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen flex items-center justify-center p-4 font-sans relative overflow-hidden">

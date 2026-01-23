@@ -122,6 +122,10 @@ export default function SignupScreen() {
             // Email doesn't exist in customer_profiles, proceed with signup
             await signUpWithPassword(email, password);
             
+            // Wait for session to be fully established (important for Next.js SSR)
+            // This ensures the auth cookie is set before redirect
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
             // After signup, check if we have a redirect URL
             if (redirectUrl) {
                 // For wizard flow, redirect to onboarding first, then to wizard

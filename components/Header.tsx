@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Search, MapPin, User, LogOut, Bell, MessageCircle, CheckCircle, XCircle } from 'lucide-react';
 import VendorDropdown from './VendorDropdown';
+import UserProfileDropdown from './UserProfileDropdown';
 import { useAuth } from '@/hooks/useAuth';
 import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 import { signOut } from '@/lib/auth/customer-auth';
@@ -219,26 +220,7 @@ export default function Header({ variant = 'solid' }: HeaderProps) {
                                         )}
                                     </div>
 
-                                    <Link
-                                        href="/profile/overview"
-                                        className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
-                                    >
-                                        <User className="w-4 h-4" />
-                                        Profile
-                                    </Link>
-                                    <Link
-                                        href="/bookings"
-                                        className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
-                                    >
-                                        My Bookings
-                                    </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className={`hidden md:flex items-center gap-2 font-poppins font-medium text-sm transition-colors hover:opacity-80 ${isScrolled || variant === 'solid' ? 'text-[#4F0000]' : 'text-white'}`}
-                                    >
-                                        <LogOut className="w-4 h-4" />
-                                        Logout
-                                    </button>
+                                    <UserProfileDropdown isScrolled={isScrolled} variant={variant} />
                                 </div>
                             ) : (
                                 <button

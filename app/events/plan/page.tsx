@@ -16,10 +16,10 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
 import AuthRequiredModal from '@/components/modals/AuthRequiredModal';
-import { 
-    isReturningFromAuth, 
-    getStepFromUrl, 
-    clearWizardReturnPath 
+import {
+    isReturningFromAuth,
+    getStepFromUrl,
+    clearWizardReturnPath
 } from '@/lib/utils/wizardRedirect';
 
 const OCCASIONS = [
@@ -93,18 +93,18 @@ function EventPlanWizardContent() {
             // Get step from URL or use stored step
             const urlStep = getStepFromUrl(searchParams);
             const stepToRestore = urlStep || storedStep || 5;
-            
+
             // Restore step
             setCurrentStep(stepToRestore);
-            
+
             // Show success message
             toast.success('Welcome back! Resuming your event planning...', {
                 duration: 3000,
             });
-            
+
             // Clear return path
             clearWizardReturnPath();
-            
+
             // Clean URL
             router.replace('/events/plan', { scroll: false });
         } else if (storedStep && storedStep !== currentStep) {
@@ -143,9 +143,10 @@ function EventPlanWizardContent() {
     const handleSubmit = async () => {
         // Check authentication first
         if (!user && !authLoading) {
-            // User not authenticated - show auth modal
+            // User not authenticated - redirect to login with return URL
             setStoredStep(currentStep); // Save current step
-            setShowAuthModal(true);
+            toast.error('Please log in to create an event');
+            router.push('/login?redirect=/events/plan');
             return;
         }
 
@@ -234,13 +235,12 @@ function EventPlanWizardContent() {
                         {STEPS.map((step, index) => (
                             <React.Fragment key={step.id}>
                                 <div
-                                    className={`relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 ${
-                                        step.id < currentStep
-                                            ? 'bg-[#4F0000] shadow-md'
-                                            : step.id === currentStep
-                                                ? 'bg-[#4F0000] shadow-md ring-2 ring-[#FFC13C]'
-                                                : 'bg-gray-200'
-                                    }`}
+                                    className={`relative flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 ${step.id < currentStep
+                                        ? 'bg-[#4F0000] shadow-md'
+                                        : step.id === currentStep
+                                            ? 'bg-[#4F0000] shadow-md ring-2 ring-[#FFC13C]'
+                                            : 'bg-gray-200'
+                                        }`}
                                 >
                                     {step.id < currentStep ? (
                                         <Check className="w-5 h-5 text-white" />
@@ -290,11 +290,10 @@ function EventPlanWizardContent() {
                                     <button
                                         key={occ.id}
                                         onClick={() => setOccasion(occ.name, occ.id)}
-                                        className={`relative p-6 rounded-2xl border-2 transition-all duration-150 ${
-                                            occasion === occ.name
-                                                ? 'border-[#4F0000] bg-[#FDF5E6] shadow-md'
-                                                : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
-                                        }`}
+                                        className={`relative p-6 rounded-2xl border-2 transition-all duration-150 ${occasion === occ.name
+                                            ? 'border-[#4F0000] bg-[#FDF5E6] shadow-md'
+                                            : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
+                                            }`}
                                     >
                                         {/* Selection checkmark */}
                                         {occasion === occ.name && (
@@ -304,9 +303,8 @@ function EventPlanWizardContent() {
                                         )}
 
                                         <div className="flex flex-col items-center text-center">
-                                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-3 ${
-                                                occasion === occ.name ? 'bg-[#4F0000]' : 'bg-gray-100'
-                                            }`}>
+                                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-3 ${occasion === occ.name ? 'bg-[#4F0000]' : 'bg-gray-100'
+                                                }`}>
                                                 <occ.icon className={`w-7 h-7 ${occasion === occ.name ? 'text-white' : 'text-gray-600'}`} />
                                             </div>
                                             <span className="font-poppins font-semibold text-gray-800">{occ.name}</span>
@@ -410,13 +408,11 @@ function EventPlanWizardContent() {
                                             {GUEST_MILESTONES.map((milestone) => (
                                                 <div
                                                     key={milestone.count}
-                                                    className={`text-center transition-all duration-150 ${
-                                                        guestCount >= milestone.count ? 'opacity-100' : 'opacity-40'
-                                                    }`}
+                                                    className={`text-center transition-all duration-150 ${guestCount >= milestone.count ? 'opacity-100' : 'opacity-40'
+                                                        }`}
                                                 >
-                                                    <div className={`w-2.5 h-2.5 rounded-full mx-auto mb-1 ${
-                                                        guestCount >= milestone.count ? 'bg-[#4F0000]' : 'bg-gray-300'
-                                                    }`} />
+                                                    <div className={`w-2.5 h-2.5 rounded-full mx-auto mb-1 ${guestCount >= milestone.count ? 'bg-[#4F0000]' : 'bg-gray-300'
+                                                        }`} />
                                                     <span className="font-poppins text-xs font-medium text-gray-500">{milestone.count}</span>
                                                     <p className="font-poppins text-xs text-gray-400">{milestone.label}</p>
                                                 </div>
@@ -493,11 +489,10 @@ function EventPlanWizardContent() {
                                     {BUDGET_TIERS.map((tier) => (
                                         <div
                                             key={tier.name}
-                                            className={`text-center p-2 rounded-lg transition-all duration-150 ${
-                                                getBudgetTier().name === tier.name
-                                                    ? 'bg-[#FDF5E6] ring-1 ring-[#FFC13C]'
-                                                    : 'bg-gray-50'
-                                            }`}
+                                            className={`text-center p-2 rounded-lg transition-all duration-150 ${getBudgetTier().name === tier.name
+                                                ? 'bg-[#FDF5E6] ring-1 ring-[#FFC13C]'
+                                                : 'bg-gray-50'
+                                                }`}
                                         >
                                             <span className="font-poppins text-xs font-medium text-gray-600">{tier.name}</span>
                                         </div>
@@ -522,20 +517,17 @@ function EventPlanWizardContent() {
                                                     : [...prev, service.id]
                                             );
                                         }}
-                                        className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-150 ${
-                                            selectedServices.includes(service.id)
-                                                ? 'border-[#4F0000] bg-[#FDF5E6] shadow-md'
-                                                : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
-                                        }`}
+                                        className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all duration-150 ${selectedServices.includes(service.id)
+                                            ? 'border-[#4F0000] bg-[#FDF5E6] shadow-md'
+                                            : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
+                                            }`}
                                     >
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-150 ${
-                                            selectedServices.includes(service.id)
-                                                ? 'bg-[#4F0000]'
-                                                : 'bg-gray-100'
-                                        }`}>
-                                            <service.icon className={`w-6 h-6 ${
-                                                selectedServices.includes(service.id) ? 'text-white' : 'text-gray-500'
-                                            }`} />
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-150 ${selectedServices.includes(service.id)
+                                            ? 'bg-[#4F0000]'
+                                            : 'bg-gray-100'
+                                            }`}>
+                                            <service.icon className={`w-6 h-6 ${selectedServices.includes(service.id) ? 'text-white' : 'text-gray-500'
+                                                }`} />
                                         </div>
                                         <div className="flex-1 text-left">
                                             <span className="font-poppins font-semibold text-gray-800 block">{service.name}</span>

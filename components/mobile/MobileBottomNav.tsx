@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, MessageCircle } from 'lucide-react';
+import { Home, Search, MessageCircle, Calendar } from 'lucide-react';
 
 export default function MobileBottomNav() {
     const pathname = usePathname();
@@ -20,6 +20,12 @@ export default function MobileBottomNav() {
             href: '/explore',
             icon: Search,
             isActive: pathname === '/explore'
+        },
+        {
+            name: 'Events',
+            href: '/events',
+            icon: Calendar,
+            isActive: pathname === '/events' || pathname.startsWith('/events/')
         },
         {
             name: 'Chat',

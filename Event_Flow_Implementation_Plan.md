@@ -205,7 +205,7 @@ Atomic Transaction:
 
 ### [13_create_event_flow.sql](file:///e:/My%20Programming%20Projects/dutuk-user/sql-migrations/13_create_event_flow.sql)
 
-Full migration applied to Supabase project `unqpmwlzyaqrryzyrslf`.
+Full migration applied to Supabase project.
 
 ---
 

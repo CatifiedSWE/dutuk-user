@@ -272,7 +272,7 @@ All screens are fully responsive:
 
 ### Environment Variables Required
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://unqpmwlzyaqrryzyrslf.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 

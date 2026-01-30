@@ -541,8 +541,8 @@ Deno.serve(async (req) => {
 #### 2.1 Environment Setup
 ```env
 # /user-website/.env.local
-NEXT_PUBLIC_SUPABASE_URL=https://unqpmwlzyaqrryzyrslf.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 #### 2.2 Supabase Client Setup

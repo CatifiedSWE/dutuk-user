@@ -311,8 +311,8 @@ Request → Middleware Check → Database Query (if needed) → Redirect/Allow �
 
 ### Environment Variables
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://unqpmwlzyaqrryzyrslf.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 ```
 
 ### Required Supabase Setup

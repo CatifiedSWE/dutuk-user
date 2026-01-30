@@ -255,7 +255,7 @@ The `profile_photo_url` field stores the public URL of the uploaded image:
 
 ```sql
 -- Example profile_photo_url value
-https://unqpmwlzyaqrryzyrslf.supabase.co/storage/v1/object/public/customer-profile-images/profile-photos/a1b2c3d4-e5f6-7890-abcd-ef1234567890/1704067200000.jpg
+https://YOUR_PROJECT.supabase.co/storage/v1/object/public/customer-profile-images/profile-photos/USER_ID/TIMESTAMP.jpg
 ```
 
 No schema changes required - the field already exists.

@@ -622,8 +622,8 @@ export async function getVendorServices() {
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
-  'https://unqpmwlzyaqrryzyrslf.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
 // Test 1: Public vendor browsing
